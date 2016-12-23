@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.openntf.xrest.xsp.feature_1.0.0.qualifier.jar" id="org.openntf.xrest.xsp.feature" version="1.0.0.qualifier">
+      <category name="OpenNTFExtension"/>
+   </feature>
+   <category-def name="OpenNTFExtension" label="OpenNTFExtension"/>
+</site>

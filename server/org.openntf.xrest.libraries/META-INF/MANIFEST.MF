@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XRest API Libraries
+Bundle-SymbolicName: org.openntf.xrest.libraries;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: WebGate Consulting AG
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime;resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .

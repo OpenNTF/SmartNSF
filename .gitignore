@@ -1,0 +1,12 @@
+server/.project
+server/.settings/
+server/org.openntf.xrest.libraries/.classpath
+server/org.openntf.xrest.libraries/.project
+server/org.openntf.xrest.libraries/.settings/
+server/org.openntf.xrest.xsp/.classpath
+server/org.openntf.xrest.xsp/.project
+server/org.openntf.xrest.xsp.feature/.project
+server/org.openntf.xrest.xsp.feature/.settings/
+server/org.openntf.xrest.xsp.updatesite/.project
+server/org.openntf.xrest.xsp.updatesite/.settings/
+server/org.openntf.xrest.xsp/.settings/
