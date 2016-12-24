@@ -10,3 +10,13 @@ server/org.openntf.xrest.xsp.feature/.settings/
 server/org.openntf.xrest.xsp.updatesite/.project
 server/org.openntf.xrest.xsp.updatesite/.settings/
 server/org.openntf.xrest.xsp/.settings/
+server/org.openntf.xrest.libraries/lib/
+server/org.openntf.xrest.libraries/target/
+server/org.openntf.xrest.xsp.feature/target/
+server/org.openntf.xrest.xsp.testsuite/.classpath
+server/org.openntf.xrest.xsp.testsuite/.project
+server/org.openntf.xrest.xsp.testsuite/.settings/
+server/org.openntf.xrest.xsp.testsuite/target/
+server/org.openntf.xrest.xsp.updatesite/target/
+server/org.openntf.xrest.xsp/target/
+server/target/

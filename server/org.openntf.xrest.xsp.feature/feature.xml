@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.xrest.xsp.feature"
       label="XREST XSP Feature"
-      version="1.2.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="WebGate Consulting AG">
 
    <description url="http://www.openntf.org/main.nsf/project.xsp?r=project/org.openntf.junit.xsp">
