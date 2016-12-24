@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="com.ibm.designer.domino.ide.resources.metamodel">
+      <metamodel
+            category="com.ibm.designer.domino.ide.metamodel.dbconfig"
+            designTimeClass="org.openntf.xrest.designer.DesignTimeModelRoutes"
+            id="org.openntf.xrest.designer.routes"
+            name="XRest API Routes"
+            path="routes.groovy"
+            icon="icons/script_link.png"
+            navigable="false"
+            isEfsFile="true"
+            visible="true">
+           </metamodel>
+   </extension>
+</plugin>
