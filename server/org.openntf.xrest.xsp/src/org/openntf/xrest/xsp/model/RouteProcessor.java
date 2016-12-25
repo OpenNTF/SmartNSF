@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
 import groovy.lang.Closure;
 
@@ -18,6 +19,8 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
+	private StrategyModel strategyModel;
+	private Strategy strategyValue;
 
 	public RouteProcessor(String path) {
 		route = path;
@@ -36,6 +39,8 @@ public class RouteProcessor {
 	}
 
 	public void strategy(Strategy strat, Closure<Void> cl) {
+		strategyValue = strat;
+		
 		System.out.println("strat: " + strat);
 	}
 

@@ -1,6 +1,6 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetByFT {
+public class GetByFT implements StrategyModel{
 
 	private String databaseNameValue;
 	private String ftQueryValue;

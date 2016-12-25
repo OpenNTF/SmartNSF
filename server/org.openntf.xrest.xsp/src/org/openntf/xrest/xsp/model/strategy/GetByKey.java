@@ -1,6 +1,6 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetByKey {
+public class GetByKey implements StrategyModel{
 
 	private String databaseNameValue;
 	private String viewNameValue;

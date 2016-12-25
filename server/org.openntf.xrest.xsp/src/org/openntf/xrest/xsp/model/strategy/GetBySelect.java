@@ -1,6 +1,6 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetBySelect {
+public class GetBySelect implements StrategyModel{
 
 	private String databaseNameValue;
 	private String selectQueryValue;
