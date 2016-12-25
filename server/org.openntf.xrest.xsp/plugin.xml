@@ -4,8 +4,12 @@
   <extension
          point="com.ibm.commons.Extension">
       <service
-            class="org.openntf.xrest.xsp.ibrary.XRestLibrary"
+            class="org.openntf.xrest.xsp.library.XRestLibrary"
             type="com.ibm.xsp.Library">
       </service>
+   </extension>
+   
+   <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.xsp.adapter.servletFactory" class="org.openntf.xrest.xsp.servlet.XRestAPIServletFactory" />
    </extension>
 </plugin>

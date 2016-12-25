@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
  org.openntf.xrest.libraries;visibility:=reexport,
  com.ibm.xsp.core,
  com.ibm.commons,
- com.ibm.xsp.extsn
+ com.ibm.xsp.extsn,
+ com.ibm.domino.xsp.adapter
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .

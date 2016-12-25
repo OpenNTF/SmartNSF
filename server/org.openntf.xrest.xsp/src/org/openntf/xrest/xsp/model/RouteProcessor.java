@@ -38,10 +38,10 @@ public class RouteProcessor {
 		}
 	}
 
-	public void strategy(Strategy strat, Closure<Void> cl) {
+	public void strategy(Strategy strat, Closure<Void> cl) throws InstantiationException, IllegalAccessException {
 		strategyValue = strat;
-		
-		System.out.println("strat: " + strat);
+		strategyModel =strat.constructModel();
+		DSLBuilder.applyClosureToObject(cl, strategyModel);
 	}
 
 	public void events(Map<String, Object> events) {

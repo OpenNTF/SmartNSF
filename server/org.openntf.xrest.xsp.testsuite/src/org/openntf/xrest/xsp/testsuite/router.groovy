@@ -7,8 +7,8 @@ def calcGroups = {
 
 router.GET('customers/{id}') {
 	strategy(GET_FROM_VIEW_BY_KEY) {
-		key("{id}")
-		view("customerById")
+		keyVariableName("{id}")
+		viewName("customerById")
 	}
 	accessPermission "SalesManager","[CustomerService]"
 	mapJson "company", json:'company',type:'String'
@@ -16,9 +16,8 @@ router.GET('customers/{id}') {
 }
 
 router.GET('customers') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
-		key("{id}")
-		view("customerById")
+	strategy(ALL_BY_VIEW) {
+		viewName("customersActive")
 	}
 	accessPermission calcGroups;
 	mapJson "company", json:'company',type:'String'
@@ -26,24 +25,23 @@ router.GET('customers') {
 }
 router.PUT('customers/{id}') {
 	strategy(GET_FROM_VIEW_BY_KEY) {
-		key("{id}")
-		view("customerById")
+		keyVariableName("{id}")
+		viewName("customerById")
 	}
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
 }
 router.POST('comment/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
-		key("{id}")
-		view("customerById")
+	strategy(GET_BY_UNID) {
+		keyVariableName("{id}")
 	}
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
 }
 router.DELETE('quote/{id}') {
 	strategy(GET_FROM_VIEW_BY_KEY) {
-		key("{id}")
-		view("customerById")
+		keyVariableName("{id}")
+		viewName("customerById")
 	}
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
