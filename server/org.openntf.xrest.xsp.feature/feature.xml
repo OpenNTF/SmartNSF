@@ -219,13 +219,14 @@ END OF TERMS AND CONDITIONS
    </requires>
 
    <plugin
-         id="org.openntf.junit.libraries"
+         id="org.openntf.xrest.libraries"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
-         id="org.openntf.junit.xsp"
+         id="org.openntf.xrest.xsp"
          download-size="0"
          install-size="0"
          version="0.0.0"

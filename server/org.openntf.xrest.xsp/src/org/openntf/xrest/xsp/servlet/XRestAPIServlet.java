@@ -75,6 +75,12 @@ public class XRestAPIServlet extends HttpServlet {
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
+	private String dsl;
+	
+	public XRestAPIServlet(String dsl) {
+		System.out.println("Servlet created...");
+		this.dsl = dsl;
+	}
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -89,6 +95,8 @@ public class XRestAPIServlet extends HttpServlet {
 			resp.setContentType("text/plain");
 			PrintWriter pwCurrent = resp.getWriter();
 			pwCurrent.println("You have called the .xrest Servlet....");
+			pwCurrent.println("DSL: ");
+			pwCurrent.println(dsl);
 			pwCurrent.close();
 			releaseContext(fcCurrent);
 		} catch (Exception e) {
@@ -104,14 +112,7 @@ public class XRestAPIServlet extends HttpServlet {
 	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-		// Create a temporary FacesContext and make it available
-
-		// FacesContext context =
-		// m_ContextFactory.getFacesContext(request.getSession().getServletContext(),
-		// request, response, dummyLifeCycle);
-		FacesContext context = contextFactory.getFacesContext(config.getServletContext(), request, response, dummyLifeCycle);
-		return context;
+		return contextFactory.getFacesContext(config.getServletContext(), request, response, dummyLifeCycle);
 	}
 
 	public void releaseContext(FacesContext context) throws ServletException, IOException {

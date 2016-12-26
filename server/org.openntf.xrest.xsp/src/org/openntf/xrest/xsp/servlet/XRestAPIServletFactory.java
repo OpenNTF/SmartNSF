@@ -15,9 +15,12 @@
  */
 package org.openntf.xrest.xsp.servlet;
 
+import java.io.IOException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
+import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.IServletFactory;
 import com.ibm.designer.runtime.domino.adapter.ServletMatch;
@@ -25,8 +28,9 @@ import com.ibm.designer.runtime.domino.adapter.ServletMatch;
 public class XRestAPIServletFactory implements IServletFactory {
 
 	private ComponentModule module;
-	public static final String SERVLET_PATH = "/.xrest/";
-	public XRestAPIServlet servlet;
+	public static final String SERVLET_PATH = "/xsp/.xrest/";
+	private XRestAPIServlet servlet;
+	private String dsl;
 
 	@Override
 	public ServletMatch getServletMatch(String contextPath, String path) throws ServletException {
@@ -42,13 +46,17 @@ public class XRestAPIServletFactory implements IServletFactory {
 
 	@Override
 	public void init(ComponentModule module) {
-		System.out.println(module.getModuleName());
 		this.module = module;
+		try {
+			this.dsl = StreamUtil.readString(module.getResourceAsStream("/WEB-INF/routes.groovy"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized Servlet getExecutorServlet() throws ServletException {
 		if (servlet == null) {
-			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(), "XRestAPI Servlet", null);
+			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(dsl), "XRestAPI Servlet", null);
 		}
 		return servlet;
 	}
