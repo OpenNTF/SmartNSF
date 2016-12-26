@@ -14,6 +14,7 @@ import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 import groovy.lang.Closure;
 
 public class RouteProcessor {
+	private static final String NV = "<NV>";
 	private final String[] pathElements;
 	private final String route;
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
@@ -34,13 +35,14 @@ public class RouteProcessor {
 			if (element.startsWith("{") && element.endsWith("}")) {
 				String variable = element.substring(1, element.length() - 1);
 				variablePositionMap.put(Integer.valueOf(index), variable);
+				pathElements[index] = NV;
 			}
 		}
 	}
 
 	public void strategy(Strategy strat, Closure<Void> cl) throws InstantiationException, IllegalAccessException {
 		strategyValue = strat;
-		strategyModel =strat.constructModel();
+		strategyModel = strat.constructModel();
 		DSLBuilder.applyClosureToObject(cl, strategyModel);
 	}
 
@@ -92,6 +94,25 @@ public class RouteProcessor {
 		} else {
 			return accessGroups;
 		}
+	}
+
+	public int matchRoute(String[] path) {
+		if (path.length != pathElements.length) {
+			return 0;
+		}
+		int matchCount = 0;
+		for (int index = 0; index < path.length; index++) {
+			String partElements = pathElements[index];
+			String partPath = path[index];
+			if (!NV.equals(partElements)) {
+				if (partElements.equals(partPath)) {
+					matchCount++;
+				} else {
+					return 0;
+				}
+			}
+		}
+		return matchCount;
 	}
 
 }

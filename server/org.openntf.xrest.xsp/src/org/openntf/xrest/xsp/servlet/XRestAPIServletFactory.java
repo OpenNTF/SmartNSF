@@ -16,9 +16,13 @@
 package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+
+import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.model.Router;
 
 import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
@@ -48,7 +52,10 @@ public class XRestAPIServletFactory implements IServletFactory {
 	public void init(ComponentModule module) {
 		this.module = module;
 		try {
-			this.dsl = StreamUtil.readString(module.getResourceAsStream("/WEB-INF/routes.groovy"));
+			InputStream is = module.getResourceAsStream("/WEB-INF/routes.groovy");
+			if (is != null) {
+				this.dsl = StreamUtil.readString(is);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +63,8 @@ public class XRestAPIServletFactory implements IServletFactory {
 
 	public synchronized Servlet getExecutorServlet() throws ServletException {
 		if (servlet == null) {
-			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(dsl), "XRestAPI Servlet", null);
+			Router router = DSLBuilder.buildRouterFromDSL(this.dsl, getClass().getClassLoader());
+			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(router), "XRestAPI Servlet", null);
 		}
 		return servlet;
 	}

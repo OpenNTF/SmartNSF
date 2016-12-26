@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openntf.xrest.xsp.model.Router;
+
 import com.ibm.commons.util.NotImplementedException;
 
 public class XRestAPIServlet extends HttpServlet {
@@ -71,15 +73,16 @@ public class XRestAPIServlet extends HttpServlet {
 		public void addPhaseListener(PhaseListener listener) {
 			throw new NotImplementedException();
 		}
+		
 	};
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
-	private String dsl;
+	private Router router;
 	
-	public XRestAPIServlet(String dsl) {
+	public XRestAPIServlet(Router router) {
 		System.out.println("Servlet created...");
-		this.dsl = dsl;
+		this.router = router;
 	}
 
 	@Override
@@ -96,7 +99,6 @@ public class XRestAPIServlet extends HttpServlet {
 			PrintWriter pwCurrent = resp.getWriter();
 			pwCurrent.println("You have called the .xrest Servlet....");
 			pwCurrent.println("DSL: ");
-			pwCurrent.println(dsl);
 			pwCurrent.close();
 			releaseContext(fcCurrent);
 		} catch (Exception e) {

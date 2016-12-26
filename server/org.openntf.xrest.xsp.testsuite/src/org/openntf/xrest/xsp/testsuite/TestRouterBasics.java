@@ -70,6 +70,20 @@ public class TestRouterBasics {
 		Assert.assertEquals(4,rp2.getAccessGroups().size());
 	}
 
+	@Test
+	public void testRouterFindRoute() throws IOException {
+		String dsl = readFile();
+		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
+		RouteProcessor rp = router.find("GET","customers");
+		Assert.assertNotNull(rp);
+		Assert.assertEquals("customers", rp.getRoute());
+		RouteProcessor rp2 = router.find("GET","customers/8109271");
+		Assert.assertNotNull(rp2);
+		Assert.assertEquals("customers/{id}", rp2.getRoute());
+		RouteProcessor rp3 = router.find("GET","customers/8109271/idh");
+		Assert.assertNull(rp3);
+	}
+	
 	private String readFile() throws IOException {
 		InputStream is = getClass().getResourceAsStream("router.groovy");
 		return IOUtils.toString(is, "utf-8");
