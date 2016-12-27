@@ -1,6 +1,12 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetByFT implements StrategyModel{
+import java.util.List;
+
+import org.openntf.xrest.xsp.exec.Context;
+
+import lotus.domino.Document;
+
+public class GetByFT implements StrategyModel<List<Document>>{
 
 	private String databaseNameValue;
 	private String ftQueryValue;
@@ -29,6 +35,13 @@ public class GetByFT implements StrategyModel{
 
 	public void setFtQueryValue(String keyVariableValue) {
 		this.ftQueryValue = keyVariableValue;
+	}
+
+
+	@Override
+	public List<Document> getModel(Context context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

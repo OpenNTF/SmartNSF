@@ -10,6 +10,9 @@ Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
  com.ibm.xsp.core,
  com.ibm.commons,
  com.ibm.xsp.extsn,
- com.ibm.domino.xsp.adapter
+ com.ibm.domino.xsp.adapter,
+ com.ibm.notes.java.api,
+ com.ibm.xsp.extlib,
+ com.ibm.xsp.domino
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .

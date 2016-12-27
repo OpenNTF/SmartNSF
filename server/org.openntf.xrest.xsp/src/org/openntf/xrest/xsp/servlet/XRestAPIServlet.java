@@ -32,9 +32,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
+import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
+import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XRestAPIServlet extends HttpServlet {
 	/**
@@ -90,26 +95,36 @@ public class XRestAPIServlet extends HttpServlet {
 		this.config = config;
 		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
-
+	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		FacesContext fcCurrent = initContext(req, resp);
 		try {
-			FacesContext fcCurrent = initContext(req, resp);
-			resp.setContentType("text/plain");
-			PrintWriter pwCurrent = resp.getWriter();
-			pwCurrent.println("You have called the .xrest Servlet....");
-			pwCurrent.println("DSL: ");
-			pwCurrent.close();
-			releaseContext(fcCurrent);
+			String method = req.getMethod();
+			String path = req.getPathInfo();
+			RouteProcessor rp = router.find(method, path);
+			 Context context = new Context();
+			if (rp != null) {
+				 NotesContext c = NotesContext.getCurrentUnchecked();
+				 context.addNotesContext(c).addRequest(req).addResponse(resp);
+				 RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
+				 executor.execute();
+			} else {
+				resp.setContentType("text/plain");
+				PrintWriter pwCurrent = resp.getWriter();
+				pwCurrent.println("You have called the .xrest Servlet....");
+				pwCurrent.println("PathInfo: ");
+				pwCurrent.println(req.getPathInfo());
+				pwCurrent.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			releaseContext(fcCurrent);
+
 		}
 	}
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doGet(req, resp);
-	}
 
 	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;

@@ -1,6 +1,10 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetByKey implements StrategyModel{
+import org.openntf.xrest.xsp.exec.Context;
+
+import lotus.domino.Document;
+
+public class GetByKey implements StrategyModel<Document>{
 
 	private String databaseNameValue;
 	private String viewNameValue;
@@ -40,6 +44,12 @@ public class GetByKey implements StrategyModel{
 
 	public void setKeyVariableValue(String keyVariableValue) {
 		this.keyVariableValue = keyVariableValue;
+	}
+
+	@Override
+	public Document getModel(Context context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

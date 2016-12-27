@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.openntf.xrest.xsp.model.EventException;
+import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.model.Strategy;
 
@@ -35,6 +37,8 @@ public class DSLBuilder {
 		// Automatically import some enum references
 		ImportCustomizer importCustomizer = new ImportCustomizer();
 		importCustomizer.addStaticStars(Strategy.class.getCanonicalName());
+		importCustomizer.addStaticStars(EventType.class.getCanonicalName());
+		importCustomizer.addStaticStars(EventException.class.getCanonicalName());
 
 		compilerConfig.addCompilationCustomizers(importCustomizer);
 
@@ -45,7 +49,6 @@ public class DSLBuilder {
 			binding.setVariable(entry.getKey(), entry.getValue());
 		}
 
-		// Set stdout to be the Darwino platform output stream
 		PrintStream out = System.out;
 		binding.setProperty("out", out); //$NON-NLS-1$
 		out.flush();

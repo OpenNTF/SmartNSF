@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.DataModel;
+import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
 import groovy.lang.Closure;
@@ -22,6 +25,7 @@ public class RouteProcessor {
 	private Closure<?> accessGroupsCL;
 	private StrategyModel strategyModel;
 	private Strategy strategyValue;
+	private Map<EventType,Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
 
 	public RouteProcessor(String path) {
 		route = path;
@@ -113,6 +117,18 @@ public class RouteProcessor {
 			}
 		}
 		return matchCount;
+	}
+
+	public Closure<?> getEventClosure(EventType eventType) {
+		if (eventMap.containsKey(eventType)) {
+			return eventMap.get(eventType);
+		}
+		return null;
+	}
+	
+	public DataModel<?> getDataModel(Context context) throws ExecutorException {
+		Object obj = strategyModel.getModel(context);
+		return new DataModel<Object>(obj);
 	}
 
 }

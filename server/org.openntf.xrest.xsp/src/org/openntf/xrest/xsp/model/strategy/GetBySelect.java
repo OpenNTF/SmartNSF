@@ -1,6 +1,12 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-public class GetBySelect implements StrategyModel{
+import java.util.List;
+
+import org.openntf.xrest.xsp.exec.Context;
+
+import lotus.domino.Document;
+
+public class GetBySelect implements StrategyModel<List<Document>>{
 
 	private String databaseNameValue;
 	private String selectQueryValue;
@@ -29,6 +35,13 @@ public class GetBySelect implements StrategyModel{
 
 	public void setSelectQueryValue(String keyVariableValue) {
 		this.selectQueryValue = keyVariableValue;
+	}
+
+
+	@Override
+	public List<Document> getModel(Context context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
