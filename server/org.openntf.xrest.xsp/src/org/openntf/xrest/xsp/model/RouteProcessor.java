@@ -23,9 +23,10 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
-	private StrategyModel strategyModel;
+	private StrategyModel<?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType,Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
+	private List<MappingField> mappingFields;
 
 	public RouteProcessor(String path) {
 		route = path;
@@ -65,11 +66,13 @@ public class RouteProcessor {
 	}
 
 	public void mapJson(Map<String, Object> options, String fieldName) {
-		System.out.println("FN: " + fieldName);
+		MappingField mf = new MappingField(fieldName,options);
+		mappingFields.add(mf);
 	}
 
 	public void mapJson(String fieldName) {
-		System.out.println("FN: " + fieldName);
+		MappingField mf = new MappingField(fieldName);
+		mappingFields.add(mf);
 	}
 
 	public String getRoute() {
