@@ -25,8 +25,8 @@ public class RouteProcessor {
 	private Closure<?> accessGroupsCL;
 	private StrategyModel<?> strategyModel;
 	private Strategy strategyValue;
-	private Map<EventType,Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
-	private List<MappingField> mappingFields;
+	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
+	private final List<MappingField> mappingFields = new ArrayList<MappingField>();
 
 	public RouteProcessor(String path) {
 		route = path;
@@ -66,7 +66,7 @@ public class RouteProcessor {
 	}
 
 	public void mapJson(Map<String, Object> options, String fieldName) {
-		MappingField mf = new MappingField(fieldName,options);
+		MappingField mf = new MappingField(fieldName, options);
 		mappingFields.add(mf);
 	}
 
@@ -128,10 +128,14 @@ public class RouteProcessor {
 		}
 		return null;
 	}
-	
+
 	public DataModel<?> getDataModel(Context context) throws ExecutorException {
 		Object obj = strategyModel.getModel(context);
 		return new DataModel<Object>(obj);
+	}
+
+	public List<MappingField> getMappingFields() {
+		return mappingFields;
 	}
 
 }

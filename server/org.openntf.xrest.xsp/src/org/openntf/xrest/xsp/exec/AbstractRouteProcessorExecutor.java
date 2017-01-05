@@ -13,15 +13,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
+import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonGenerator;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.domino.services.HttpServiceConstants;
 import com.ibm.xsp.util.HtmlUtil;
 
 import groovy.lang.Closure;
+import lotus.domino.Document;
+import lotus.domino.NotesException;
 
 public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor {
 
@@ -52,7 +57,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			preLoadDocument();
 			loadModel();
 			postLoadDocument();
-			executeMethodeSpecific();
+			executeMethodeSpecific(this.context, this.model);
 			preSubmitValues();
 			submitValues();
 		} catch (ExecutorException ex) {
@@ -153,7 +158,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 
-	abstract protected void executeMethodeSpecific();
+	abstract protected void executeMethodeSpecific(Context context, DataModel<?> model);
 
 
 
@@ -186,5 +191,16 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 	public void setModel(DataModel<?> model) {
 		this.model = model;
+	}
+
+	protected JsonObject buildJsonFromDocument(Document doc) throws NotesException {
+		JsonObject jo = new JsonJavaObject();
+		for (MappingField mapField : routerProcessor.getMappingFields()) {
+			if (doc.hasItem(mapField.getNotesFieldName())) {
+				//TODO: Start Support of FieldTypes
+				jo.putJsonProperty(mapField.getJsonName(), doc.getItemValue(mapField.getNotesFieldName()));
+			}
+		}
+		return jo;
 	}
 }

@@ -18,7 +18,6 @@ public class MappingField {
 		notesFieldName = name;
 		jsonName = getFromMap("json", options, name);
 		type = getFromMap("type", options, "");
-		;
 	}
 
 	private String getFromMap(String key, Map<String, Object> options, String name) {
