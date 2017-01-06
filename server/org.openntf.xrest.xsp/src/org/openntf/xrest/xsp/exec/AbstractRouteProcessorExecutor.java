@@ -55,7 +55,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			checkAccess();
 			validateRequest();
 			preLoadDocument();
-			loadModel();
+			loadDocument();
 			postLoadDocument();
 			executeMethodeSpecific(this.context, this.model);
 			preSubmitValues();
@@ -116,7 +116,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 	
-	private void loadModel() throws ExecutorException {
+	private void loadDocument() throws ExecutorException {
 		model = routerProcessor.getDataModel(context);
 	}
 

@@ -36,7 +36,6 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.model.RouteProcessor;
-import org.openntf.xrest.xsp.model.Router;
 
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -83,11 +82,11 @@ public class XRestAPIServlet extends HttpServlet {
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
-	private Router router;
+	private RouterFactory routerFactory;
 	
-	public XRestAPIServlet(Router router) {
+	public XRestAPIServlet(RouterFactory routerFactory) {
 		System.out.println("Servlet created...");
-		this.router = router;
+		this.routerFactory = routerFactory;
 	}
 
 	@Override
@@ -98,12 +97,16 @@ public class XRestAPIServlet extends HttpServlet {
 	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		FacesContext fcCurrent = initContext(req, resp);
+		//FacesContext fcCurrent = initContext(req, resp);
+		if (routerFactory.hasError()) {
+			publishError(req, resp, routerFactory.getError());
+			return;
+		}
 		try {
 			String method = req.getMethod();
 			String path = req.getPathInfo();
-			RouteProcessor rp = router.find(method, path);
-			 Context context = new Context();
+			RouteProcessor rp = routerFactory.getRouter().find(method, path);
+			Context context = new Context();
 			if (rp != null) {
 				 NotesContext c = NotesContext.getCurrentUnchecked();
 				 context.addNotesContext(c).addRequest(req).addResponse(resp);
@@ -120,11 +123,16 @@ public class XRestAPIServlet extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			releaseContext(fcCurrent);
+			//releaseContext(fcCurrent);
 
 		}
 	}
 
+
+	private void publishError(HttpServletRequest req, HttpServletResponse resp, Throwable error) {
+		error.printStackTrace();
+		
+	}
 
 	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -134,6 +142,12 @@ public class XRestAPIServlet extends HttpServlet {
 
 	public void releaseContext(FacesContext context) throws ServletException, IOException {
 		context.release();
+	}
+
+
+	public void refresh() {
+		routerFactory.refresh();
+		
 	}
 
 }

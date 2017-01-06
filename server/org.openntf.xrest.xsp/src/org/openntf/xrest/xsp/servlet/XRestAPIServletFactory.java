@@ -15,16 +15,9 @@
  */
 package org.openntf.xrest.xsp.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
-import org.openntf.xrest.xsp.dsl.DSLBuilder;
-import org.openntf.xrest.xsp.model.Router;
-
-import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.IServletFactory;
 import com.ibm.designer.runtime.domino.adapter.ServletMatch;
@@ -34,7 +27,7 @@ public class XRestAPIServletFactory implements IServletFactory {
 	private ComponentModule module;
 	public static final String SERVLET_PATH = "/xsp/.xrest/";
 	private XRestAPIServlet servlet;
-	private String dsl;
+	private long lastUpdate;
 
 	@Override
 	public ServletMatch getServletMatch(String contextPath, String path) throws ServletException {
@@ -51,20 +44,18 @@ public class XRestAPIServletFactory implements IServletFactory {
 	@Override
 	public void init(ComponentModule module) {
 		this.module = module;
-		try {
-			InputStream is = module.getResourceAsStream("/WEB-INF/routes.groovy");
-			if (is != null) {
-				this.dsl = StreamUtil.readString(is);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.lastUpdate = module.getLastRefresh();
 	}
 
 	public synchronized Servlet getExecutorServlet() throws ServletException {
 		if (servlet == null) {
-			Router router = DSLBuilder.buildRouterFromDSL(this.dsl, getClass().getClassLoader());
-			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(router), "XRestAPI Servlet", null);
+			RouterFactory rf = new RouterFactory(module);
+			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(rf), "XRestAPI Servlet", null);
+		} else {
+			if (lastUpdate < this.module.getLastRefresh()) {
+				lastUpdate = this.module.getLastRefresh();
+				servlet.refresh();
+			}
 		}
 		return servlet;
 	}
