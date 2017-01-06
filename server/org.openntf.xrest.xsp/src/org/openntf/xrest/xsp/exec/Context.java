@@ -2,6 +2,7 @@ package org.openntf.xrest.xsp.exec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ public class Context {
 	private List<String> groups;
 	private List<String> roles;
 	private JsonObject jsonPayload;
+	private Map<String,String> routerVariables;
 	
 	public Context() {
 		
@@ -49,6 +51,10 @@ public class Context {
 	}
 	public Context addJsonPayload(JsonObject jsonObject) {
 		this.jsonPayload = jsonObject;
+		return this;
+	}
+	public Context addRouterVariables(Map<String,String> rv) {
+		this.routerVariables = rv;
 		return this;
 	}
 
@@ -91,6 +97,10 @@ public class Context {
 		this.userName = userName;
 		userNotesName.recycle();
 		
+	}
+
+	public Map<String,String> getRouterVariables() {
+		return routerVariables;
 	}
 	
 }

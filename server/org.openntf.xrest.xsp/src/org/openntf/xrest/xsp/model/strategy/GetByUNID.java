@@ -1,13 +1,17 @@
 package org.openntf.xrest.xsp.model.strategy;
 
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.DatabaseProvider;
+import org.openntf.xrest.xsp.exec.ExecutorException;
 
+import lotus.domino.Database;
 import lotus.domino.Document;
 
 public class GetByUNID implements StrategyModel<Document> {
 
 	private String databaseNameValue;
 	private String keyVariableValue;
+	private Database dbAccess;
 
 	public void databaseName(String dbName) {
 		databaseNameValue = dbName;
@@ -34,9 +38,23 @@ public class GetByUNID implements StrategyModel<Document> {
 	}
 
 	@Override
-	public Document getModel(Context context) {
-		// TODO Auto-generated method stub
-		return null;
+	public Document getModel(Context context) throws ExecutorException {
+		try {
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(databaseNameValue, context.getDatabase(), context.getSession());
+			String unid = context.getRouterVariables().get(keyVariableValue);
+			return dbAccess.getDocumentByUNID(unid);
+		} catch (Exception ex) {
+			throw new ExecutorException(500, ex, "", "getmodel");
+		}
+	}
+
+	@Override
+	public void cleanUp() {
+		try {
+			dbAccess.recycle();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

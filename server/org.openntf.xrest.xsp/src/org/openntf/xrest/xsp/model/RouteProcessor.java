@@ -144,5 +144,9 @@ public class RouteProcessor {
 	public List<MappingField> getMappingFields() {
 		return mappingFields;
 	}
+	
+	public void cleanUp() {
+		strategyModel.cleanUp();
+	}
 
 }

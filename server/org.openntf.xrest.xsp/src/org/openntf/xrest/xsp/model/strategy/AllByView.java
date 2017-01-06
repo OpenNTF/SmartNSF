@@ -61,4 +61,15 @@ public class AllByView implements StrategyModel<List<Document>> {
 		}
 	}
 
+	@Override
+	public void cleanUp() {
+		try {
+			viewAccess.recycle();
+			dbAccess.recycle();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 }

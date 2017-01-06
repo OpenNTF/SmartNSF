@@ -147,6 +147,9 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runntime Error: " +e.getMessage(), path, "presubmit");
 		}
+		model.cleanUp();
+		routerProcessor.cleanUp();
+		
 	}
 	private void submitValues() throws ExecutorException, IOException, JsonException {
 		context.getResponse().addHeader("content-type", HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
