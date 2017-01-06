@@ -13,6 +13,8 @@ router.GET('customers/{id}') {
 	accessPermission "SalesManager","[CustomerService]"
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
+	events VALIDATE: {
+		context -> return true}
 }
 
 router.GET('customers') {
@@ -30,6 +32,9 @@ router.PUT('customers/{id}') {
 	}
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
+	events (POST_SAVE_DOCUMENT: {
+		context, document ->
+	}, PRE_SAVE_DOCUMENT: {context, document ->})
 }
 router.POST('comment/{id}') {
 	strategy(GET_BY_UNID) {

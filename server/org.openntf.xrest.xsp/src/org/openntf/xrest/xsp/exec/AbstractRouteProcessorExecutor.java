@@ -105,7 +105,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 
 	private void preLoadDocument()  throws ExecutorException {
 		try {
-			Closure<?> cl = routerProcessor.getEventClosure(EventType.PRE_LOAD_MODEl);
+			Closure<?> cl = routerProcessor.getEventClosure(EventType.PRE_LOAD_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl,context);
 			}
@@ -122,7 +122,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 
 	private void postLoadDocument() throws ExecutorException {
 		try {
-			Closure<?> cl = routerProcessor.getEventClosure(EventType.POST_LOAD_MODEL);
+			Closure<?> cl = routerProcessor.getEventClosure(EventType.POST_LOAD_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl,context, model);
 			}

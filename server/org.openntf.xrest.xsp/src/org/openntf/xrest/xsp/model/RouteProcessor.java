@@ -52,7 +52,14 @@ public class RouteProcessor {
 	}
 
 	public void events(Map<String, Object> events) {
-		System.out.println("Events: " + events);
+		for (Entry<String, Object> event : events.entrySet()) {
+			EventType type = EventType.valueOf(event.getKey());
+			if (event.getValue() instanceof Closure<?>) {
+				eventMap.put(type, (Closure<?>) event.getValue());
+			} else {
+				throw new IllegalArgumentException("Type for event " + event.getKey() + " must be Closure");
+			}
+		}
 	}
 
 	public void accessPermission(String[] acc) {

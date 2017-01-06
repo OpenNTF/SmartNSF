@@ -8,15 +8,17 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
+
+import groovy.lang.Closure;
 
 public class TestRouterBasics {
 
 	@Test()
 	public void testLoadDSLFile() throws IOException {
 		String dsl = readFile();
-		System.out.println(dsl);
 		Assert.assertNotNull(dsl);
 	}
 
@@ -82,6 +84,22 @@ public class TestRouterBasics {
 		Assert.assertEquals("customers/{id}", rp2.getRoute());
 		RouteProcessor rp3 = router.find("GET","customers/8109271/idh");
 		Assert.assertNull(rp3);
+	}
+	
+	@Test
+	public void testEvents() throws IOException {
+		String dsl = readFile();
+		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
+		RouteProcessor rp = router.find("GET","customers/3322");
+		Closure<?> cl = rp.getEventClosure(EventType.VALIDATE);
+		Assert.assertNotNull(cl);
+		
+		RouteProcessor rpPut = router.find("PUT","customers/3322");
+		Closure<?> clPOSTSAVE = rpPut.getEventClosure(EventType.POST_SAVE_DOCUMENT);
+		Closure<?> clPRESAVE = rpPut.getEventClosure(EventType.PRE_SAVE_DOCUMENT);
+		Assert.assertNotNull(clPOSTSAVE);
+		Assert.assertNotNull(clPRESAVE);
+
 	}
 	
 	private String readFile() throws IOException {
