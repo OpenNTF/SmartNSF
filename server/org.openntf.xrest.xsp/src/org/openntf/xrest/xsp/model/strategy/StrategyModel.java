@@ -1,7 +1,7 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.Context;
 
 public interface StrategyModel<T> {
 

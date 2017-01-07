@@ -1,28 +1,24 @@
-package org.openntf.xrest.xsp.exec;
+package org.openntf.xrest.xsp.exec.impl;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.DataModel;
+import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
+import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
+import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.commons.util.io.json.JsonGenerator;
-import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
-import com.ibm.domino.services.HttpServiceConstants;
-import com.ibm.xsp.util.HtmlUtil;
 
 import groovy.lang.Closure;
 import lotus.domino.Document;
@@ -62,14 +58,22 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			submitValues();
 		} catch (ExecutorException ex) {
 			try {
-				processError(ex);
+				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} catch (JsonException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (JsonException ex) {
+			try {
+				ExecutorExceptionProcessor.INSTANCE.processGeneralException(500,ex, context.getResponse());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (IOException ex) {
+			try {
+				ExecutorExceptionProcessor.INSTANCE.processGeneralException(500,ex, context.getResponse());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -94,28 +98,28 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		try {
 			Closure<?> cl = routerProcessor.getEventClosure(EventType.VALIDATE);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl,context);
+				DSLBuilder.callClosure(cl, context);
 			}
-		} catch(EventException e) {
-			throw new ExecutorException(400, "Validation Error: " +e.getMessage(), path, "validation");
+		} catch (EventException e) {
+			throw new ExecutorException(400, "Validation Error: " + e.getMessage(), e, path, "validation");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " +e.getMessage(), path, "validation");
+			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "validation");
 		}
 	}
 
-	private void preLoadDocument()  throws ExecutorException {
+	private void preLoadDocument() throws ExecutorException {
 		try {
 			Closure<?> cl = routerProcessor.getEventClosure(EventType.PRE_LOAD_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl,context);
+				DSLBuilder.callClosure(cl, context);
 			}
-		} catch(EventException e) {
-			throw new ExecutorException(400, "Pre Load Error: " +e.getMessage(), path, "preloadmodel");
+		} catch (EventException e) {
+			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, path, "preloadmodel");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " +e.getMessage(), path, "preloadmodel");
+			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "preloadmodel");
 		}
 	}
-	
+
 	private void loadDocument() throws ExecutorException {
 		model = routerProcessor.getDataModel(context);
 	}
@@ -124,74 +128,46 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		try {
 			Closure<?> cl = routerProcessor.getEventClosure(EventType.POST_LOAD_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl,context, model);
+				DSLBuilder.callClosure(cl, context, model);
 			}
-		} catch(EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " +e.getMessage(), path, "postloadmodel");
+		} catch (EventException e) {
+			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " +e.getMessage(), path, "postloadmodel");
+			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "postloadmodel");
 		}
 	}
 
 	public void applyMapping() {
-		
+
 	}
+
 	private void preSubmitValues() throws ExecutorException {
 		try {
 			Closure<?> cl = routerProcessor.getEventClosure(EventType.PRE_SUBMIT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl,context, model);
+				DSLBuilder.callClosure(cl, context, model);
 			}
-		} catch(EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " +e.getMessage(), path, "presubmit");
+		} catch (EventException e) {
+			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "presubmit");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " +e.getMessage(), path, "presubmit");
+			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "presubmit");
 		}
 		model.cleanUp();
 		routerProcessor.cleanUp();
-		
-	}
-	private void submitValues() throws ExecutorException, IOException, JsonException {
-		context.getResponse().addHeader("content-type", HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
-        context.getResponse().setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
-        Writer os = new OutputStreamWriter(context.getResponse().getOutputStream(),HttpServiceConstants.ENCODING_UTF8);
-        JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, resultPayload, false);
-        os.close();
-        return;
+
 	}
 
+	private void submitValues() throws IOException, JsonException {
+		JsonPayloadProcessor.INSTANCE.processJsonPayload(resultPayload, context.getResponse());
+	}
 
 	abstract protected void executeMethodeSpecific(Context context, DataModel<?> model);
 
 
-
-
-
-	private void processError(ExecutorException ex) throws UnsupportedEncodingException, IOException {
-		HttpServletResponse resp = context.getResponse();
-		resp.setStatus(ex.getHttpErrorNr());
-		resp.setContentType("text/html");
-		resp.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		PrintWriter w = new PrintWriter(new OutputStreamWriter(resp.getOutputStream(), "utf-8")); //$NON-NLS-1$
-		try {
-			w.println("<html>"); //$NON-NLS-1$
-			w.println("<body>"); //$NON-NLS-1$
-			w.println("<h1>" + ex.getHttpErrorNr() + "</h1>"); // $NLX-ProxyServlet.Errorwhileprocessingtherequest-1$
-			w.println("<br>"); //$NON-NLS-1$
-			w.println(HtmlUtil.toHTMLContentString(ex.getMessage(), true));
-			w.println("<pre>");
-			ex.printStackTrace(w);
-			w.print("</pre>");
-			w.println("</body>"); //$NON-NLS-1$
-			w.println("</html>"); //$NON-NLS-1$
-		} finally {
-			w.flush();
-		}
-	}
-
 	public void setResultPayload(Object rp) {
 		resultPayload = rp;
 	}
+
 	public void setModel(DataModel<?> model) {
 		this.model = model;
 	}
@@ -200,7 +176,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		JsonObject jo = new JsonJavaObject();
 		for (MappingField mapField : routerProcessor.getMappingFields()) {
 			if (doc.hasItem(mapField.getNotesFieldName())) {
-				//TODO: Start Support of FieldTypes
+				// TODO: Start Support of FieldTypes
 				jo.putJsonProperty(mapField.getJsonName(), doc.getItemValue(mapField.getNotesFieldName()));
 			}
 		}

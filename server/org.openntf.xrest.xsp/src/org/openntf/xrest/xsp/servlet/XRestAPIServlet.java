@@ -17,6 +17,7 @@ package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.ExecutionException;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -32,9 +33,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
+import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.NotImplementedException;
@@ -77,13 +80,13 @@ public class XRestAPIServlet extends HttpServlet {
 		public void addPhaseListener(PhaseListener listener) {
 			throw new NotImplementedException();
 		}
-		
+
 	};
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
-	
+
 	public XRestAPIServlet(RouterFactory routerFactory) {
 		System.out.println("Servlet created...");
 		this.routerFactory = routerFactory;
@@ -94,10 +97,10 @@ public class XRestAPIServlet extends HttpServlet {
 		this.config = config;
 		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
-	
+
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//FacesContext fcCurrent = initContext(req, resp);
+		// FacesContext fcCurrent = initContext(req, resp);
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -106,32 +109,38 @@ public class XRestAPIServlet extends HttpServlet {
 			String method = req.getMethod();
 			String path = req.getPathInfo();
 			RouteProcessor rp = routerFactory.getRouter().find(method, path);
-			Context context = new Context();
+			ContextImpl context = new ContextImpl();
 			if (rp != null) {
-				 NotesContext c = NotesContext.getCurrentUnchecked();
-				 context.addNotesContext(c).addRequest(req).addResponse(resp);
-				 RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
-				 executor.execute();
+				NotesContext c = NotesContext.getCurrentUnchecked();
+				context.addNotesContext(c).addRequest(req).addResponse(resp);
+				RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
+				executor.execute();
 			} else {
-				resp.setContentType("text/plain");
-				PrintWriter pwCurrent = resp.getWriter();
-				pwCurrent.println("You have called the .xrest Servlet....");
-				pwCurrent.println("PathInfo: ");
-				pwCurrent.println(req.getPathInfo());
-				pwCurrent.close();
+				throw new ExecutorException(500, "Path not found", path, "SERVLET");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ExecutorException ex) {
+			try {
+				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, resp);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} catch (Exception ex) {
+			try {
+				ExecutorExceptionProcessor.INSTANCE.processGeneralException(500, ex, resp);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		} finally {
-			//releaseContext(fcCurrent);
+			// releaseContext(fcCurrent);
 
 		}
 	}
 
-
 	private void publishError(HttpServletRequest req, HttpServletResponse resp, Throwable error) {
 		error.printStackTrace();
-		
+
 	}
 
 	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
@@ -144,10 +153,9 @@ public class XRestAPIServlet extends HttpServlet {
 		context.release();
 	}
 
-
 	public void refresh() {
 		routerFactory.refresh();
-		
+
 	}
 
 }
