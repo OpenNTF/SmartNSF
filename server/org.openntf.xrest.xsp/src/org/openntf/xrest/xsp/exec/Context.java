@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ibm.commons.util.io.json.JsonObject;
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 import lotus.domino.Database;
 import lotus.domino.Session;
@@ -30,8 +29,11 @@ public interface Context {
 
 	JsonObject getJsonPayload();
 
-	NotesContext getNotesContext();
-
+	//NotesContext getNotesContext();
+	
 	Map<String, String> getRouterVariables();
-
+	
+	boolean throwException(String message);
+	
+	boolean throwException (String message, Throwable e);
 }

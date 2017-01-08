@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.model.EventException;
 
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -120,10 +121,6 @@ public class ContextImpl implements Context {
 	/* (non-Javadoc)
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getNotesContext()
 	 */
-	@Override
-	public NotesContext getNotesContext() {
-		return notesContext;
-	}
 
 	@SuppressWarnings("unchecked")
 	private void calcSessionBasedValues() throws NotesException {
@@ -143,6 +140,18 @@ public class ContextImpl implements Context {
 	@Override
 	public Map<String,String> getRouterVariables() {
 		return routerVariables;
+	}
+
+	@Override
+	public boolean throwException(String message) {
+		throw new EventException(message);
+		
+	}
+
+	@Override
+	public boolean throwException(String message, Throwable e) {
+		throw new EventException(message,e);
+		
 	}
 	
 }
