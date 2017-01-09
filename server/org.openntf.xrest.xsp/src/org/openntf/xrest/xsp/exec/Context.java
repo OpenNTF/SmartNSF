@@ -36,4 +36,6 @@ public interface Context {
 	boolean throwException(String message);
 	
 	boolean throwException (String message, Throwable e);
+
+	NSFHelper getNSFHelper();
 }

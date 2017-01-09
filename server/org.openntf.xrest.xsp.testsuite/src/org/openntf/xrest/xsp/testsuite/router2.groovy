@@ -19,4 +19,23 @@ router.POST('customers/{id}') {
 		}
 	}
 }
+router.POST('customers/{customerid}/phonecall/{id}') {
+	strategy(GET_FROM_VIEW_BY_KEY) {
+		keyVariableName("{id}")
+		viewName("customerById")
+	}
+	accessPermission "SalesManager","[CustomerService]"
+	mapJson "company", json:'company',type:'String'
+	mapJson "fdFirstName", json:'firstname', type:'String'
+	events PRE_SAVE_DOCUMENT:{
+		context, document ->
+		parentId = context.getRouterVariables().get('customerid')
+		nsfHelp = context.getNSFHelper()
+		nsfHelp.makeDocumentAsChild(parentId, document)
+	}, POST_SAVE_DOCUMENT: {
+		context, document ->
+		nsfHelp = context.getNSFHelper()
+		nsfHelp.executeAgent("processHistory", document)
+	}
+}
 

@@ -1,17 +1,24 @@
 package org.openntf.xrest.xsp.testsuite;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
-import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
@@ -20,7 +27,8 @@ import org.openntf.xrest.xsp.model.Router;
 import com.ibm.commons.util.io.json.JsonObject;
 
 import groovy.lang.Closure;
-
+import lotus.domino.Document;
+import lotus.domino.NotesException;
 
 public class TestEvents {
 
@@ -32,8 +40,8 @@ public class TestEvents {
 		expect(context.getJsonPayload()).andReturn(jso);
 		expect(jso.getJsonProperty("id")).andReturn("this is my id");
 		replay(context, jso);
-		
-		RouteProcessor rp = router.find("POST","customers/123");
+
+		RouteProcessor rp = router.find("POST", "customers/123");
 		assertNotNull(rp);
 		Closure<?> cl = rp.getEventClosure(EventType.VALIDATE);
 		assertNotNull(cl);
@@ -51,22 +59,61 @@ public class TestEvents {
 		expect(jso.getJsonProperty("id")).andReturn("");
 		expect(context.throwException("ID should not be null or empty")).andThrow(new EventException("ID should not be null or empty"));
 		replay(context, jso);
-		
-		RouteProcessor rp = router.find("POST","customers/123");
+
+		RouteProcessor rp = router.find("POST", "customers/123");
 		assertNotNull(rp);
 		Closure<?> cl = rp.getEventClosure(EventType.VALIDATE);
 		assertNotNull(cl);
 		try {
 			DSLBuilder.callClosure(cl, context);
-			assertFalse("This block should not be reached..",true);
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			assertTrue (ex instanceof EventException);
+			assertFalse("This block should not be reached..", true);
+		} catch (Exception ex) {
+			assertTrue(ex instanceof EventException);
 			verify(context, jso);
 		}
 	}
 
-	
+	@Test
+	public void testEventCallMakeChildInPreSave() throws IOException, NotesException {
+		Map<String, String> rv = new HashMap<String, String>();
+		rv.put("customerid", "123");
+		Router router = buildRouter();
+		Context context = createNiceMock(Context.class);
+		Document doc = createNiceMock(Document.class);
+		expect(context.getRouterVariables()).andReturn(rv);
+		NSFHelper nsfHelper = createNiceMock(NSFHelper.class);
+		expect(context.getNSFHelper()).andReturn(nsfHelper);
+		expect(nsfHelper.makeDocumentAsChild("123", doc)).andReturn(true);
+		replay(context, nsfHelper, doc);
+
+		RouteProcessor rp = router.find("POST", "customers/123/phonecall/@new");
+		assertNotNull(rp);
+		Closure<?> cl = rp.getEventClosure(EventType.PRE_SAVE_DOCUMENT);
+		assertNotNull(cl);
+		DSLBuilder.callClosure(cl, context, doc);
+		verify(context, nsfHelper, doc);
+
+	}
+
+	@Test
+	public void testEventCallExecuteAgentInPostSave() throws IOException, NotesException {
+		Router router = buildRouter();
+		Context context = createNiceMock(Context.class);
+		Document doc = createNiceMock(Document.class);
+		NSFHelper nsfHelper = createNiceMock(NSFHelper.class);
+		expect(context.getNSFHelper()).andReturn(nsfHelper);
+		expect(nsfHelper.executeAgent("processHistory", doc)).andReturn(true);
+		replay(context, nsfHelper, doc);
+
+		RouteProcessor rp = router.find("POST", "customers/123/phonecall/@new");
+		assertNotNull(rp);
+		Closure<?> cl = rp.getEventClosure(EventType.POST_SAVE_DOCUMENT);
+		assertNotNull(cl);
+		DSLBuilder.callClosure(cl, context, doc);
+		verify(context, nsfHelper, doc);
+
+	}
+
 	private Router buildRouter() throws IOException {
 		String dsl = readFile();
 		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
@@ -79,5 +126,4 @@ public class TestEvents {
 		return IOUtils.toString(is, "utf-8");
 	}
 
-	
 }

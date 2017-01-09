@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.EventException;
 
 import com.ibm.commons.util.io.json.JsonObject;
@@ -31,6 +32,7 @@ public class ContextImpl implements Context {
 	private List<String> roles;
 	private JsonObject jsonPayload;
 	private Map<String,String> routerVariables;
+	private NSFHelper nsfHelper;
 	
 	public ContextImpl() {
 		
@@ -50,6 +52,7 @@ public class ContextImpl implements Context {
 		this.session = notesContext.getCurrentSession();
 		this.database = notesContext.getCurrentDatabase();
 		calcSessionBasedValues();
+		this.nsfHelper = new NSFHelperImpl(this.database);
 		return this;
 	}
 	public Context addJsonPayload(JsonObject jsonObject) {
@@ -152,6 +155,11 @@ public class ContextImpl implements Context {
 	public boolean throwException(String message, Throwable e) {
 		throw new EventException(message,e);
 		
+	}
+
+	@Override
+	public NSFHelper getNSFHelper() {
+		return nsfHelper;
 	}
 	
 }
