@@ -24,7 +24,6 @@ public class ContextImpl implements Context {
 
 	private HttpServletRequest request;
 	private HttpServletResponse response;
-	private NotesContext notesContext;
 	private Session session;
 	private Database database;
 	private String userName;
@@ -47,8 +46,7 @@ public class ContextImpl implements Context {
 		this.response = response;
 		return this;
 	}
-	public ContextImpl addNotesContext(NotesContext context) throws NotesException {
-		this.notesContext = context;
+	public ContextImpl addNotesContext(NotesContext notesContext) throws NotesException {
 		this.session = notesContext.getCurrentSession();
 		this.database = notesContext.getCurrentDatabase();
 		calcSessionBasedValues();

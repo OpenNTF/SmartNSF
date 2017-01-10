@@ -42,6 +42,9 @@ public class GetByUNID implements StrategyModel<Document> {
 		try {
 			dbAccess = DatabaseProvider.INSTANCE.getDatabase(databaseNameValue, context.getDatabase(), context.getSession());
 			String unid = context.getRouterVariables().get(keyVariableValue);
+			if (unid.equalsIgnoreCase("@new")) {
+				return dbAccess.createDocument();
+			}
 			return dbAccess.getDocumentByUNID(unid);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");

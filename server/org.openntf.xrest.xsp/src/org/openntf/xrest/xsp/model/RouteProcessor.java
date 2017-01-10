@@ -26,7 +26,7 @@ public class RouteProcessor {
 	private StrategyModel<?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
-	private final List<MappingField> mappingFields = new ArrayList<MappingField>();
+	private final Map<String,MappingField> mappingFields = new HashMap<String,MappingField>();
 
 	public RouteProcessor(String path) {
 		route = path;
@@ -74,12 +74,12 @@ public class RouteProcessor {
 
 	public void mapJson(Map<String, Object> options, String fieldName) {
 		MappingField mf = new MappingField(fieldName, options);
-		mappingFields.add(mf);
+		mappingFields.put(fieldName.toLowerCase(),mf);
 	}
 
 	public void mapJson(String fieldName) {
 		MappingField mf = new MappingField(fieldName);
-		mappingFields.add(mf);
+		mappingFields.put(fieldName.toLowerCase(),mf);
 	}
 
 	public String getRoute() {
@@ -141,7 +141,7 @@ public class RouteProcessor {
 		return new DataModel<Object>(obj);
 	}
 
-	public List<MappingField> getMappingFields() {
+	public Map<String,MappingField> getMappingFields() {
 		return mappingFields;
 	}
 	

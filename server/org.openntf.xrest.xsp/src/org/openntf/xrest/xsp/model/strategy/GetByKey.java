@@ -59,7 +59,9 @@ public class GetByKey implements StrategyModel<Document>{
 			viewAccess = dbAccess.getView(viewNameValue);
 
 			String key = context.getRouterVariables().get(keyVariableValue);
-
+			if (key.equalsIgnoreCase("@new")) {
+				return dbAccess.createDocument();
+			}
 			return viewAccess.getDocumentByKey(key,true);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");

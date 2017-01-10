@@ -41,6 +41,10 @@ import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.JsonJavaFactory;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XRestAPIServlet extends HttpServlet {
@@ -111,8 +115,15 @@ public class XRestAPIServlet extends HttpServlet {
 			RouteProcessor rp = routerFactory.getRouter().find(method, path);
 			ContextImpl context = new ContextImpl();
 			if (rp != null) {
+				JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
+				try {
+					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
+					context.addJsonPayload(json);
+				} catch (JsonException jE) {
+					jE.printStackTrace();
+				}
 				RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
 				executor.execute();
 			} else {

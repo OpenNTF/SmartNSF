@@ -14,7 +14,6 @@ router.POST('customers/{id}') {
 		//Accessing the JsonObject
 		id = json.getJsonProperty('id')
 		if (id == '') {
-			println "id is blank"
 			context.throwException("ID should not be null or empty")
 		}
 	}
