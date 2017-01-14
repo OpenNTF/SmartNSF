@@ -33,10 +33,26 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 			buildResultMapping(context, model);
 		} else {
 			executePreSave(context, model);
-			applyPayLoad(context, model);
+			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_UPDATE);
+			if (cl != null) {
+				executeAlternateDocumentUpdate(cl, context, model);
+			} else {
+				executeDocumentUpdateAndSave(context, model);
+			}
 			executePostSave(context, model);
+			buildResultMapping(context, model);
 		}
 
+	}
+
+	private void executeAlternateDocumentUpdate(Closure<?> cl, Context context, DataModel<?> model) throws ExecutorException {
+		try {
+			DSLBuilder.callClosure(cl, context, model);
+		} catch (EventException e) {
+			throw new ExecutorException(400, "Alternate Document Update Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
+		} catch (Exception e) {
+			throw new ExecutorException(500, "Alternate Document Update Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
+		}
 	}
 
 	private void executePreSave(Context context, DataModel<?> model) throws ExecutorException {
@@ -53,7 +69,7 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
 	}
 
-	private void applyPayLoad(Context context, DataModel<?> model) throws ExecutorException {
+	private void executeDocumentUpdateAndSave(Context context, DataModel<?> model) throws ExecutorException {
 		try {
 			Document doc = (Document) model.getData();
 			JsonJavaObject jso = (JsonJavaObject) context.getJsonPayload();
