@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.openntf.xrest.xsp.model.AttachmentSelectionType;
+import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.Router;
@@ -19,9 +21,7 @@ public class DSLBuilder {
 
 	public static Router buildRouterFromDSL(String dsl, ClassLoader cl) {
 		Router router = new Router();
-		// BasicGlobalSettings settings = new BasicGlobalSettings();
 		Map<String, Object> bindings = new HashMap<String, Object>();
-		// bindings.put(BINDING_VAR_SETTINGS, settings);
 		bindings.put("router", router);
 		evaluateScript(dsl, bindings, cl);
 		return router;
@@ -32,19 +32,19 @@ public class DSLBuilder {
 		// Establish the compiler configuration - namely, the base class to use
 		// for the context
 		final CompilerConfiguration compilerConfig = new CompilerConfiguration();
-		// compilerConfig.setScriptBaseClass(baseClass.getName());
 
 		// Automatically import some enum references
 		ImportCustomizer importCustomizer = new ImportCustomizer();
 		importCustomizer.addStaticStars(Strategy.class.getCanonicalName());
 		importCustomizer.addStaticStars(EventType.class.getCanonicalName());
 		importCustomizer.addStaticStars(EventException.class.getCanonicalName());
+		importCustomizer.addStaticStars(AttachmentSelectionType.class.getCanonicalName());
+		importCustomizer.addStaticStars(AttachmentUpdateType.class.getCanonicalName());
 
 		compilerConfig.addCompilationCustomizers(importCustomizer);
 
 		// Create a new shell per run for safety
 		Binding binding = new Binding();
-		// binding.setVariable(BINDING_VAR_SCRIPTLOADER, scriptLoader);
 		for (Map.Entry<String, Object> entry : bindings.entrySet()) {
 			binding.setVariable(entry.getKey(), entry.getValue());
 		}

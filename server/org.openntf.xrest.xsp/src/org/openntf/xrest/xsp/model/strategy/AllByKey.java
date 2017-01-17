@@ -12,60 +12,20 @@ import lotus.domino.Document;
 import lotus.domino.View;
 import lotus.domino.DocumentCollection;
 
-public class AllByKey implements StrategyModel<List<Document>> {
-
-	private String databaseNameValue;
-	private String viewNameValue;
-	private String keyVariableValue;
+public class AllByKey extends AbstractKeyViewDatabaseStrategy implements StrategyModel<List<Document>> {
 
 	private Database dbAccess;
 	private View viewAccess;
 
-	public void databaseName(String dbName) {
-		databaseNameValue = dbName;
-	}
-
-	public void viewName(String viewName) {
-		this.viewNameValue = viewName;
-	}
-
-	public void keyVariableName(String name) {
-		this.keyVariableValue = name;
-	}
-
-	public String getDatabaseNameValue() {
-		return databaseNameValue;
-	}
-
-	public void setDatabaseNameValue(String databaseNameValue) {
-		this.databaseNameValue = databaseNameValue;
-	}
-
-	public String getViewNameValue() {
-		return viewNameValue;
-	}
-
-	public void setViewNameValue(String viewNameValue) {
-		this.viewNameValue = viewNameValue;
-	}
-
-	public String getKeyVariableValue() {
-		return keyVariableValue;
-	}
-
-	public void setKeyVariableValue(String keyVariableValue) {
-		this.keyVariableValue = keyVariableValue;
-	}
-
 	@Override
 	public List<Document> getModel(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(databaseNameValue, context.getDatabase(), context.getSession());
-			viewAccess = dbAccess.getView(viewNameValue);
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			viewAccess = dbAccess.getView(getViewNameValue(context));
 			List<Document> docs = new ArrayList<Document>();
-			String varValue = context.getRouterVariables().get(keyVariableValue);
+			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue);
-			
+
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
 				Document docProcess = docNext;
@@ -76,7 +36,7 @@ public class AllByKey implements StrategyModel<List<Document>> {
 			return docs;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
-		} 
+		}
 	}
 
 	@Override
@@ -87,7 +47,7 @@ public class AllByKey implements StrategyModel<List<Document>> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }

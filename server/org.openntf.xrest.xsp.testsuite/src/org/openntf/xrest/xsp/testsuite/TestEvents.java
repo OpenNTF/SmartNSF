@@ -9,12 +9,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
@@ -30,11 +27,16 @@ import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
-public class TestEvents {
+public class TestEvents extends AbstractRouterBasics {
 
+	@Override
+	protected String getRouterDSLFileName() {
+		return "router2.groovy";
+	}
+	
 	@Test
-	public void testEventValidate() throws IOException {
-		Router router = buildRouter();
+	public void testEventValidate() {
+		Router router = getRouter();
 		Context context = createNiceMock(Context.class);
 		JsonObject jso = createNiceMock(JsonObject.class);
 		expect(context.getJsonPayload()).andReturn(jso);
@@ -52,7 +54,7 @@ public class TestEvents {
 
 	@Test
 	public void testEventValidateThrowException() throws IOException {
-		Router router = buildRouter();
+		Router router = getRouter();
 		Context context = createNiceMock(Context.class);
 		JsonObject jso = createNiceMock(JsonObject.class);
 		expect(context.getJsonPayload()).andReturn(jso);
@@ -74,10 +76,10 @@ public class TestEvents {
 	}
 
 	@Test
-	public void testEventCallMakeChildInPreSave() throws IOException, NotesException {
+	public void testEventCallMakeChildInPreSave() throws NotesException {
 		Map<String, String> rv = new HashMap<String, String>();
 		rv.put("customerid", "123");
-		Router router = buildRouter();
+		Router router = getRouter();
 		Context context = createNiceMock(Context.class);
 		Document doc = createNiceMock(Document.class);
 		expect(context.getRouterVariables()).andReturn(rv);
@@ -96,8 +98,8 @@ public class TestEvents {
 	}
 
 	@Test
-	public void testEventCallExecuteAgentInPostSave() throws IOException, NotesException {
-		Router router = buildRouter();
+	public void testEventCallExecuteAgentInPostSave() throws NotesException {
+		Router router = getRouter();
 		Context context = createNiceMock(Context.class);
 		Document doc = createNiceMock(Document.class);
 		NSFHelper nsfHelper = createNiceMock(NSFHelper.class);
@@ -114,16 +116,6 @@ public class TestEvents {
 
 	}
 
-	private Router buildRouter() throws IOException {
-		String dsl = readFile();
-		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
-		Assert.assertNotNull(router);
-		return router;
-	}
 
-	private String readFile() throws IOException {
-		InputStream is = getClass().getResourceAsStream("router2.groovy");
-		return IOUtils.toString(is, "utf-8");
-	}
 
 }

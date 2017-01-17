@@ -1,6 +1,6 @@
 
 router.POST('customers/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
+	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}
@@ -19,7 +19,7 @@ router.POST('customers/{id}') {
 	}
 }
 router.POST('customers/{customerid}/phonecall/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
+	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}

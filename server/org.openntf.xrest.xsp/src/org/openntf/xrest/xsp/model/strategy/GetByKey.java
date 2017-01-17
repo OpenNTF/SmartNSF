@@ -8,61 +8,22 @@ import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.View;
 
-public class GetByKey implements StrategyModel<Document>{
+public class GetByKey extends AbstractKeyViewDatabaseStrategy implements StrategyModel<Document> {
 
-	private String databaseNameValue;
-	private String viewNameValue;
-	private String keyVariableValue;
 	private Database dbAccess;
 	private View viewAccess;
-
-	public void databaseName(String dbName) {
-		databaseNameValue = dbName;
-	}
-
-	public void viewName(String viewName) {
-		this.viewNameValue = viewName;
-	}
-
-	public void keyVariableName(String name) {
-		this.keyVariableValue = name;
-	}
-
-	public String getDatabaseNameValue() {
-		return databaseNameValue;
-	}
-
-	public void setDatabaseNameValue(String databaseNameValue) {
-		this.databaseNameValue = databaseNameValue;
-	}
-
-	public String getViewNameValue() {
-		return viewNameValue;
-	}
-
-	public void setViewNameValue(String viewNameValue) {
-		this.viewNameValue = viewNameValue;
-	}
-
-	public String getKeyVariableValue() {
-		return keyVariableValue;
-	}
-
-	public void setKeyVariableValue(String keyVariableValue) {
-		this.keyVariableValue = keyVariableValue;
-	}
 
 	@Override
 	public Document getModel(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(databaseNameValue, context.getDatabase(), context.getSession());
-			viewAccess = dbAccess.getView(viewNameValue);
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			viewAccess = dbAccess.getView(getViewNameValue(context));
 
-			String key = context.getRouterVariables().get(keyVariableValue);
+			String key = context.getRouterVariables().get(getKeyVariableValue(context));
 			if (key.equalsIgnoreCase("@new")) {
 				return dbAccess.createDocument();
 			}
-			return viewAccess.getDocumentByKey(key,true);
+			return viewAccess.getDocumentByKey(key, true);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
@@ -76,7 +37,7 @@ public class GetByKey implements StrategyModel<Document>{
 			dbAccess.recycle();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 }

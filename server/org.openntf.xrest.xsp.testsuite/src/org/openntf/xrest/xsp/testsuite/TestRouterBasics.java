@@ -27,13 +27,13 @@ public class TestRouterBasics {
 		String dsl = readFile();
 		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
 		Assert.assertNotNull(router);
-		Assert.assertEquals(2, router.getRoutesGET().size());
+		Assert.assertEquals(3, router.getRoutesGET().size());
 		Assert.assertEquals(1, router.getRoutesPUT().size());
-		Assert.assertEquals(1, router.getRoutesPOST().size());
+		Assert.assertEquals(2, router.getRoutesPOST().size());
 		Assert.assertEquals(1, router.getRoutesDELETE().size());
-		Assert.assertEquals("customers", router.getRoutesGET().get(1).getRoute());
+		Assert.assertEquals("customers", router.getRoutesGET().get(2).getRoute());
 		Assert.assertEquals("customers/{id}", router.getRoutesPUT().get(0).getRoute());
-		Assert.assertEquals("comment/{id}", router.getRoutesPOST().get(0).getRoute());
+		Assert.assertEquals("comment/{id}", router.getRoutesPOST().get(1).getRoute());
 		Assert.assertEquals("quote/{id}", router.getRoutesDELETE().get(0).getRoute());
 	}
 
@@ -68,7 +68,7 @@ public class TestRouterBasics {
 		Router router = DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
 		RouteProcessor rp = router.getRoutesGET().get(0);
 		Assert.assertEquals(2, rp.getAccessGroups().size());
-		RouteProcessor rp2 = router.getRoutesGET().get(1);
+		RouteProcessor rp2 = router.getRoutesGET().get(2);
 		Assert.assertEquals(4,rp2.getAccessGroups().size());
 	}
 

@@ -6,7 +6,7 @@ def calcGroups = {
 }
 
 router.GET('customers/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
+	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}
@@ -17,8 +17,31 @@ router.GET('customers/{id}') {
 		context -> return true}
 }
 
+router.GET('customers/{id}/contract/{attachmentName}') {
+	strategy(SELECT_ATTACHMENT) {
+		documentStrategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
+			keyVariableName("{id}")
+			viewName("customerById")
+		}
+		fieldName "Body"
+		selectionType BY_NAME //Could be BY_NAME, FIRST
+		attachmentNameVariableName "{attachmentName}"
+	}
+}
+
+router.POST('customers/{id}/contract') {
+	strategy(SELECT_ATTACHMENT){
+		documentStrategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
+			keyVariableName("{id}")
+			viewName("customerById")
+		}
+		fieldName "Body"
+		updateType REPLACE_ALL //Could be REPLACE_ALL, REPLACE_BY_NAME
+	}
+}
+
 router.GET('customers') {
-	strategy(ALL_BY_VIEW) {
+	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
 		viewName("customersActive")
 	}
 	accessPermission calcGroups;
@@ -26,7 +49,7 @@ router.GET('customers') {
 	mapJson "fdFirstName", json:'firstname', type:'String'
 }
 router.PUT('customers/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
+	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}
@@ -37,14 +60,14 @@ router.PUT('customers/{id}') {
 	}, PRE_SAVE_DOCUMENT: {context, document ->})
 }
 router.POST('comment/{id}') {
-	strategy(GET_BY_UNID) {
+	strategy(SELECT_DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
 	mapJson "company", json:'company',type:'String'
 	mapJson "fdFirstName", json:'firstname', type:'String'
 }
 router.DELETE('quote/{id}') {
-	strategy(GET_FROM_VIEW_BY_KEY) {
+	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}

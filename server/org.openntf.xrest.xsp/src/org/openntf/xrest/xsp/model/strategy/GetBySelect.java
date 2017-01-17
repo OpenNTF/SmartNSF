@@ -6,49 +6,42 @@ import java.util.Map.Entry;
 
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
+
+import groovy.lang.Closure;
+
+import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 
-public class GetBySelect implements StrategyModel<List<Document>>{
+public class GetBySelect extends AbstractDatabaseStrategy implements StrategyModel<List<Document>> {
 
-	private String databaseNameValue;
 	private String selectQueryValue;
+	private Closure<?> selectQueryCl;
 	private Database dbAccess;
-
-	public void databaseName(String dbName) {
-		databaseNameValue = dbName;
-	}
-
 
 	public void selectQuery(String name) {
 		this.selectQueryValue = name;
 	}
 
-	public String getDatabaseNameValue() {
-		return databaseNameValue;
+	public void selectQuery(Closure<?> queryCl) {
+		this.selectQueryCl = queryCl;
 	}
 
-	public void setDatabaseNameValue(String databaseNameValue) {
-		this.databaseNameValue = databaseNameValue;
+	public String getSelectQueryValue(Context context) {
+		if (selectQueryCl != null) {
+			return (String) DSLBuilder.callClosure(selectQueryCl, context);
+		} else {
+			return selectQueryValue;
+		}
 	}
-
-
-	public String getSelectQueryValue() {
-		return selectQueryValue;
-	}
-
-	public void setSelectQueryValue(String keyVariableValue) {
-		this.selectQueryValue = keyVariableValue;
-	}
-
 
 	@Override
-	public List<Document> getModel(Context context) throws ExecutorException{
+	public List<Document> getModel(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(databaseNameValue, context.getDatabase(), context.getSession());
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
@@ -66,13 +59,12 @@ public class GetBySelect implements StrategyModel<List<Document>>{
 	}
 
 	private String buildSelectString(Context context) {
-		String rc = this.selectQueryValue;
+		String rc = getSelectQueryValue(context);
 		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
 		}
 		return rc;
 	}
-
 
 	@Override
 	public void cleanUp() {
@@ -81,7 +73,5 @@ public class GetBySelect implements StrategyModel<List<Document>>{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
-
 }
