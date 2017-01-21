@@ -16,7 +16,7 @@ public enum JsonPayloadProcessor {
 
 	public void processJsonPayload(Object payload, HttpServletResponse resp) throws IOException, JsonException {
 		resp.setStatus(200);
-		resp.addHeader("content-type", HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
+		resp.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
 		JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, payload, false);

@@ -1,10 +1,8 @@
 router.GET('topics}') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
-		viewName {
-			
-		}
+		viewName ('($all)')
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'DATE',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }

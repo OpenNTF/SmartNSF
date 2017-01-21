@@ -118,6 +118,7 @@ public class XRestAPIServlet extends HttpServlet {
 				JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
+				context.addRouterVariables(rp.extractValuesFromPath(path));
 				try {
 					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
 					context.addJsonPayload(json);

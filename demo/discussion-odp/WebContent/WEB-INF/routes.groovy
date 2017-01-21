@@ -1,16 +1,17 @@
-router.GET('topics}') {
+router.GET('topics') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
-		viewName("($All)")
+		viewName('($All)')
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID'
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
 router.GET('topics/{id}') {
 	strategy(SELECT_DOCUMENT_BY_UNID) {
-			keyVariableName("{id}")
+			keyVariableName("id")
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
