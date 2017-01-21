@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="43e" sequence="22" unid="6C7C0E71933F950680257694003BD623">
+<created><datetime>20091222T105334,43+00</datetime></created>
+<modified><datetime>20170121T105730,27+01</datetime></modified>
+<revised><datetime dst="true">20130919T143524,50-04</datetime></revised>
+<lastaccessed><datetime>20170121T105730,27+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105730,27+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$FlagsExt" sign="true"><text>D</text></item>
+<item name="$ImagesWide" sign="true"><number>1</number></item>
+<item name="$ImagesHigh" sign="true"><number>1</number></item>
+<item name="$ImagesColorize" sign="true"><number>0</number></item>
+<item name="$TITLE" sign="true"><textlist><text>outl_AllContacts.gif</text><text>AllContacts.gif</text></textlist></item>
+<item name="$FileModDT" sign="true"><datetime dst="true">20060905T125552,39-04</datetime></item>
+<item name="$Flags"><text>D34CiQ</text></item>
+<item name="$ImageNames" sign="true"><text>out_mycontacts.gif</text></item>
+<item name="$LANGUAGE" sign="true"><text>en</text></item>
+<item name="$DesignerVersion" sign="true"><text>8.5.3</text></item>
+
+</note>

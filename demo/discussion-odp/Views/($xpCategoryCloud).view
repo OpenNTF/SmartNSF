@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='view' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.5'
+ replicaid='C12580AF0036B297'>
+<noteinfo noteid='29a' unid='6CA50FF2875AB34E85257458007D7B5D' sequence='38'>
+<created><datetime dst='true'>20080529T185035,81-04</datetime></created>
+<modified><datetime>20170121T105728,21+01</datetime></modified>
+<revised><datetime dst='true'>20130919T143522,32-04</datetime></revised>
+<lastaccessed><datetime>20170121T111147,45+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105728,21+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name='$LANGUAGE' sign='true'><text>en</text></item>
+<item name='$FORMULACLASS' sign='true'><text>1</text></item>
+<item name='$TITLE' sign='true'><text>($xpCategoryCloud)|xpCategoryCloud</text></item>
+<item name='$Index' sign='true'><text>/C</text></item>
+<item name='$FORMULA' summary='true' sign='true'><formula compiled='true'>
+xgACACAACgBDYXRlZ29yaWVzBQAKAENhdGVnb3JpZXMDAAUAIAAbAAIACgAJAENhdGVnb3JpZXMk
+Q29uZmxpY3QABAAEAAAAWgAFAAQAZm9ybWEBAQAHAHByb2ZpbGUARwIeAQQABQAEAGZvcm1hAQEA
+BwBhcmNoaXZlAEcCHgEEABwCBQAKAENhdGVnb3JpZXNeAQEAAAALAgQAHAIDAAcAJgAgAAlMMVQx
+MFMxM1MxNFJUVDIzUzI2UzI3UlRUMzJTMzNT
+</formula></item>
+<item name='$COLLATION' summary='true'>
+<rawitemdata type='2'>
+FwABAABECGYHAAAKAENhdGVnb3JpZXM=
+</rawitemdata></item>
+<item name='$VIEWFORMAT' summary='true' sign='true'>
+<rawitemdata type='5'>
+AQABAHcAi0wAAFZDowQKAAoAIgAAAFAAAQENCQABAAAAAAAAAAICAAAAQ2F0ZWdvcmllc0NhdGVn
+b3JpZXMiAAIAIAAKAENhdGVnb3JpZXMFAAoAQ2F0ZWdvcmllcwMAJgABAAAAAQEACQEACAoBAQQK
+AAA/AK0rBAEBAAEBAAAAAAAAAABXQwIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAAAAAA
+AAAAAAAAAAAAQgBQAAAAAQD///8AAQDv7+8AAQAAAAAAAAAAAAAAAQABAP///wABALTVxQAAAAEA
+gAAAAAEAAAD/AAEAAAAAAAAACAAAAAAAAQA=
+</rawitemdata></item>
+<item name='$Comment' sign='true'><text/></item>
+<item name='$Flags'><text>YT</text></item>
+<item name='$WebFlags' sign='true'><text>S</text></item>
+<item name='$DesignerVersion' sign='true'><text>8.5</text></item>
+<item name='$V5ACTIONS' sign='true'>
+<rawitemdata type='1'>
+vRzVAAAAAQABAAAAwQAAAAAAAAACAAAJCAAFAHn/bAABAIu8nQABAAAAAAABAAAAAAABALrVxQAD
+ACIAAAAAAAAAAAADAAAAAgAACQAAAAAAAAAAE0AFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz/OgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=
+</rawitemdata></item></note>
+
