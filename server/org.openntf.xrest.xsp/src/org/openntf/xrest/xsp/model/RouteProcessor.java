@@ -149,4 +149,8 @@ public class RouteProcessor {
 		strategyModel.cleanUp();
 	}
 
+	public StrategyModel<?> getStrategyModel() {
+		return strategyModel;
+	}
+
 }
