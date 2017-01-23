@@ -4,7 +4,7 @@ router.GET('topics') {
 		viewName('($All)')
 	}
 	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID'
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
+	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
@@ -16,7 +16,7 @@ router.GET('topics/{id}') {
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
 	strategy(SELECT_ATTACHMENT) {
@@ -34,7 +34,7 @@ router.POST('topics/{id}') {
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 	events POST_SAVE_DOCUMENT: {
 		context, document ->
 		nsfHelp = context.getNSFHelper()
@@ -70,7 +70,7 @@ router.GET('comments/{id}') {
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 
 }
 
@@ -80,7 +80,7 @@ router.POST('comments/{id}/parent/{parent_id}') {
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 	events PRE_SAVE_DOCUMENT:{
 		context, document ->
 		parentId = context.getRouterVariables().get('parent_id')

@@ -2,7 +2,7 @@ router.GET('topics}') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
 		viewName ('($all)')
 	}
-	mapJson "date", json:'date',type:'DATE',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
@@ -10,11 +10,11 @@ router.GET('topics/{id}') {
 	strategy(SELECT_DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
 	strategy(SELECT_ATTACHMENT) {
@@ -32,7 +32,7 @@ router.POST('topics/{id}') {
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 	events POST_SAVE_DOCUMENT: {
 		context, document ->
 		nsfHelp = context.getNSFHelper()
@@ -55,7 +55,7 @@ router.GET('comments/byparent/{parent_id}') {
 			keyVariableName("{parent_id}")
 			viewName("commentsByParentId")
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
@@ -64,11 +64,11 @@ router.GET('comments/{id}') {
 	strategy(SELECT_DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 	}
-	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
+	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 
 }
 
@@ -78,7 +78,7 @@ router.POST('comments/{id}/parent/{parent_id}') {
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
-	mapJson "categories", json:'categories', type:'ARRY_OF_STRING'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 	events PRE_SAVE_DOCUMENT:{
 		context, document ->
 		parentId = context.getRouterVariables().get('parent_id')

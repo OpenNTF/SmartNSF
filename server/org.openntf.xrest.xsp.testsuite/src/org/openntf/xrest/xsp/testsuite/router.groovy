@@ -11,8 +11,8 @@ router.GET('customers/{id}') {
 		viewName("customerById")
 	}
 	accessPermission "SalesManager","[CustomerService]"
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events VALIDATE: {
 		context -> return true}
 }
@@ -45,16 +45,16 @@ router.GET('customers') {
 		viewName("customersActive")
 	}
 	accessPermission calcGroups;
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 }
 router.PUT('customers/{id}') {
 	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events (POST_SAVE_DOCUMENT: {
 		context, document ->
 	}, PRE_SAVE_DOCUMENT: {context, document ->})
@@ -63,14 +63,14 @@ router.POST('comment/{id}') {
 	strategy(SELECT_DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 }
 router.DELETE('quote/{id}') {
 	strategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
 	}
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 }

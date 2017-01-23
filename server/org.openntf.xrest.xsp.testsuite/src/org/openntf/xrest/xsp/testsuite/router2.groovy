@@ -5,8 +5,8 @@ router.POST('customers/{id}') {
 		viewName("customerById")
 	}
 	accessPermission "SalesManager","[CustomerService]"
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events VALIDATE: {
 		context -> 
 		//Accessing the payload
@@ -24,8 +24,8 @@ router.POST('customers/{customerid}/phonecall/{id}') {
 		viewName("customerById")
 	}
 	accessPermission "SalesManager","[CustomerService]"
-	mapJson "company", json:'company',type:'String'
-	mapJson "fdFirstName", json:'firstname', type:'String'
+	mapJson "company", json:'company',type:'STRING'
+	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events PRE_SAVE_DOCUMENT:{
 		context, document ->
 		parentId = context.getRouterVariables().get('customerid')

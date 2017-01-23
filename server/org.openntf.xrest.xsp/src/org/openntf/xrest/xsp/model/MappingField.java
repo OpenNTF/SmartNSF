@@ -6,14 +6,14 @@ public class MappingField {
 
 	private final String notesFieldName;
 	private final String jsonName;
-	private final String type;
+	private final MapJsonType type;
 	private final boolean isFormula;
 	private final String formula;
 
 	public MappingField(String name) {
 		notesFieldName = name;
 		jsonName = name;
-		type = "";
+		type = MapJsonType.DEFAULT;
 		isFormula = false;
 		formula = "";
 	}
@@ -21,9 +21,17 @@ public class MappingField {
 	public MappingField(String name, Map<String, Object> options) {
 		notesFieldName = name;
 		jsonName = getFromMap("json", options, name);
-		type = getFromMap("type", options, "");
+		type = getFromMapAsMTP("type", options, MapJsonType.DEFAULT);
 		isFormula = getFromMapAsBoolean("isformula", options, false);
 		formula = getFromMap("formula", options, "");
+	}
+
+	private MapJsonType getFromMapAsMTP(String key, Map<String, Object> options, MapJsonType defaultValue) {
+		if (options.containsKey(key)) {
+			String type = (String) options.get(key);
+			return MapJsonType.valueOf(type);
+		}
+		return defaultValue;
 	}
 
 	private String getFromMap(String key, Map<String, Object> options, String name) {
@@ -48,7 +56,7 @@ public class MappingField {
 		return jsonName;
 	}
 
-	public String getType() {
+	public MapJsonType getType() {
 		return type;
 	}
 
