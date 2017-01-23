@@ -1,3 +1,4 @@
+println ("building routing...")
 router.GET('topics') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
 		viewName('($All)')

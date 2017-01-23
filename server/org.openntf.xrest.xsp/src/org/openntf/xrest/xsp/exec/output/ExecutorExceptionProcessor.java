@@ -22,7 +22,7 @@ public enum ExecutorExceptionProcessor {
 
 	public void processExecutorException(ExecutorException ex, HttpServletResponse resp) throws IOException, JsonException {
 		resp.setStatus(ex.getHttpErrorNr());
-		resp.addHeader("content-type", HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
+		resp.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
 		JsonObject jso = buildJsonError(ex);
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
@@ -32,7 +32,7 @@ public enum ExecutorExceptionProcessor {
 	
 	public void processGeneralException(int httpStatus, Exception ex, HttpServletResponse resp) throws JsonException, IOException {
 		resp.setStatus(httpStatus);
-		resp.addHeader("content-type", HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
+		resp.setContentType( HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
 		JsonObject jso = buildJsonErrorFromException(ex);
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
