@@ -132,7 +132,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			Document doc = (Document) model.getData();
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_NEW);
 			if (cl != null && doc.isNewNote()) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, doc);
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
@@ -145,7 +145,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_LOAD_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, model.getData());
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
@@ -158,7 +158,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SUBMIT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, model.getData());
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "presubmit");

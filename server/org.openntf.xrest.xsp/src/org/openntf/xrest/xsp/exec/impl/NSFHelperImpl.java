@@ -39,5 +39,23 @@ public class NSFHelperImpl implements NSFHelper {
 		return executeAgent(agentName, null);
 	}
 
+	@Override
+	public boolean computeWithForm(Document doc ) throws NotesException {
+		boolean rc = doc.computeWithForm(false, false);
+		if (rc) {
+			doc.save(true,false,true);
+		}
+		return rc;
+	}
+
+	@Override
+	public boolean computeWithFormAndValidate(Document doc) throws NotesException {
+		boolean rc= doc.computeWithForm(false, true);
+		if (rc) {
+			doc.save(true,false,true);
+		}
+		return rc;
+	}
+
 	
 }

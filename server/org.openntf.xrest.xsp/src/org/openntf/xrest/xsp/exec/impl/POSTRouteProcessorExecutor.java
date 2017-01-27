@@ -1,15 +1,14 @@
 package org.openntf.xrest.xsp.exec.impl;
 
-import org.openntf.xrest.xsp.exec.DataModel;
-import org.openntf.xrest.xsp.exec.ExecutorException;
-
 import java.util.List;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.DataModel;
+import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.convertor.Json2DocumentConverter;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
-import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonArray;
@@ -47,7 +46,7 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
 	private void executeAlternateDocumentUpdate(Closure<?> cl, Context context, DataModel<?> model) throws ExecutorException {
 		try {
-			DSLBuilder.callClosure(cl, context, model);
+			DSLBuilder.callClosure(cl, context, model.getData());
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Alternate Document Update Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
 		} catch (Exception e) {
@@ -59,7 +58,7 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 		try {
 			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_SAVE_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, model.getData());
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, getPath(), "presavedocument");
@@ -73,16 +72,8 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 		try {
 			Document doc = (Document) model.getData();
 			JsonJavaObject jso = (JsonJavaObject) context.getJsonPayload();
-			boolean update = false;
-			for (MappingField mfField : getRouteProcessor().getMappingFields().values()) {
-				if (jso.containsKey(mfField.getJsonName())) {
-					doc.replaceItemValue(mfField.getNotesFieldName(), jso.get(mfField.getJsonName()));
-					update = true;
-				}
-			}
-			if (update) {
-				doc.save(true, false, true);
-			}
+			Json2DocumentConverter converter = new Json2DocumentConverter(doc, getRouteProcessor(), jso);
+			converter.buildDocumentFromJson();
 		} catch (NotesException e) {
 			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, getPath(), "applyPayLoad");
 		}
@@ -92,7 +83,7 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 		try {
 			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.POST_SAVE_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, model.getData());
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, getPath(), "postsavedocument");

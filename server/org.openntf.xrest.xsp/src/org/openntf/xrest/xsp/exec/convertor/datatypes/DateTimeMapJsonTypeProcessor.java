@@ -1,11 +1,9 @@
-package org.openntf.xrest.xsp.exec.convertor;
+package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import org.openntf.xrest.xsp.model.MapJsonTypeProcessor;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
@@ -13,7 +11,7 @@ import lotus.domino.DateTime;
 import lotus.domino.Item;
 import lotus.domino.NotesException;
 
-public class DateTimeMapJsonTypeProcessor implements MapJsonTypeProcessor {
+public class DateTimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {

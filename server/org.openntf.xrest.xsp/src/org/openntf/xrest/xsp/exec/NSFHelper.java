@@ -10,5 +10,9 @@ public interface NSFHelper {
 	public boolean executeAgent(String agentName, Document doc) throws NotesException;
 
 	public boolean executeAgent(String agentName) throws NotesException;
+	
+	public boolean computeWithForm(Document doc) throws NotesException;
+
+	public boolean computeWithFormAndValidate(Document doc) throws NotesException;
 
 }
