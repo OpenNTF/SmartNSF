@@ -16,6 +16,9 @@ public class DefaultMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonPropertyName) throws NotesException {
+		if (values == null || values.isEmpty()) {
+			return;
+		}
 		if (values.size() == 1) {
 			jo.putJsonProperty(jsonPropertyName, values.get(0));
 		} else {

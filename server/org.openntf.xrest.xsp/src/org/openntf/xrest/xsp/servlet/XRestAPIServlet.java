@@ -119,11 +119,13 @@ public class XRestAPIServlet extends HttpServlet {
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
 				context.addRouterVariables(rp.extractValuesFromPath(path));
-				try {
-					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
-					context.addJsonPayload(json);
-				} catch (JsonException jE) {
-					jE.printStackTrace();
+				if (req.getContentLength() > 0 && "application/json".equalsIgnoreCase(req.getContentType())){
+					try {
+						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
+						context.addJsonPayload(json);
+					} catch (JsonException jE) {
+						jE.printStackTrace();
+					}
 				}
 				RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
 				executor.execute();

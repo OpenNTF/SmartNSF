@@ -1,6 +1,8 @@
 package org.openntf.xrest.xsp.exec.convertor;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.Context;
@@ -28,13 +30,17 @@ public class Document2JsonConverter {
 	}
 
 	public JsonObject buildJsonFromDocument() throws NotesException {
+		Set<String> itemProcessed = new HashSet<String>();
 		JsonObject jo = new JsonJavaObject();
 		@SuppressWarnings("unchecked")
 		Vector<Item> documentItems = doc.getItems();
 		Map<String, MappingField> fieldDefinition = routeProcessor.getMappingFields();
 		for (Item item : documentItems) {
-			if (fieldDefinition.containsKey(item.getName().toLowerCase())) {
+			if (!itemProcessed.contains(item.getName())) {
+				if (fieldDefinition.containsKey(item.getName().toLowerCase())) {
 				processItem(jo, item, fieldDefinition.get(item.getName().toLowerCase()));
+				itemProcessed.add(item.getName());
+				}
 			}
 		}
 		for (MappingField field : routeProcessor.getFormulaFields()) {

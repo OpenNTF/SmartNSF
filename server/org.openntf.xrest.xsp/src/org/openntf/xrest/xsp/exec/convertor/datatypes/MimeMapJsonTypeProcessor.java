@@ -59,6 +59,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 		MIMEEntity contentEntity = findContent(entity, "text/html");
 		if (contentEntity != null) {
+			System.out.println("HTML FOUND!");
 			content = extractContentsAsText(contentEntity, parent);
 		} else {
 			contentEntity = findContent(entity, "text/plain");
@@ -84,56 +85,69 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		String value = jso.getAsString(mfField.getJsonName());
 		Stream stream = doc.getParentDatabase().getParent().createStream();
 		stream.writeText(value);
-		MIMEEntity entity = doc.getMIMEEntity(fieldName);
-		MIMEEntity htmlEntity;
-		if (entity == null) {
-			doc.removeItem(fieldName);
-			entity = doc.createMIMEEntity(fieldName);
-			htmlEntity = entity;
+		Item notesItem = doc.getFirstItem(fieldName);
+		if (notesItem.getType() == Item.RICHTEXT) {
+			System.out.println("NOOOOO ITS RICHTEXT!!!!!");
 		} else {
-			htmlEntity = findContent(entity, "text/html");
-			if (htmlEntity == null) {
-				htmlEntity = entity.createChildEntity();
+			MIMEEntity entity = doc.getMIMEEntity(fieldName);
+			MIMEEntity htmlEntity;
+			if (entity == null) {
+				doc.removeItem(fieldName);
+				entity = doc.createMIMEEntity(fieldName);
+				htmlEntity = entity;
+			} else {
+				htmlEntity = findContent(entity, "text/html");
+				if (htmlEntity == null) {
+					htmlEntity = entity.createChildEntity();
+				}
 			}
+			checkHTMLEntityHeaders(htmlEntity);
+			stream.setPosition(0);
+			htmlEntity.setContentFromText(stream, TEXT_HTML_CHARSET_UTF_8, MIMEEntity.ENC_NONE);
+			stream.close();
 		}
-		checkHTMLEntityHeaders(htmlEntity);
-		stream.setPosition(0);
-		entity.setContentFromText(stream, TEXT_HTML_CHARSET_UTF_8, 1725);
-		stream.close();
 	}
 
 	private void checkHTMLEntityHeaders(MIMEEntity htmlEntity) throws NotesException {
-		
+
 		MIMEHeader localMIMEHeader = htmlEntity.getNthHeader(CONTENT_TYPE);
-	    if (localMIMEHeader == null) {
-	      localMIMEHeader = htmlEntity.createHeader(CONTENT_TYPE);
-	      localMIMEHeader.setHeaderValAndParams(TEXT_HTML_CHARSET_UTF_8);
-	    } else {
-	      localMIMEHeader.setParamVal("charset", CHARSET_UTF_8);
-	    }
+		if (localMIMEHeader == null) {
+			localMIMEHeader = htmlEntity.createHeader(CONTENT_TYPE);
+			localMIMEHeader.setHeaderValAndParams(TEXT_HTML_CHARSET_UTF_8);
+		} else {
+			localMIMEHeader.setParamVal("charset", CHARSET_UTF_8);
+		}
 	}
 
 	private MIMEEntity findContent(MIMEEntity entity, String mimeType) throws NotesException {
-		String contentType = entity.getContentType();
+		String contentType = getContentHeaderValue(entity);
 		if (contentType.startsWith(mimeType)) {
 			return entity;
-		} else {
-			MIMEEntity child = entity.getFirstChildEntity();
-			while (child != null) {
-				String type = child.getContentType();
-				if (type.startsWith("text/html")) {
-					return child;
-				} else {
-					MIMEEntity matcher = findContent(child, mimeType);
-					if (matcher != null) {
-						return matcher;
-					}
+		}
+		if (contentType.startsWith("multipart")) {
+			MIMEEntity childNext = entity.getFirstChildEntity();
+			while (childNext != null) {
+				MIMEEntity childCurrent = childNext;
+				childNext = childNext.getNextSibling();
+				MIMEEntity matcher = findContent(childCurrent, mimeType);
+				if (matcher != null) {
+					childNext.recycle();
+					return matcher;
 				}
-
-				child = child.getNextSibling();
+				childCurrent.recycle();
 			}
 		}
-
 		return null;
+	}
+
+	private String getContentHeaderValue(MIMEEntity entity) throws NotesException {
+		MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
+		if (mimeHeader != null) {
+			String contenType = mimeHeader.getHeaderVal();
+			mimeHeader.recycle();
+			return contenType;
+		}
+		return "";
+
 	}
 }
