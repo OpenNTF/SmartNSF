@@ -13,6 +13,18 @@ Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
  com.ibm.domino.xsp.adapter,
  com.ibm.notes.java.api,
  com.ibm.xsp.extlib,
- com.ibm.xsp.domino
+ com.ibm.xsp.domino,
+ com.ibm.designer.lib.javamail
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/commons-io.jar
+Export-Package: org.openntf.xrest.xsp.dsl,
+ org.openntf.xrest.xsp.exec,
+ org.openntf.xrest.xsp.exec.convertor,
+ org.openntf.xrest.xsp.exec.convertor.datatypes,
+ org.openntf.xrest.xsp.exec.impl,
+ org.openntf.xrest.xsp.exec.output,
+ org.openntf.xrest.xsp.library,
+ org.openntf.xrest.xsp.model,
+ org.openntf.xrest.xsp.model.strategy,
+ org.openntf.xrest.xsp.servlet

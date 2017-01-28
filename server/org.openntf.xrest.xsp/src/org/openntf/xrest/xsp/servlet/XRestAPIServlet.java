@@ -104,7 +104,7 @@ public class XRestAPIServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// FacesContext fcCurrent = initContext(req, resp);
+		//FacesContext fcCurrent = initContext(req, resp);
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -119,7 +119,7 @@ public class XRestAPIServlet extends HttpServlet {
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
 				context.addRouterVariables(rp.extractValuesFromPath(path));
-				if (req.getContentLength() > 0 && "application/json".equalsIgnoreCase(req.getContentType())){
+				if (req.getContentLength() > 0 && "application/json".equalsIgnoreCase(req.getContentType())) {
 					try {
 						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
 						context.addJsonPayload(json);
@@ -147,7 +147,7 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 
 		} finally {
-			// releaseContext(fcCurrent);
+			//releaseContext(fcCurrent);
 
 		}
 	}
