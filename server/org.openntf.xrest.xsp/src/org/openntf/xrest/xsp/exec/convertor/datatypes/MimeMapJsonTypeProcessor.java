@@ -1,5 +1,10 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
+import static com.ibm.domino.services.HttpServiceConstants.CONTENTTYPE_TEXT_HTML;
+import static com.ibm.domino.services.rest.RestServiceConstants.ATTR_CONTENTTYPE;
+import static com.ibm.domino.services.rest.RestServiceConstants.ATTR_TYPE;
+import static com.ibm.domino.services.rest.RestServiceConstants.TYPE_RICHTEXT;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +31,7 @@ import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.designer.runtime.domino.adapter.mime.MIME;
 import com.ibm.xsp.application.ApplicationEx;
+import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 import com.ibm.xsp.model.domino.wrapped.DominoRichTextItem;
 
@@ -64,14 +70,29 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			if (item.getType() != Item.RICHTEXT) {
 				jo.putJsonProperty(jsonPropertyName, item.getValueString());
 			} else {
-				RichTextItem rti = (RichTextItem) item;
-				DominoDocument dd = new DominoDocument();
-				dd.setDocument(doc);
-				DominoRichTextItem drtCurrent = new DominoRichTextItem(dd, rti);
-				String value = drtCurrent.getHTML();
+				String value = getContentFormRT(doc, item.getName());
 				jo.putJsonProperty(jsonPropertyName, value);
 			}
 		}
+	}
+
+	private String getContentFormRT(Document doc, String fieldName) throws NotesException {
+		DominoUtils.HtmlConverterWrapper converter = null;
+		String htmlContent;
+		try {
+			converter = new DominoUtils.HtmlConverterWrapper();
+			converter.convertItem(doc, fieldName);
+			htmlContent = converter.getConverterText();
+			Vector<String> attachments = converter.getReferneceUrls();
+			for (String att : attachments) {
+				System.out.println("Attachment: " + att);
+			}
+		} finally {
+			if (converter != null) {
+				converter.recycle();
+			}
+		}
+		return htmlContent;
 	}
 
 	@Override
@@ -111,7 +132,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		Stream stream = doc.getParentDatabase().getParent().createStream();
 		stream.writeText(value);
 		Item notesItem = doc.getFirstItem(fieldName);
-		if (notesItem.getType() == Item.RICHTEXT) {
+		if (notesItem != null && notesItem.getType() == Item.RICHTEXT) {
 			updateAndConvertRTItemToMime((RichTextItem) notesItem, stream);
 		} else {
 			MIMEEntity entity = doc.getMIMEEntity(fieldName);
@@ -185,7 +206,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 			MIMEHeader contentDispHeader = applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TYPE, ATTACHMENT_HEADER_VALUE);
 			contentDispHeader.setParamVal("filename", attachmentValue);
-			
+
 			applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TRANSFER_ENCODING, BINARY_HEADER_VALUE);
 			stream.close();
 			stream.recycle();
@@ -255,19 +276,19 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		MIMEHeader mimeHeader = baseEntity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader == null) {
 			mimeHeader = baseEntity.createHeader(CONTENT_TYPE);
-		} 
+		}
 		mimeHeader.setHeaderVal(MULTIPART_MIXED);
 
 	}
-	
+
 	private MIMEHeader applyMimeHeaderTypeAndValue(MIMEEntity entity, String type, String value) throws NotesException {
 		MIMEHeader mimeHeader = entity.getNthHeader(type);
 		if (mimeHeader == null) {
 			mimeHeader = entity.createHeader(type);
-		} 
+		}
 		mimeHeader.setHeaderVal(value);
 		return mimeHeader;
-		
+
 	}
 
 	private MIMEEntity findContent(MIMEEntity entity, String mimeType) throws NotesException {

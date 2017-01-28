@@ -1,17 +1,22 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
+import java.util.Vector;
 
+import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
+import org.openntf.xrest.xsp.model.MappingField;
+
+import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.DateTime;
+import lotus.domino.Document;
 import lotus.domino.Item;
 import lotus.domino.NotesException;
 
-public class DateTimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
+public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate implements MapJsonTypeProcessor {
 
 	@Override
 	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {
@@ -31,44 +36,39 @@ public class DateTimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private String buildISO8601Date(Date javaDate) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+	@Override
+	public void processJsonValueToDocument(JsonJavaObject jo, Document doc, MappingField mf) throws NotesException {
+		if (jo.containsKey(mf.getJsonName())) {
+			DateTime dtValue = null;
+			try {
+				Date date = parse(jo.getAsString(mf.getJsonName()));
+				dtValue = doc.getParentDatabase().getParent().createDateTime(date);
+				doc.replaceItemValue(mf.getNotesFieldName(), dtValue);
+			} catch (Exception ex) {
+				throw new NotesException(9999, "Error during ISO Date parsing", ex);
+			} finally {
+				if (dtValue != null) {
+					dtValue.recycle();
+				}
+			}
+		}
 
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-
-		df.setTimeZone(tz);
-
-		String output = df.format(javaDate);
-
-		int inset0 = 9;
-		int inset1 = 6;
-
-		String s0 = output.substring(0, output.length() - inset0);
-		String s1 = output.substring(output.length() - inset1, output.length());
-		String result = s0 + s1;
-		result = result.replaceAll("UTC", "+00:00");
-		return result;
 	}
-	
-	public static Date parse( String input ) throws java.text.ParseException {
 
-        //NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
-        //things a bit.  Before we go on we have to repair this.
-        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz" );
-        
-        //this is zero time so we need to add that TZ indicator for 
-        if ( input.endsWith( "Z" ) ) {
-            input = input.substring( 0, input.length() - 1) + "GMT-00:00";
-        } else {
-            int inset = 6;
-        
-            String s0 = input.substring( 0, input.length() - inset );
-            String s1 = input.substring( input.length() - inset, input.length() );
-
-            input = s0 + "GMT" + s1;
-        }
-        
-        return df.parse( input );
-        
-    }
+	@Override
+	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException {
+		if (values != null && values.isEmpty()) {
+			Object obj = values.get(0);
+			DateTime dateTimeValue;
+			try {
+				dateTimeValue = buildDateTime(obj, doc.getParentDatabase().getParent());
+				if (dateTimeValue != null) {
+					doc.replaceItemValue(fieldName, dateTimeValue);
+					dateTimeValue.recycle();
+				}
+			} catch (ParseException e) {
+				throw new NotesException(9999, "Error during ISO Date parsing", e);
+			}
+		}
+	}
 }

@@ -34,6 +34,7 @@ router.POST('topics/{id}') {
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
+	mapJson 'categories', json:'categories', type:'ARRAY_OF_STRING'
 	events POST_SAVE_DOCUMENT: {
 		context, document ->
 		nsfHelp = context.getNSFHelper()
