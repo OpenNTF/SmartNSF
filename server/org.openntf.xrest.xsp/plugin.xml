@@ -12,5 +12,12 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.adapter.servletFactory" class="org.openntf.xrest.xsp.servlet.XRestAPIServletFactory" />
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="XRestFactories"
+            type="com.ibm.xsp.library.Contributor">
+      </service>
+   </extension>
     
 </plugin>

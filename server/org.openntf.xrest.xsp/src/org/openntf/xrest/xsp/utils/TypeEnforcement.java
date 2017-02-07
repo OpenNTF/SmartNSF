@@ -4,6 +4,8 @@ public class TypeEnforcement {
 
 	private TypeEnforcement() {
 	}
+	
+	//Interger, Double, Boolean, 
 
 	public static Integer getAsInteger(Object obj) {
 		if (obj instanceof Integer) {

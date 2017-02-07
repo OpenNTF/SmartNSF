@@ -20,6 +20,9 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.commons.swt,
  com.ibm.designer.domino.product,
  org.eclipse.ui.ide;bundle-version="3.4.2",
- org.eclipse.ui.editors
+ org.eclipse.ui.editors,
+ org.openntf.xrest.libraries,
+ org.openntf.xrest.xsp,
+ org.eclipse.jface.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

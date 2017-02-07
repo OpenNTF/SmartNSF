@@ -1,0 +1,5 @@
+<div>
+<table class="table">
+<tr ng-repeat="topic in ovCtrl.topics | orderBy: 'date' : reverse ='true'"><td>{{topic.date| date:'dd.MM.yyyy HH:mm'}}</td><td>{{topic.topic}}</td><td>{{topic.author}}</td></tr>
+</table>
+</div>

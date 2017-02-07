@@ -78,6 +78,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 	private void checkAccess() throws ExecutorException {
+		//TODO: Looser! You missing the context
 		List<String> allowedUsersAndGroups = routeProcessor.getAccessGroups();
 		if (allowedUsersAndGroups == null || allowedUsersAndGroups.isEmpty()) {
 			return;

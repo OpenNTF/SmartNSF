@@ -16,6 +16,7 @@ import org.openntf.xrest.xsp.model.Strategy;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 
 public class DSLBuilder {
 
@@ -31,6 +32,19 @@ public class DSLBuilder {
 
 		// Establish the compiler configuration - namely, the base class to use
 		// for the context
+		GroovyShell shell = prepareDSLShell(bindings, cl);
+		shell.evaluate(dsl);
+	}
+	
+	public static Script parseDSLScript(String dsl, ClassLoader cl) {
+		Router router = new Router();
+		Map<String, Object> bindings = new HashMap<String, Object>();
+		bindings.put("router", router);
+		GroovyShell shell = prepareDSLShell(bindings, cl);
+		return shell.parse(dsl);
+	}
+	
+	private static GroovyShell prepareDSLShell(Map<String, Object> bindings, ClassLoader cl) {
 		final CompilerConfiguration compilerConfig = new CompilerConfiguration();
 
 		// Automatically import some enum references
@@ -54,7 +68,7 @@ public class DSLBuilder {
 		out.flush();
 
 		GroovyShell shell = new GroovyShell(cl, binding, compilerConfig);
-		shell.evaluate(dsl);
+		return shell;
 	}
 
 	public static void applyClosureToObject(Closure<Void> cl, Object obj) {
