@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="1caa" sequence="6" unid="5C8295921F68B5AD80257BDE00010887">
+<created><datetime dst="true">20130906T011117,19+01</datetime></created>
+<modified><datetime>20170121T105751,37+01</datetime></modified>
+<revised><datetime dst="true">20130919T143541,38-04</datetime></revised>
+<lastaccessed><datetime>20170121T105751,37+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105751,37+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$Flags"><text>gC~4;2</text></item>
+<item name="$TITLE"><text>ccTagCloudGroup_sl.properties</text></item>
+
+
+<item name="$FileNames" sign="true"><text>ccTagCloudGroup_sl.properties</text></item></note>

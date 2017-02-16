@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:xe="http://www.ibm.com/xsp/coreex"
+	xmlns:xc="http://www.ibm.com/xsp/custom" enableModifiedFlag="true">
+	<xp:this.data>
+		<xp:dominoDocument var="dominoDoc" formName="MainTopic"
+			computeWithForm="onsave" action="newDocument">
+			<xp:this.querySaveDocument><![CDATA[#{javascript:// store user CGI variables
+var cgi = new CGIVariables();
+dominoDoc.replaceItemValue("Remote_User", cgi.get("REMOTE_USER"));
+dominoDoc.replaceItemValue("Remote_Addr", cgi.get("REMOTE_ADDR"));
+cgi = null;}]]></xp:this.querySaveDocument>
+		</xp:dominoDocument>
+	</xp:this.data>
+
+	<xp:this.resources>
+		<xp:script src="/xpAttachFile.js" clientSide="true"></xp:script>
+	</xp:this.resources>
+	<xe:djxmHeading id="djxmHeading1" label="All Documents"
+		loaded="${javascript:deviceBean.isMobile() || deviceBean.isTablet()}" back="Back">
+		<xp:this.moveTo>
+			<![CDATA[#{javascript:
+				if(null == sessionScope.from)
+					return "allDocs";
+				else	
+					return sessionScope.from;
+			}]]>
+		</xp:this.moveTo>
+	</xe:djxmHeading>
+
+	<xe:formTable id="formTable2" formTitle="New Topic" xp:key="profile"
+		legend="New topic form">
+		<xe:formRow id="formRow1" label="Subject:"
+			labelPosition="left">
+			<xp:inputText id="inputText1" required="true"
+				disableClientSideValidation="true" value="#{dominoDoc.Subject}"
+				styleClass="mblFormRowInput">
+			</xp:inputText>
+		</xe:formRow>
+		<xe:formRow id="formRow2" label="Tags:" labelPosition="left">
+			<xp:inputText id="inputText2"
+				value="#{dominoDoc.WebCategories}" multipleSeparator=","
+				styleClass="mblFormRowInput">
+				<xp:typeAhead mode="partial" ignoreCase="true"
+					minChars="1" id="typeAhead1" valueListSeparator="," tokens=",">
+					<xp:this.valueList><![CDATA[#{javascript:@DbColumn(@DbName(), "xpCategoryCloud", 1)}]]></xp:this.valueList>
+				</xp:typeAhead>
+			</xp:inputText>
+		</xe:formRow>
+		<xe:formRow id="formRow3" labelPosition="none">
+			<xp:inputRichText id="rtBody" value="#{dominoDoc.Body}"
+				styleClass="mblThreadRichText">
+			</xp:inputRichText>
+		</xe:formRow>
+		<xe:formRow id="formRow4" labelPosition="none">
+			<xp:table
+				style="width:100%;" role="presentation" id="attachmentTable">
+				<xp:tr>
+					<xp:td valign="top">
+						<!--  the upload TD -->
+						<xp:panel id="attachFilePanel" styleClass="attachFilePanel"	loaded="${javascript:!deviceBean.isMobile() &amp;&amp; !deviceBean.isTablet()}">
+							<xp:link escape="true" id="link1" text=" Attach File"
+								styleClass="attachFileLink" role="button"
+								style="float: #{javascript: context.isDirectionRTL() ? 'right' : 'left'};"
+								title="Select this link to show or hide the file attachment field">
+								<xp:this.attrs>
+									<!-- This is a hack workaround to get spacebar working on this link
+										 when added as a proper onkeydown event, other key events get blocked.
+										 Adding it as below, preserves other key functionality, whilst fixing
+										 the spacebar functionality-->
+									<xp:attr name="onkeydown" value="var kc=event.keyCode?event.keyCode:event.which;if(kc==32){var fileContainer = dojo.byId('view:_id1:_id3:middleColumnFacetEx:mainTopic:fileContainer');if(null != fileContainer){var displayStyle = fileContainer.style.display;if(!displayStyle || displayStyle == 'none'){fileContainer.style.display = 'block';}else{fileContainer.style.display = 'none';}}}else{return true;}"></xp:attr>
+								</xp:this.attrs>
+								<xp:eventHandler event="onclick" submit="false">
+									<xp:this.script><![CDATA[
+											var fileContainer = document.getElementById("#{id:fileContainer}");
+											//var upload = document.getElementById("#{id:fileUpload1}");
+											if(null != fileContainer)
+											{
+												var displayStyle = fileContainer.style.display;
+												if (!displayStyle || displayStyle == "none")
+												{
+													fileContainer.style.display = 'block';
+												} 
+												else 
+												{
+													fileContainer.style.display = 'none';
+												}
+											}
+										]]></xp:this.script>
+								</xp:eventHandler>
+								<xp:image id="image2" url="/xpAttachment.gif"
+									alt="Add Attachment">
+								</xp:image>
+							</xp:link>
+						</xp:panel>
+						<xp:panel id="fileContainer" loaded="${javascript:!deviceBean.isMobile() &amp;&amp; !deviceBean.isTablet()}"
+							style="display:none; float: #{javascript: context.isDirectionRTL() ? 'right' : 'left'};">
+							<xp:br />
+							<xp:label for="fileUpload" style="margin-right:10px;">
+								File:
+							</xp:label>
+							<xp:fileUpload id="fileUpload" value="#{dominoDoc.Body}" style="margin-top:5px;">
+								<xp:eventHandler event="onchange" submit="true" refreshMode="complete">
+									<xp:this.action><![CDATA[#{javascript:// kick off round-trip...}]]></xp:this.action>
+								</xp:eventHandler>
+							</xp:fileUpload>
+						</xp:panel>
+					</xp:td>
+					<xp:td valign="top">
+						<!--  the download TD -->
+						<xp:fileDownload rows="30" id="fileDownload1"
+							displayLastModified="false" styleClass="mainTopicDownload"
+							allowDelete="true" hideWhen="true" value="#{dominoDoc.Body}">
+							<xp:this.facets>
+								<xp:label xp:key="caption" value="Attached files" id="fileDownloadCaption"
+									style="font-weight: bold;text-align: #{javascript: context.isDirectionRTL() ? 'right' : 'left'};">
+								</xp:label>
+							</xp:this.facets>
+							<xp:this.attrs>
+								<xp:attr name="aria-labelledby" value="#{id:fileDownloadCaption}">
+								</xp:attr>
+							</xp:this.attrs>
+						</xp:fileDownload>
+					</xp:td>
+				</xp:tr>
+			</xp:table>
+		</xe:formRow>
+		<xe:this.facets>
+			<xp:panel xp:key="footer" id="panel16" styleClass="xlFormFooterContainer">
+				<xp:button value="Save" id="button2"
+					styleClass="lotusFormButton"
+					title="save button for new document form">
+					<xp:eventHandler event="onclick" submit="true"
+						refreshMode="complete" id="eventHandler2" execMode="partial"
+						execId="mainTopic">
+						<xp:this.action>
+							<xp:actionGroup>
+								<xp:save
+									name="#{javascript:compositeData.gotoPage}">
+								</xp:save>
+							</xp:actionGroup>
+						</xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:link id="linkCancel" text="Cancel" themeId="Link.action"
+					value="#{javascript:compositeData.gotoPage}" role="button">
+					<!-- style="zoom:1" -->
+				</xp:link>
+			</xp:panel>
+		</xe:this.facets>
+	</xe:formTable>
+</xp:view>

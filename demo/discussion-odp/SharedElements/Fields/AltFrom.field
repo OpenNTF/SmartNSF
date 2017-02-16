@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='sharedfield' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.5'
+ replicaid='C12580AF0036B297'>
+<noteinfo noteid='1e2' unid='A6C41FD99C0C816785256679005C69D9' sequence='30'>
+<created><datetime dst='true'>19980908T124924,09-04</datetime></created>
+<modified><datetime>20170121T105727,41+01</datetime></modified>
+<revised><datetime dst='true'>20130919T143521,50-04</datetime></revised>
+<lastaccessed><datetime>20170121T105727,41+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105727,41+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name='$LANGUAGE' sign='true'><text>en</text></item>
+<item name='$HTMLCode' sign='true'>
+<rawitemdata type='1'>
+</rawitemdata></item>
+<item name='$TITLE'><text>AltFrom</text></item>
+<item name='$INFO' sign='true'>
+<rawitemdata type='1'>
+hhgBAIAAAAAAgAAAAQABAP///wAAAAAA
+</rawitemdata></item>
+<item name='$Flags'><text/></item>
+<item name='$DesignerVersion' sign='true'><text>7</text></item>
+<item name='AltFrom' placeholder='true'>
+<rawitemdata type='0'>
+</rawitemdata></item>
+<item name='$Fields'><text>AltFrom</text></item>
+<item name='$BODY' summary='true' sign='true'>
+<rawitemdata type='1'>
+gQKC/1oAAQAAAAAAAAAAAKAFAACgBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAABAAAAAJSHAAAAAAAAAAAAAAAAAQAAAAQAAACDBAEAhf8IAAEAAArdBgAAiv/+/1AA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAIr/CAGAAAAFADACAAAAAAAAAgEADgncAAAAAAAAAAcAAAAAANwA
+CgAEAAEAQAAKAF9Ob3Rlc05hbWW/AFgBAAAAAAAAAIBiQA4CrwAcAAgA9ACuABQAAAAAAAAAAADw
+P/QBrgAEALUDAwAHACAAGQAJMVMyUzRUOFM5UzExUlRUVFQxM1JUVFRUAAEAEgAIAF9XZWJOYW1l
+9AADAAcADgAIAAkwUlIxUzJTAABAAPsABQEBAAUATm90ZXMACgKvACgAFAAFAAoAX05vdGVzTmFt
+Za4AFAAFAAgAX1dlYk5hbWWuAAQAtQMDAAcAFgAQAAkwUlIyVDNTNFM2UlQ4UlRBbHRGcm9tAN4G
+AACK/4X/CAABAAAK
+</rawitemdata></item></note>
+

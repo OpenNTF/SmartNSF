@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="3f6" sequence="40" unid="DBD0D84BA4136567802575FA002EC5D4">
+<created><datetime dst="true">20090721T093053,00+01</datetime></created>
+<modified><datetime>20170121T105729,91+01</datetime></modified>
+<revised><datetime dst="true">20130919T143523,68-04</datetime></revised>
+<lastaccessed><datetime>20170121T105729,91+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105729,91+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$Flags"><text>34567Cg~`</text></item>
+<item name="$TITLE"><text>tux.theme</text></item>
+<item name="$$ScriptName" sign="true" summary="false"><text>tux.theme</text></item>
+<item name="$DesignerVersion" sign="true"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>tux.theme</text></item>
+<item name="$CSSFiles" sign="true"><textlist><text>tux.css</text><text>tux_ie06.css</text><text>tux_ie78.css</text><text>commonRTL.css</text><text>pagerRTL.css</text></textlist></item></note>

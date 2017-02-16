@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="27a" sequence="34" unid="8E78F8FA11878013882569F30071B55F">
+<created><datetime>20010214T124159,99-08</datetime></created>
+<modified><datetime>20170121T105728,05+01</datetime></modified>
+<revised><datetime dst="true">20130919T143522,14-04</datetime></revised>
+<lastaccessed><datetime>20170121T105728,05+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105728,05+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$ImagesWide" sign="true"><number>1</number></item>
+<item name="$ImagesHigh" sign="true"><number>1</number></item>
+<item name="$ImagesColorize" sign="true"><number>0</number></item>
+<item name="$FileModDT" sign="true"><datetime>20010209T034226,00-08</datetime></item>
+<item name="$ImageNames" sign="true"><text>discussion_outline.gif</text></item>
+<item name="$LANGUAGE" sign="true"><text>en</text></item>
+<item name="$TITLE" sign="true"><text>OutlinePage.gif</text></item>
+<item name="$DesignerVersion" sign="true"><text>8.5.3</text></item>
+
+
+
+<item name="$EditFilePath" sign="true"><text>C:\DOCUME~1\akapetan\LOCALS~1\Temp\notes32C5CD\~discussion_outline.gif</text></item>
+<item name="$Flags"><text>34CiQ$</text></item></note>

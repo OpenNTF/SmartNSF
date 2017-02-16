@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='sharedfield' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.5'
+ replicaid='C12580AF0036B297'>
+<noteinfo noteid='16a' unid='E57B23E3C43BB7AA8525649D00533C24' sequence='25'>
+<created><datetime dst='true'>19970520T110908,84-04</datetime></created>
+<modified><datetime>20170121T105727,01+01</datetime></modified>
+<revised><datetime dst='true'>20130919T143521,10-04</datetime></revised>
+<lastaccessed><datetime>20170121T105727,01+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105727,01+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name='$TITLE' sign='true'><text>DoclinkParent</text></item>
+<item name='$INFO' sign='true'>
+<rawitemdata type='1'>
+hhgBAIAAAAAAAAAAAQAAAAAAAAAAAAAA
+</rawitemdata></item>
+<item name='$Flags'><text/></item>
+<item name='$BODY' summary='true' sign='true'>
+<rawitemdata type='1'>
+gQKDBAEAhf8IAAEAAAqK/2IAgAEABQAwAgAAAAAAAAIBAO4JMAAAAAAAAAANAAAAAAAwAAAAIgCJ
+AK8AGAAIACgArgAQAAUABAAkUmVmrgAEALUDAwAHAAwABQAJNFM2UwBEb2NsaW5rUGFyZW50AIX/
+CAABAAAK
+</rawitemdata></item>
+<item name='$LANGUAGE' sign='true'><text>en</text></item></note>
+

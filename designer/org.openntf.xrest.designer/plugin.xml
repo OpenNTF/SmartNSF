@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="com.ibm.designer.domino.ide.resources.metamodel">
+      <metamodel
+            category="com.ibm.designer.domino.ide.metamodel.dbconfig"
+            designTimeClass="org.openntf.xrest.designer.DesignTimeModelRoutes"
+            id="org.openntf.xrest.designer.routes"
+            name="XRest API Routes"
+            path="routes.groovy"
+            icon="icons/script_link.png"
+            navigable="false"
+            isEfsFile="true"
+            visible="true">
+           </metamodel>
+   </extension>
+   <extension 
+         id="DSLGroovyBuilder" 
+         name="Router DSL Groyyve Builder" 
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="org.openntf.xrest.designer.builder.GroovyDSLBuilder">
+            <parameter name="optimize" value="true"/>
+            <parameter name="comment" value="Groovy DSL Builder"/>
+         </run>
+      </builder>
+   </extension>
+   <extension point="com.ibm.designer.prj.resources.builderAssociation">
+   		<builder id="org.openntf.xrest.designer.DSLGroovyBuilder"></builder>
+   		<!-- <builder id="org.openntf.xrest.desinger.DSLGroovyBuilder"></builder> -->
+   </extension>
+   <extension
+         id="org.openntf.xrest.dsl.routes"
+         name="XREST API routes.groovy Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.openntf.xrest.designer.editors.RoutesDSLEdtior"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="groovy"
+            icon="icons/script_link.png"
+            id="org.openntf.xrest.designer.editors.RoutesDSLEdtior"
+            name="Editor for Routes">
+      </editor>
+   </extension>
+</plugin>

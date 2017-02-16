@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<note class='form' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.5'
+ replicaid='C12580AF0036B297'>
+<noteinfo noteid='25e' unid='33A6C4145F76DC09882569ED000C7F96' sequence='29'>
+<created><datetime>20010207T181630,94-08</datetime></created>
+<modified><datetime>20170121T105727,91+01</datetime></modified>
+<revised><datetime dst='true'>20130919T143522,00-04</datetime></revised>
+<lastaccessed><datetime>20170121T105727,91+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105727,91+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name='$TITLE'><textlist><text>White Page</text><text>White Page</text></textlist></item>
+<item name='$INFO' sign='true'>
+<rawitemdata type='1'>
+hhgBAIAAAAAAgAAAAQABAP///wAKAAAA
+</rawitemdata></item>
+<item name='$DesignerVersion' sign='true'><text>6</text></item>
+<item name='$Flags'><text>C34WQ</text></item>
+<item name='$LANGUAGE' sign='true'><text>en</text></item>
+<item name='$$ScriptName' summary='false' sign='true'><text>White Page</text></item>
+<item name='$BODY' sign='true'>
+<rawitemdata type='1'>
+gQKC/1IAAQAAAAAAAAAAAKAFAACgBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAABAAAAAJQHAAAAAAAAAAAAAAAAgwQBAIX/CAABAAAK
+</rawitemdata></item></note>
+
