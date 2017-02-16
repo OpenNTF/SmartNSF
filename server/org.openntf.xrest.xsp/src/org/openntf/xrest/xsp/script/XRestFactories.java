@@ -1,5 +1,4 @@
-import org.openntf.xrest.xsp.library.GroovyScriptBindingFactory;
-
+package org.openntf.xrest.xsp.script;
 import com.ibm.xsp.library.XspContributor;
 
 public class XRestFactories extends XspContributor {

@@ -1,4 +1,4 @@
-package org.openntf.xrest.xsp.library;
+package org.openntf.xrest.xsp.script;
 
 import javax.faces.application.Application;
 import javax.faces.el.MethodBinding;

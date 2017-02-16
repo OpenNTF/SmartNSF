@@ -1,4 +1,4 @@
-package org.openntf.xrest.xsp.library;
+package org.openntf.xrest.xsp.script;
 
 import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;

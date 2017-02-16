@@ -15,7 +15,7 @@
    <extension
          point="com.ibm.commons.Extension">
       <service
-            class="XRestFactories"
+            class="org.openntf.xrest.xsp.script.XRestFactories"
             type="com.ibm.xsp.library.Contributor">
       </service>
    </extension>

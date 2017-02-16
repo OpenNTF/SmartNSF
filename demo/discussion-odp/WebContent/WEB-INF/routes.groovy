@@ -3,6 +3,11 @@ router.GET('topics') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
 		viewName('($All)')
 	}
+	accessPermission { context ->
+		println("bla bla bla")
+		println(context)
+		return new ArrayList()
+	}
 	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID'
 	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
 	mapJson "Subject", json:'topic', type:'STRING'
@@ -17,6 +22,12 @@ router.GET('topics/{id}') {
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
 	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	events POST_LOAD_DOCUMENT: {
+		context, document ->
+		nsfHelp = context.getNSFHelper()
+		nsfHelp.executeAgent('martinsAgent',document)
+		
+	}
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
 	strategy(SELECT_ATTACHMENT) {

@@ -5,12 +5,12 @@
       version="1.0.0.qualifier"
       provider-name="WebGate Consulting AG">
 
-   <description url="http://www.openntf.org/main.nsf/project.xsp?r=project/org.openntf.junit.xsp">
-      This project is one part of the BuildAndTestPattern4XPages. It contains a plugin that gives you the capabilty to use JUnit Version 4.11 in your XPage application development.
+   <description url="https://smartnsf.openntf.org">
+      Make your NST to a Microservice
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      Copyright 2014, Webgate Consulting AG
+   <copyright>
+      (c) Webgate Consulting AG and IBM, 2017
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0.html">
