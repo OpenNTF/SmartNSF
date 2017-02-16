@@ -5,9 +5,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.ErrorCollector;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.messages.Message;
+import org.codehaus.groovy.runtime.StackTraceUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -22,6 +24,7 @@ import org.openntf.xrest.xsp.dsl.DSLBuilder;
 
 import com.ibm.commons.util.io.StreamUtil;
 
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 
 public class GroovyDSLBuilder extends IncrementalProjectBuilder {
@@ -64,7 +67,6 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 
 				@Override
 				public boolean visit(IResource arg0) throws CoreException {
-					System.out.println("FULL: " + arg0.getProjectRelativePath());
 					testFileForGoovy(arg0);
 					return true;
 				}
@@ -79,9 +81,12 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 		if ("WebContent/WEB-INF/routes.groovy".equalsIgnoreCase(resource.getProjectRelativePath().toPortableString())) {
 			try {
 				removeMarkers(resource);
+				CompilationUnit cu = new CompilationUnit();
 				String dsl = StreamUtil.readString(((IFile) resource).getContents());
 				Script sc =DSLBuilder.parseDSLScript(dsl, this.getClass().getClassLoader());
+				System.out.println(sc.toString());
 				sc.run();
+				System.out.println("run done");
 			} catch (MultipleCompilationErrorsException cfe) {
 				ErrorCollector errorCollector = cfe.getErrorCollector();
 				processErrors(errorCollector, resource);
@@ -93,12 +98,20 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 				e.printStackTrace();
 			}
 			catch (Exception e) {
+				Throwable rc = StackTraceUtils.extractRootCause(e);
+				addMarker(rc.getMessage(), resource);
 				System.out.println("GEN EX");
-				System.out.println(e.getMessage());
-				System.out.println(e.getCause().getMessage());
-				for (StackTraceElement el: e.getStackTrace()) {
-					System.out.println(el.getClassName() +" "+el.getLineNumber() +" "+el.getMethodName());
+				System.out.println("Message:" +rc.getMessage());
+				System.out.println("Class: "+rc.getClass());
+				if (rc instanceof GroovyRuntimeException) {
+					GroovyRuntimeException grc = (GroovyRuntimeException)rc;
+					System.out.println(grc.getNode());
+					System.out.println(grc.getModule());
+					grc.printStackTrace();
 				}
+				
+				//System.out.println(rc.getCause().getMessage());
+				//rc.printStackTrace();
 			}
 		}
 
@@ -120,7 +133,6 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			msg.write(pw);
-			System.out.println(sw.toString());
 			addMarker(sw.toString(), resource);
 		}
 
@@ -142,6 +154,9 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 
 	private int getLineNumber(String message) {
 		int startPoint = message.indexOf(" @ line");
+		if (startPoint < 0) {
+			return 1;
+		}
 		int endPoint = message.indexOf(",", startPoint);
 		return Integer.parseInt(message.substring(startPoint + 7, endPoint).trim());
 	}

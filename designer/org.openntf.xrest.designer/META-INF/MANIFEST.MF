@@ -21,8 +21,12 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.designer.domino.product,
  org.eclipse.ui.ide;bundle-version="3.4.2",
  org.eclipse.ui.editors,
- org.openntf.xrest.libraries,
- org.openntf.xrest.xsp,
- org.eclipse.jface.text
+ org.openntf.xrest.libraries;visibility:=reexport,
+ org.openntf.xrest.xsp;visibility:=reexport,
+ org.eclipse.jface.text,
+ org.eclipse.jdt.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: org.openntf.xrest.designer,
+ org.openntf.xrest.designer.builder,
+ org.openntf.xrest.designer.editors

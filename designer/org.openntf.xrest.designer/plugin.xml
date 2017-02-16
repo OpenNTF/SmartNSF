@@ -47,7 +47,7 @@
             class="org.openntf.xrest.designer.editors.RoutesDSLEdtior"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             extensions="groovy"
-            icon="icons/sample.gif"
+            icon="icons/script_link.png"
             id="org.openntf.xrest.designer.editors.RoutesDSLEdtior"
             name="Editor for Routes">
       </editor>

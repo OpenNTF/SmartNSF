@@ -16,8 +16,48 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="com.ibm.designer.prj.resources"/>
+      <import plugin="com.ibm.designer.domino.ide.resources"/>
+      <import plugin="com.ibm.designer.domino.ui.commons"/>
+      <import plugin="com.ibm.designer.domino.navigator"/>
+      <import plugin="com.ibm.domino.napi"/>
+      <import plugin="com.ibm.commons"/>
+      <import plugin="com.ibm.designer.domino.constants"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="com.ibm.commons.swt"/>
+      <import plugin="com.ibm.designer.domino.product"/>
+      <import plugin="org.eclipse.ui.ide" version="3.4.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="com.ibm.xsp.core"/>
+      <import plugin="com.ibm.xsp.extsn"/>
+      <import plugin="com.ibm.domino.xsp.adapter"/>
+      <import plugin="com.ibm.notes.java.api"/>
+      <import plugin="com.ibm.xsp.extlib"/>
+      <import plugin="com.ibm.xsp.domino"/>
+      <import plugin="com.ibm.designer.lib.javamail"/>
+   </requires>
+
    <plugin
          id="org.openntf.xrest.designer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openntf.xrest.libraries"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.xrest.xsp"
          download-size="0"
          install-size="0"
          version="0.0.0"

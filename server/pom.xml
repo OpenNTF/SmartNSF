@@ -15,7 +15,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-		<groovy-version>2.4.7</groovy-version>
+		<groovy-version>2.4.8</groovy-version>
 	</properties>
 
 	<repositories>

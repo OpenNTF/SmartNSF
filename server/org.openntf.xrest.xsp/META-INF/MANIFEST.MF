@@ -27,4 +27,5 @@ Export-Package: org.openntf.xrest.xsp.dsl,
  org.openntf.xrest.xsp.library,
  org.openntf.xrest.xsp.model,
  org.openntf.xrest.xsp.model.strategy,
- org.openntf.xrest.xsp.servlet
+ org.openntf.xrest.xsp.servlet,
+ org.openntf.xrest.xsp.utils

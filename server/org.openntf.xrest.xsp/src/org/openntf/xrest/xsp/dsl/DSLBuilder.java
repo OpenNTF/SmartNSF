@@ -46,7 +46,6 @@ public class DSLBuilder {
 	
 	private static GroovyShell prepareDSLShell(Map<String, Object> bindings, ClassLoader cl) {
 		final CompilerConfiguration compilerConfig = new CompilerConfiguration();
-
 		// Automatically import some enum references
 		ImportCustomizer importCustomizer = new ImportCustomizer();
 		importCustomizer.addStaticStars(Strategy.class.getCanonicalName());
@@ -66,8 +65,8 @@ public class DSLBuilder {
 		PrintStream out = System.out;
 		binding.setProperty("out", out); //$NON-NLS-1$
 		out.flush();
-
-		GroovyShell shell = new GroovyShell(cl, binding, compilerConfig);
+		
+		GroovyShell shell = cl != null ?new GroovyShell(cl, binding, compilerConfig) : new GroovyShell(binding, compilerConfig);
 		return shell;
 	}
 
