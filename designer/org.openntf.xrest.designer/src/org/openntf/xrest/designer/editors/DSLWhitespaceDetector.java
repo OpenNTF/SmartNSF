@@ -2,10 +2,10 @@ package org.openntf.xrest.designer.editors;
 
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 
-public class XMLWhitespaceDetector implements IWhitespaceDetector {
+public class DSLWhitespaceDetector implements IWhitespaceDetector {
 
 	@Override
 	public boolean isWhitespace(char c) {
-		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+		return  Character.isWhitespace(c);
 	}
 }

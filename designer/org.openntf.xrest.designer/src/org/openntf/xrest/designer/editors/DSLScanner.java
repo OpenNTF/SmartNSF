@@ -46,7 +46,7 @@ public class DSLScanner extends RuleBasedScanner {
 		rules[1] = new SingleLineRule("\"", "\"", string, '\\');
 		// Add a rule for single quotes
 		rules[2] = new SingleLineRule("'", "'", string, '\\');
-		rules[3] = new WhitespaceRule(new XMLWhitespaceDetector());
+		rules[3] = new WhitespaceRule(new DSLWhitespaceDetector());
 		rules[4] = new EndOfLineRule("//", commentToken);
 		rules[5] = new MultiLineRule("/*", "*/", commentToken);
 		rules[6] = buildWordRules();
