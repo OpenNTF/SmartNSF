@@ -34,9 +34,6 @@ public class Json2DocumentConverter {
 			processFormulaToJson(jso, field, doc);
 			update = true;
 		}
-		if (update) {
-			doc.save(true, false, true);
-		}
 		return update;
 	}
 

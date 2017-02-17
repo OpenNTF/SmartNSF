@@ -31,13 +31,14 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 		if (model.isList()) {
 			buildResultMapping(context, model);
 		} else {
-			executePreSave(context, model);
 			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_UPDATE);
 			if (cl != null) {
 				executeAlternateDocumentUpdate(cl, context, model);
 			} else {
-				executeDocumentUpdateAndSave(context, model);
+				executeDocumentUpdate(context, model);
 			}
+			executePreSave(context, model);
+			executeDocumentSave(model);
 			executePostSave(context, model);
 			buildResultMapping(context, model);
 		}
@@ -68,7 +69,7 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
 	}
 
-	private void executeDocumentUpdateAndSave(Context context, DataModel<?> model) throws ExecutorException {
+	private void executeDocumentUpdate(Context context, DataModel<?> model) throws ExecutorException {
 		try {
 			Document doc = (Document) model.getData();
 			JsonJavaObject jso = (JsonJavaObject) context.getJsonPayload();
@@ -76,6 +77,15 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 			converter.buildDocumentFromJson();
 		} catch (NotesException e) {
 			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, getPath(), "applyPayLoad");
+		}
+	}
+
+	private void executeDocumentSave(DataModel<?> model) throws ExecutorException {
+		try {
+			Document doc = (Document) model.getData();
+			doc.save(true, false, true);
+		} catch (NotesException e) {
+			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, getPath(), "savedocument");
 		}
 	}
 
@@ -112,7 +122,5 @@ public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
-
 }

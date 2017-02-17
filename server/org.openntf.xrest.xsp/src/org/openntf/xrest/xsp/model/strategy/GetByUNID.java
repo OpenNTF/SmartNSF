@@ -3,6 +3,8 @@ package org.openntf.xrest.xsp.model.strategy;
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 
+import com.ibm.commons.util.StringUtil;
+
 import groovy.lang.Closure;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
@@ -15,6 +17,9 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 
 	private String keyVariableValue;
 	private Closure<?> keyVariableCl;
+	private String formValue;
+	private Closure<?> formCl;
+
 	private Database dbAccess;
 
 	public void keyVariableName(String name) {
@@ -25,11 +30,27 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 		this.keyVariableCl = keyVariableCl;
 	}
 
+	public void form(String name) {
+		this.formValue = name;
+	}
+
+	public void form(Closure<?> formCl) {
+		this.formCl = formCl;
+	}
+
 	public String getKeyVariableValue(Context context) {
 		if (keyVariableCl != null) {
 			return (String) DSLBuilder.callClosure(keyVariableCl, context);
 		} else {
 			return keyVariableValue;
+		}
+	}
+
+	public String getFormValue(Context context) {
+		if (formCl != null) {
+			return (String) DSLBuilder.callClosure(formCl, context);
+		} else {
+			return formValue;
 		}
 	}
 
@@ -39,7 +60,12 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			String unid = context.getRouterVariables().get(keyVariableValue);
 			if (unid.equalsIgnoreCase("@new")) {
-				return dbAccess.createDocument();
+				Document doc = dbAccess.createDocument();
+				String form = getFormValue(context);
+				if (!StringUtil.isEmpty(form)) {
+					doc.replaceItemValue("Form", form);
+				}
+				return doc;
 			}
 			return dbAccess.getDocumentByUNID(unid);
 		} catch (Exception ex) {

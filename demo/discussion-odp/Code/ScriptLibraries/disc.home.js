@@ -1,11 +1,10 @@
-var app = angular.module('disc', [ 'ngResource', 'ui.router','ui.bootstrap']);
+var app = angular.module('disc', [ 'ngResource', 'ui.router','ui.bootstrap','ngSanitize']);
 
 app.config( function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise("/home");
 	var homeState = {
 		name : 'home',
 		url : '/home',
-		//template : '<h1>Ich bin die Home</h1>'
 		templateUrl : 'overview.html',
 		controller	: 'OverviewCtrl as ovCtrl'			
 	};
@@ -27,21 +26,51 @@ app.config( function($stateProvider, $urlRouterProvider) {
 	$stateProvider.state(newTopicState);
 });
 
-app.controller('OverviewCtrl',['TopicService', function(TopicService) {
+app.controller('OverviewCtrl',['TopicService','$state', function(TopicService, $state) {
 	var vm = this;
-	console.log("loading...")
 	vm.topics = TopicService.overview();
+	vm.newTopic = function() {
+		$state.go('newtopic');
+	}
+	vm.openTopic = function(id) {
+		$state.go('topic', {'id':id});
+	}
 	
-} ])
+} ]);
+
+app.controller('TopicCtrl',['TopicService','$state','$stateParams', function(TopicService, $state,$stateParams) {
+	var vm = this;
+	var id = $stateParams.id;
+	console.log(id);
+	vm.data = {};
+	vm.newcomment = { parentid: id, topic:'', content:''};
+	vm.data.topic = TopicService.getTopic(id);
+	vm.comments = TopicService.getComments(id);
+	vm.addComment = function () {
+		var comment = TopicService.addComment(vm.newcomment);
+		vm.newcomment = {parentid: id, topic:'', content:''};
+		vm.comments.push(comment);
+	}
+	
+} ]);
 
 
 app.factory('TopicService', [ '$resource', function($resource) {
 	var topicsService = {};
-	topicsService.store = $resource("xsp/.xrest/topics", null, {
-	});
+	topicsService.store = $resource("xsp/.xrest/topics/:id", {id:'@id'}, {	});
+	topicsService.commentstore = $resource("xsp/.xrest/topics/:parentid/comments/:id", {id:'@id', parentid:'@parentid'}, {	});
 	topicsService.overview = function() {
-		console.log("executing overview");
 		return topicsService.store.query();
+	}
+	topicsService.getTopic = function(id) {
+		return topicsService.store.get({'id':id});
+	}
+	topicsService.getComments = function(parentId) {
+		return topicsService.commentstore.query({parentid:parentId});		
+	}
+	topicsService.addComment = function(comment) {
+		comment.id = "@new";
+		return topicsService.commentstore.save(comment);
 	}
 	return topicsService;
 } ]);

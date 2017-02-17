@@ -119,7 +119,8 @@ public class XRestAPIServlet extends HttpServlet {
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
 				context.addRouterVariables(rp.extractValuesFromPath(path));
-				if (req.getContentLength() > 0 && "application/json".equalsIgnoreCase(req.getContentType())) {
+				System.out.println(req.getContentType());
+				if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
 					try {
 						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
 						context.addJsonPayload(json);

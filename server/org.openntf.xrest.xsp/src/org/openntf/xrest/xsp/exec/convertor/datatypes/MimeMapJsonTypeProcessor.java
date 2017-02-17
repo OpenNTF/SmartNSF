@@ -1,14 +1,7 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
-import static com.ibm.domino.services.HttpServiceConstants.CONTENTTYPE_TEXT_HTML;
-import static com.ibm.domino.services.rest.RestServiceConstants.ATTR_CONTENTTYPE;
-import static com.ibm.domino.services.rest.RestServiceConstants.ATTR_TYPE;
-import static com.ibm.domino.services.rest.RestServiceConstants.TYPE_RICHTEXT;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -21,29 +14,24 @@ import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.openntf.xrest.xsp.model.MappingField;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.commons.util.io.FileUtil;
 import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.designer.runtime.domino.adapter.mime.MIME;
-import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.model.domino.DominoUtils;
-import com.ibm.xsp.model.domino.wrapped.DominoDocument;
-import com.ibm.xsp.model.domino.wrapped.DominoRichTextItem;
 
 import lotus.domino.Document;
 import lotus.domino.EmbeddedObject;
 import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
+import lotus.domino.MIMEHeader;
 import lotus.domino.NotesException;
 import lotus.domino.RichTextItem;
 import lotus.domino.Session;
 import lotus.domino.Stream;
-import lotus.domino.MIMEHeader;
 
 public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
@@ -149,6 +137,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			}
 			checkHTMLEntityHeaders(htmlEntity);
 			addContentToHTMLEntity(stream, htmlEntity);
+			doc.closeMIMEEntities(true, fieldName);
 		}
 	}
 
@@ -178,7 +167,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			checkHTMLEntityHeaders(htmlEntity);
 			addContentToHTMLEntity(stream, htmlEntity);
 			processAttachments2Mime(fileNames, baseEntity, tempDir.getAbsolutePath(), session);
-
+			doc.closeMIMEEntities(true, fieldName);
 		} finally {
 			try {
 				FileUtils.deleteDirectory(tempDir);
@@ -234,6 +223,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return "application/octet-stream";
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<String> extractAllAttachments(RichTextItem notesItem, String tempDir) throws NotesException {
 		Vector<Object> embObjects = notesItem.getEmbeddedObjects();
 		if (embObjects == null || embObjects.isEmpty()) {
