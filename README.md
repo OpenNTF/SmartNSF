@@ -1,5 +1,12 @@
 SmartNSF
 =============
+Turn your Notes/Domino Application into a microservice and expose a REST API within minutes? This
+is the core goal of SmartNSF!
+
+
+Issues:
+-------
+Please report issues to the following project on OpenNTF's JIRA: https://jira.openntf.org/projects/XRAPI/issues
 
 OPENNTF
 
