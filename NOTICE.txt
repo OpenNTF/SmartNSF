@@ -7,6 +7,16 @@ OpenNTF Alliance (http://www.OpenNTF.org/)
 The example database is an extended Version of the discussion Template:
     - from the ExtLib - example database ("http://exlib.openntf.org") under Apache V2.0 (http://www.apache.org/licenses/)
 
+List of third party software used in the enhanced discussion database:
+    - Angular JS, Version 1.5.9
+    - UI-Router (https://ui-router.github.io/), Version 0.2.18, under MIT License, (http://www.opensource.org/licenses/MIT)
+    - angular-ui-bootstrap, (http://angular-ui.github.io/bootstrap/, Version: 2.2.0, under MIT License, (http://www.opensource.org/licenses/MIT)
+    - Quill Editor v1.1.5, under MIT License, (http://www.opensource.org/licenses/MIT)
+    - ng-quill, Version 2.20, under MIT License, (http://www.opensource.org/licenses/MIT)
+    - jQuery (https://jquery.org), Version v1.12.4, under MIT License, (http://www.opensource.org/licenses/MIT)
+    - Bootstrap v3.3.7 (http://getbootstrap.com), under MIT License, (http://www.opensource.org/licenses/MIT)
+ 
+
 
 List of third party software used in this project:
 
