@@ -3,6 +3,7 @@ SmartNSF
 Turn your Notes/Domino Application into a microservice and expose a REST API within minutes? This
 is the core goal of SmartNSF! With this in mind, SmartNSF is integrated in the IBM Domino Designer
 and the configuration is smart and simple.
+
 ![designer-intagration](https://openntf.org/Projects/pmt.nsf/0/2C996F60E4F51270852580CC007EAF7F/$file/XREST%20Router%20in%20Designer.png "Designer Integration")
 
 ### Issues

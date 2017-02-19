@@ -1,0 +1,26 @@
+﻿OpenNTF's SmartNSF
+Copyright 2016, 2017 WebGate Consulting AG, IBM
+
+This product includes software contributed to 
+OpenNTF Alliance (http://www.OpenNTF.org/)
+
+The example database is an extended Version of the discussion Template:
+    - from the ExtLib - example database ("http://exlib.openntf.org") under Apache V2.0 (http://www.apache.org/licenses/)
+
+
+List of third party software used in this project:
+
+	- Apache Groovy, Verison 2.4.8 (http://www.groovy-lang.org/) under Apache V2.0 (http://www.apache.org/licenses/)
+	
+List of third party software used for Development & Test purpose
+	- EasyMock, Version 3.4 (http://easymock.org/) under Apache V2.0 (http://www.apache.org/licenses/)
+
+	- CGLib, Version 2.2.2 (https://github.com/cglib/cglib) under Apache V2.0 (http://www.apache.org/licenses/)
+	
+	- Javassist, Version 3.19-GA (https://github.com/jboss-javassist/javassist) under Mozilla Public Licence 1.1
+	
+	- Objenesis, Version 2.1 (http://objenesis.org/) under Apache V2.0 (http://www.apache.org/licenses/)
+	
+	- Powermock Version 1.6.2 (https://github.com/powermock/powermock)  under Apache V2.0 (http://www.apache.org/licenses/)
+
+ 
