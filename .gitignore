@@ -21,3 +21,7 @@ server/org.openntf.xrest.xsp.updatesite/target/
 server/org.openntf.xrest.xsp/target/
 server/target/
 server/org.openntf.xrest.xsp.testsuite/lib/
+designer/org.openntf.xrest.designer.updatesite/artifacts.jar
+designer/org.openntf.xrest.designer.updatesite/content.jar
+designer/org.openntf.xrest.designer.updatesite/features/
+designer/org.openntf.xrest.designer.updatesite/plugins/

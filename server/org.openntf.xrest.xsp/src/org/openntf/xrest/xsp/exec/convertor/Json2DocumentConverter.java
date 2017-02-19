@@ -16,6 +16,7 @@ public class Json2DocumentConverter {
 	private final RouteProcessor routeProcessor;
 	private final Document doc;
 	private final JsonJavaObject jso;
+
 	public Json2DocumentConverter(Document doc, RouteProcessor routeProcessor, JsonJavaObject jso) {
 		this.jso = jso;
 		this.routeProcessor = routeProcessor;
@@ -25,25 +26,23 @@ public class Json2DocumentConverter {
 	public boolean buildDocumentFromJson() throws NotesException {
 		boolean update = false;
 		for (MappingField mfField : routeProcessor.getMappingFields().values()) {
-			if (jso.containsKey(mfField.getJsonName())) {
+			if (jso.containsKey(mfField.getJsonName()) && !mfField.isReadOnly()) {
 				mfField.getType().processJsonValueToDocument(jso, doc, mfField);
 				update = true;
 			}
 		}
 		for (MappingField field : routeProcessor.getFormulaFields()) {
-			processFormulaToJson(jso, field, doc);
-			update = true;
-		}
-		if (update) {
-			doc.save(true, false, true);
+			if (!field.isReadOnly()) {
+				processFormulaToDocument(jso, field, doc);
+				update = true;
+			}
 		}
 		return update;
 	}
 
-	private void processFormulaToJson(JsonObject jo, MappingField field, Document doc) throws NotesException {
+	private void processFormulaToDocument(JsonObject jo, MappingField field, Document doc) throws NotesException {
 		Vector<?> result = doc.getParentDatabase().getParent().evaluate(field.getFormula(), doc);
-		field.getType().processValuesToJsonObject(result, jo, field.getJsonName());
+		field.getType().processJsonValueToDocument(result,doc,field.getNotesFieldName());
 	}
-
 
 }

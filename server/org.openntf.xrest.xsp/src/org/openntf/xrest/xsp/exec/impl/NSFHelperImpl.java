@@ -41,18 +41,12 @@ public class NSFHelperImpl implements NSFHelper {
 
 	@Override
 	public void computeWithForm(Document doc) throws NotesException {
-		boolean rc = doc.computeWithForm(false, false);
-		if (rc) {
-			doc.save(true, false, true);
-		}
+		doc.computeWithForm(false, false);
 	}
 
 	@Override
 	public void computeWithFormAndValidate(Document doc) throws NotesException {
-		boolean rc = doc.computeWithForm(false, true);
-		if (rc) {
-			doc.save(true, false, true);
-		}
+		doc.computeWithForm(false, true);
 	}
 
 	@Override

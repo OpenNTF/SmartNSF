@@ -85,7 +85,7 @@ public class TestEvents extends AbstractRouterBasics {
 		expect(context.getRouterVariables()).andReturn(rv);
 		NSFHelper nsfHelper = createNiceMock(NSFHelper.class);
 		expect(context.getNSFHelper()).andReturn(nsfHelper);
-		expect(nsfHelper.makeDocumentAsChild("123", doc)).andReturn(true);
+		//expect(nsfHelper.makeDocumentAsChild("123", doc)).andReturn(true);
 		replay(context, nsfHelper, doc);
 
 		RouteProcessor rp = router.find("POST", "customers/123/phonecall/@new");
@@ -104,7 +104,7 @@ public class TestEvents extends AbstractRouterBasics {
 		Document doc = createNiceMock(Document.class);
 		NSFHelper nsfHelper = createNiceMock(NSFHelper.class);
 		expect(context.getNSFHelper()).andReturn(nsfHelper);
-		expect(nsfHelper.executeAgent("processHistory", doc)).andReturn(true);
+		//expect(nsfHelper.executeAgent("processHistory", doc)).andReturn(true);
 		replay(context, nsfHelper, doc);
 
 		RouteProcessor rp = router.find("POST", "customers/123/phonecall/@new");
