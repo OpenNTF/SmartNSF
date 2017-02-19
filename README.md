@@ -1,4 +1,4 @@
-XRest API
+SmartNSF
 =============
 
 OPENNTF
