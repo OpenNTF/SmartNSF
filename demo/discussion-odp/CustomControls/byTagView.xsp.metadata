@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="496" sequence="213" unid="05AB80ECDFA9D00C80257917004CA9B7">
+<created><datetime dst="true">20110926T145721,83+01</datetime></created>
+<modified><datetime>20170121T105730,71+01</datetime></modified>
+<revised><datetime dst="true">20130919T143524,88-04</datetime></revised>
+<lastaccessed><datetime>20170121T105730,71+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105730,71+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$TITLE"><text>byTagView.xsp</text></item>
+<item name="$Flags"><text>gC~4;</text></item>
+
+
+
+
+
+
+
+<item name="$FileNames" sign="true"><text>byTagView.xsp</text></item>
+<item name="$DesignerVersion" sign="true"><text>9.0.1</text></item>
+
+
+</note>

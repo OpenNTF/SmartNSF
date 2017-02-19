@@ -1,0 +1,56 @@
+
+<div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<b>{{topCtrl.data.topic.topic}}</b><br> <small>by {{topCtrl.data.topic.author}} {{topCtrl.data.topic.date| date:'dd.MM.yyyy HH:mm'}}</small>
+			</div>
+			<div class="panel-body"><p ng-bind-html="topCtrl.data.topic.content"></p></div>
+			<div class="panel-footer"><span ng-repeat="cat in topCtrl.data.topic.categories"class="badge">{{cat}}</span></div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Comments
+			</div>
+			<div class="panel-body">
+				<div class="form-horizontal">
+					<div class="form-group">
+    					<label for="inputCommentSubject" class="col-sm-2 control-label">Topic</label>
+    					<div class="col-sm-10">
+      						<input type="text" class="form-control" id="inputCommentSubject" placeholder="Topic" ng-model="topCtrl.newcomment.topic">
+    					</div>
+  					</div>
+  					<div class="form-group">
+    					<label for="inputCommentContent" class="col-sm-2 control-label">Comment</label>
+    					<div class="col-sm-10">
+							<textarea class="form-control" rows="3" ng-model="topCtrl.newcomment.content" id="inputCommentContent"></textarea>
+    					</div>
+  					</div>
+  					<div class="form-group">
+    					<div class="col-sm-offset-2 col-sm-10">
+							<button class="btn btn-primary" type="button" ng-click="topCtrl.addComment()">Post!</button>
+    					</div>
+  					</div>
+      			</div>
+      		</div>
+			<table class="table table-condensed">
+				<tr ng-repeat-start="comment in topCtrl.comments | orderBy: 'date' : reverse ='true'">
+					<td>{{comment.date}}</td>
+					<td>{{comment.topic}}</td>
+					<td>{{comment.author}}</td>
+				</tr>
+				<tr ng-repeat-end>
+					<td colspan="3" ng-bind-html="comment.content"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+</div>

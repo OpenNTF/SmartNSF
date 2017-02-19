@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:xe="http://www.ibm.com/xsp/coreex"
+	xmlns:xc="http://www.ibm.com/xsp/custom">
+	<xp:this.beforePageLoad>
+		<![CDATA[#{javascript:
+			var _request = facesContext.getExternalContext().getRequest();
+			var _cookies = _request.getHeader("Cookie");
+			// See here what cookies we need to analyze:
+			// http://www-01.ibm.com/support/docview.wss?uid=swg27003558
+			// Also - for Domino 8.5.4 you could have just LtpaToken2 SSO
+			var _isSessionAuth = (@Contains(_cookies, "DomAuthSessId") === 1 || 
+			@Contains(_cookies, "LtpaToken") === 1 || 
+			@Contains(_cookies, "LtpaToken2") === 1) ? true : false;
+			viewScope.put("isSessionAuth", _isSessionAuth);
+		}]]>
+	</xp:this.beforePageLoad>
+	<xe:djxmHeading id="djxmHeading0" styleClass="mblLoginText">
+		<xe:this.label><![CDATA[#{javascript:
+			@DbTitle();
+		}]]></xe:this.label>
+		<xp:this.facets>
+			<xe:toolBarButton id="link1" xp:key="actionFacet">
+				<xp:this.rendered>
+					<![CDATA[#{javascript:
+						if(view.isRenderingPhase()){
+							if((userBean.canonicalName !== "Anonymous") && (viewScope.get("isSessionAuth") === false)){
+								return false;
+							}
+							return true;
+						}
+					}]]>
+				</xp:this.rendered>
+				<xp:this.label><![CDATA[#{javascript:
+					if(userBean.canonicalName === 'Anonymous')
+					{
+						return res.getString("banner.login");
+					}
+					else if(viewScope.get("isSessionAuth") === true)
+					{
+						return res.getString("banner.logout");
+					}
+				}]]></xp:this.label>
+				<xp:this.href>
+					<![CDATA[#{javascript:
+						if(userBean.canonicalName === 'Anonymous')
+						{
+							return facesContext.getExternalContext().getRequestContextPath() + "?opendatabase&login";
+						}
+						else
+						{
+							return facesContext.getExternalContext().getRequestContextPath() + "?logout";
+						}
+					}]]>
+				</xp:this.href>
+			</xe:toolBarButton>
+		</xp:this.facets>
+	</xe:djxmHeading>
+	<xe:outline>
+		<xe:this.treeNodes>
+			<xe:basicLeafNode href="#allDocs"
+				label="All Documents">
+			</xe:basicLeafNode>
+			<xe:basicLeafNode label="Most Recent"
+				href="#mostRecent">
+			</xe:basicLeafNode>
+			<xe:basicLeafNode label="By Author" href="#docsByAuthor">
+			</xe:basicLeafNode>
+			<xe:basicLeafNode label="By Tag"
+				href="#tags">
+			</xe:basicLeafNode>
+			<xe:basicLeafNode label="My Documents"
+				href="#myDocs">
+			</xe:basicLeafNode>
+			<xe:basicLeafNode href="#profile" style="overflow: hidden;"
+				label="#{javascript: I18n.format(res.getString('my.profile'), userBean.commonName)}">
+				<xp:this.rendered><![CDATA[#{javascript:
+					userBean.canonicalName !== "Anonymous";
+				}]]></xp:this.rendered>
+			</xe:basicLeafNode>
+		</xe:this.treeNodes>
+	</xe:outline>
+</xp:view>

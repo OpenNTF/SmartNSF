@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XREST API Plugin
+Bundle-SymbolicName: org.openntf.xrest.xsp.testsuite
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: WebGate Consulting AG
+Fragment-Host: org.openntf.xrest.xsp
+Require-Bundle: org.junit;bundle-version="4.11.0"
+Import-Package: lotus.domino
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/commons-io.jar,
+ lib/objenesis.jar,
+ lib/easymock.jar,
+ lib/cglib-nodep.jar

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.xrest.xsp.library.XRestLibrary"
+            type="com.ibm.xsp.Library">
+      </service>
+   </extension>
+   
+   <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.xsp.adapter.servletFactory" class="org.openntf.xrest.xsp.servlet.XRestAPIServletFactory" />
+   </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.xrest.xsp.script.XRestFactories"
+            type="com.ibm.xsp.library.Contributor">
+      </service>
+   </extension>
+    
+</plugin>

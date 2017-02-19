@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="556" sequence="37" unid="99DB5340169E76CB80257949004B816E">
+<created><datetime>20111115T134443,34+00</datetime></created>
+<modified><datetime>20170121T105731,67+01</datetime></modified>
+<revised><datetime dst="true">20130919T143526,42-04</datetime></revised>
+<lastaccessed><datetime>20170121T105731,67+01</datetime></lastaccessed>
+<addedtofile><datetime>20170121T105731,67+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></updatedby>
+<wassignedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name></wassignedby>
+<item name="$TITLE"><text>blackberry.theme</text></item>
+<item name="$Flags"><text>34567Cg~`</text></item>
+<item name="$DesignerVersion" sign="true"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>blackberry.theme</text></item></note>

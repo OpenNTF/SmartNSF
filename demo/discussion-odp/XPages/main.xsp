@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" viewState="nostate"
+	rendered="false">
+	<xp:this.afterPageLoad>
+		<![CDATA[#{javascript:
+            if(deviceBean.isMobile() || deviceBean.isTablet()){
+                context.redirectToPage("/mobile.xsp", true);
+            }else{
+                context.redirectToPage("/allDocuments.xsp", true);  
+            }
+		}]]>
+	</xp:this.afterPageLoad>
+</xp:view>

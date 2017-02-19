@@ -1,0 +1,6 @@
+<div>
+<div class="row"><div class="col-md-8"><h3>All Discussions</h3></div><div class="col-md-4 text-right"><input type="button" class="btn btn-primary" value="New Topic" ng-click="ovCtrl.newTopic()"></input></div></div>
+<table class="table">
+<tr ng-repeat="topic in ovCtrl.topics | orderBy: 'date' : reverse ='true'" ng-click="ovCtrl.openTopic(topic.id)"><td>{{topic.date| date:'dd.MM.yyyy HH:mm'}}</td><td>{{topic.topic}}</td><td>{{topic.author}}</td></tr>
+</table>
+</div>

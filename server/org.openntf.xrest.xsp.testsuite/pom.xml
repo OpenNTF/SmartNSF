@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.xrest</groupId>
+		<artifactId>xrest.xsp.parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>org.openntf.xrest.xsp.testsuite</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+	<name>XREST API TestSuite</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<systemProperties>
+						<junit-test-running>yes</junit-test-running>
+					</systemProperties>
+					<useUIHarness>false</useUIHarness>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.6.1</version>
+
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>lib</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+
+				<configuration>
+					<excludeTransitive>true</excludeTransitive>
+					<includeGroupIds>org.codehaus.groovy</includeGroupIds>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>commons-io</groupId>
+									<artifactId>commons-io</artifactId>
+									<version>2.5</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.easymock</groupId>
+									<artifactId>easymock</artifactId>
+									<version>3.3</version>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.objenesis</groupId>
+									<artifactId>objenesis</artifactId>
+									<version>2.1</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>cglib</groupId>
+									<artifactId>cglib-nodep</artifactId>
+									<version>2.2.2</version>
+								</artifactItem>
+							</artifactItems>
+							<includeScope>compile</includeScope>
+							<includeTypes>jar</includeTypes>
+							<outputDirectory>lib</outputDirectory>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<stripVersion>true</stripVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+	<properties>
+		<!-- Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=397015 -->
+		<sonar.sources></sonar.sources>
+		<sonar.tests>src</sonar.tests>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+	</dependencies>
+</project>

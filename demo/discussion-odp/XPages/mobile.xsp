@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:xe="http://www.ibm.com/xsp/coreex"
+	xmlns:xc="http://www.ibm.com/xsp/custom" pageTitle="Discussion">
+
+	<xe:singlePageApp id="DiscussionApp"
+		selectedPageName="mostRecent">
+
+		<xe:appPage resetContent="true" id="home" pageName="home">
+			<xc:mobile_home></xc:mobile_home>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" preload="true" id="profile"
+			pageName="profile">
+			<xc:authorProfileForm></xc:authorProfileForm>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" preload="true" id="newTopic"
+			pageName="newTopic">
+			<xc:mobile_newTopic></xc:mobile_newTopic>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="allDocs"
+			pageName="allDocs">
+			<xc:allDocumentsView></xc:allDocumentsView>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="mostRecent"
+			pageName="mostRecent">
+			<xc:byMostRecentView></xc:byMostRecentView>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="docsByAuthor"
+			pageName="docsByAuthor">
+			<xc:byAuthorView></xc:byAuthorView>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="tags" pageName="tags">
+			<xc:byTagView></xc:byTagView>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="myDocs" pageName="myDocs">
+			<xc:myDocumentsView></xc:myDocumentsView>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="authorProfile"
+			pageName="authorProfile">
+			<xc:authorProfileView></xc:authorProfileView>
+		</xe:appPage>
+
+		<xe:appPage id="document" resetContent="true"
+			pageName="document">
+			<xc:viewTopic></xc:viewTopic>
+		</xe:appPage>
+
+		<xe:appPage resetContent="false" id="replyThread"
+			pageName="replyThread">
+			<xc:response></xc:response>
+		</xe:appPage>
+
+		<xe:appPage resetContent="true" id="largeContent"
+			pageName="largeContent">
+			<xc:mobile_largeContent></xc:mobile_largeContent>
+		</xe:appPage>
+
+		<xe:appPage id="document2" resetContent="true"
+			pageName="document2">
+			<xc:viewTopic2></xc:viewTopic2>
+		</xe:appPage>
+	</xe:singlePageApp>
+</xp:view>
