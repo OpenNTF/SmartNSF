@@ -36,15 +36,18 @@ public class Document2JsonConverter {
 		Vector<Item> documentItems = doc.getItems();
 		Map<String, MappingField> fieldDefinition = routeProcessor.getMappingFields();
 		for (Item item : documentItems) {
-			if (!itemProcessed.contains(item.getName())) {
-				if (fieldDefinition.containsKey(item.getName().toLowerCase())) {
-				processItem(jo, item, fieldDefinition.get(item.getName().toLowerCase()));
-				itemProcessed.add(item.getName());
+			if (!itemProcessed.contains(item.getName()) && fieldDefinition.containsKey(item.getName().toLowerCase())) {
+				MappingField mf = fieldDefinition.get(item.getName().toLowerCase());
+				if (!mf.isWriteOnly()) {
+					processItem(jo, item, mf);
+					itemProcessed.add(item.getName());
 				}
 			}
 		}
 		for (MappingField field : routeProcessor.getFormulaFields()) {
-			processFormulaToJson(jo, field, doc);
+			if (!field.isWriteOnly()){
+				processFormulaToJson(jo, field, doc);
+			}
 		}
 		return jo;
 	}

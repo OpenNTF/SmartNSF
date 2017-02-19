@@ -8,6 +8,8 @@ public class MappingField {
 	private final String jsonName;
 	private final MapJsonType type;
 	private final boolean isFormula;
+	private final boolean isReadonly;
+	private final boolean isWriteonly;
 	private final String formula;
 
 	public MappingField(String name) {
@@ -16,6 +18,8 @@ public class MappingField {
 		type = MapJsonType.DEFAULT;
 		isFormula = false;
 		formula = "";
+		isReadonly = false;
+		isWriteonly = false;
 	}
 
 	public MappingField(String name, Map<String, Object> options) {
@@ -23,6 +27,8 @@ public class MappingField {
 		jsonName = getFromMap("json", options, name);
 		type = getFromMapAsMTP("type", options, MapJsonType.DEFAULT);
 		isFormula = getFromMapAsBoolean("isformula", options, false);
+		isReadonly = getFromMapAsBoolean("readonly", options, false);
+		isWriteonly = getFromMapAsBoolean("writeonly", options, false);
 		formula = getFromMap("formula", options, "");
 	}
 
@@ -67,4 +73,13 @@ public class MappingField {
 	public String getFormula() {
 		return formula;
 	}
+	
+	public boolean isReadOnly() {
+		return isReadonly;
+	}
+	public boolean isWriteOnly() {
+		return isWriteonly;
+	}
+
+
 }

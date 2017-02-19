@@ -1,4 +1,4 @@
-var app = angular.module('disc', [ 'ngResource', 'ui.router','ui.bootstrap','ngSanitize']);
+var app = angular.module('disc', [ 'ngResource', 'ui.router','ui.bootstrap','ngSanitize','ngQuill']);
 
 app.config( function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise("/home");
@@ -26,6 +26,10 @@ app.config( function($stateProvider, $urlRouterProvider) {
 	$stateProvider.state(newTopicState);
 });
 
+app.config(['ngQuillConfigProvider', function (ngQuillConfigProvider) {
+    ngQuillConfigProvider.set(null, null, 'custom placeholder');
+}]);
+
 app.controller('OverviewCtrl',['TopicService','$state', function(TopicService, $state) {
 	var vm = this;
 	vm.topics = TopicService.overview();
@@ -37,6 +41,24 @@ app.controller('OverviewCtrl',['TopicService','$state', function(TopicService, $
 	}
 	
 } ]);
+
+app.controller('NewTopicCtrl',['TopicService','$state', function(TopicService, $state) {
+	var vm = this;
+	vm.data = { id:"@new"};
+	vm.inputCategories = "";
+	vm.saveTopic = function() {
+		if (vm.inputCategories != '') {
+			vm.data.categories = vm.inputCategories.split(',');
+		}
+		TopicService.saveTopic(vm.data);
+		$state.go('home');
+
+	}
+	vm.postDisabled = function() {
+		return vm.topicForm.$invalid;
+	}
+} ]);
+
 
 app.controller('TopicCtrl',['TopicService','$state','$stateParams', function(TopicService, $state,$stateParams) {
 	var vm = this;
@@ -64,6 +86,9 @@ app.factory('TopicService', [ '$resource', function($resource) {
 	}
 	topicsService.getTopic = function(id) {
 		return topicsService.store.get({'id':id});
+	}
+	topicsService.saveTopic = function(topic) {
+		return topicsService.store.save(topic);
 	}
 	topicsService.getComments = function(parentId) {
 		return topicsService.commentstore.query({parentid:parentId});		

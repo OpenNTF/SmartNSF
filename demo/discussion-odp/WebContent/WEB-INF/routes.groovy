@@ -37,6 +37,8 @@ router.POST('topics/{id}') {
 	mapJson "body", json:'content', type:'MIME'
 	mapJson 'categories', json:'categories', type:'ARRAY_OF_STRING', readonly:true
 	mapJson 'NewCats', json:'categories', type:'ARRAY_OF_STRING', writeonly:true
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)', readonly:true
+	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)', readonly:true
 	
 	events PRE_SAVE_DOCUMENT: {
 		context, document ->
@@ -76,7 +78,6 @@ router.GET('topics/{parent_id}/comments/{id}') {
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
 	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
-
 }
 
 router.POST('topics/{parent_id}/comments/{id}') {
@@ -87,6 +88,9 @@ router.POST('topics/{parent_id}/comments/{id}') {
 	mapJson "Subject", json:'topic', type:'STRING'
 	mapJson "body", json:'content', type:'MIME'
 	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)', readonly:true
+	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)', readonly:true
+	
 	events PRE_SAVE_DOCUMENT:{
 		context, document ->
 		parentId = context.getRouterVariables().get('parent_id')
