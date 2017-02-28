@@ -72,7 +72,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 			if (null != viewAccess) {
 				viewAccess.recycle();
 			}
-			if (null != dbAccess] {
+			if (null != dbAccess) {
 				dbAccess.recycle();
 			}
 		} catch (Exception e) {
