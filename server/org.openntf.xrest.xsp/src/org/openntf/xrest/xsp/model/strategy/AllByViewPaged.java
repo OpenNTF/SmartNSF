@@ -29,31 +29,11 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 					context.getSession());
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			vnav = viewAccess.createViewNav();
-			String paramStart = context.getRequest().getParameter("start");
-			String paramCount = context.getRequest().getParameter("count");
-			int start = DEFAULT_START;
-			try {
-				if (null != paramStart) {
-					start = Integer.valueOf(paramStart);
-					if (start < 1) {
-						start = DEFAULT_START;
-					}
-					// we may need to check if start is not greater than
-					// vnav.getCount() and issue an error message? the code
-					// works without it, but returns an empty list
-				}
-			} catch (NumberFormatException e) {
-			}
-			int count = DEFAULT_COUNT;
-			try {
-				if (null != paramCount) {
-					count = Integer.valueOf(paramCount);
-					if (count < 1) {
-						count = DEFAULT_COUNT;
-					}
-				}
-			} catch (NumberFormatException e) {
-			}
+			// TODO: should probably check if dbAccess, viewAccess and vnav are
+			// not null before proceeding
+
+			int start = getParam(context.getRequest().getParameter("start"), DEFAULT_START);
+			int count = getParam(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 			List<Document> docs = new ArrayList<Document>();
 			entNext = vnav.getNth(start);
 			int i = 0;
@@ -67,6 +47,20 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
+	}
+
+	private int getParam(final String param, final int defaultVal) {
+		int count = defaultVal;
+		try {
+			if (null != param) {
+				count = Integer.parseInt(param);
+				if (count < 1) {
+					count = defaultVal;
+				}
+			}
+		} catch (NumberFormatException e) {
+		}
+		return count;
 	}
 
 	@Override
