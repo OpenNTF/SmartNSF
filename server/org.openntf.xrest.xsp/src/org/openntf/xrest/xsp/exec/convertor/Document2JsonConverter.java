@@ -9,6 +9,7 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.MapJsonType;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
@@ -49,12 +50,14 @@ public class Document2JsonConverter {
 				processFormulaToJson(jo, field, doc);
 			}
 		}
+		NotesObjectRecycler.recycleObjects(documentItems.toArray());
 		return jo;
 	}
 
 	private void processFormulaToJson(JsonObject jo, MappingField field, Document doc) throws NotesException {
 		Vector<?> result = context.getSession().evaluate(field.getFormula(), doc);
 		field.getType().processValuesToJsonObject(result, jo, field.getJsonName());
+		NotesObjectRecycler.recycleObjects(result.toArray());
 	}
 
 	private void processItem(JsonObject jo, Item item, MappingField mappingField) throws NotesException {
@@ -67,7 +70,6 @@ public class Document2JsonConverter {
 			break;
 		case Item.MIME_PART:
 		case Item.RICHTEXT:
-			// TODO: Should we force MIME Handling.... I think so
 			mjType.processItemToJsonObject(item, jo, mappingField.getJsonName());
 			break;
 		default:

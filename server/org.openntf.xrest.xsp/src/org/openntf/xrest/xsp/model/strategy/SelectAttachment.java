@@ -5,16 +5,20 @@ import java.io.OutputStream;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
 import org.openntf.xrest.xsp.model.AttachmentSelectionType;
 import org.openntf.xrest.xsp.model.AttachmentUpdateType;
+import org.openntf.xrest.xsp.model.DataContainer;
+import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Strategy;
 
 import groovy.lang.Closure;
+import lotus.domino.NotesException;
 
-public class SelectAttachment implements StrategyModel<OutputStream> {
+public class SelectAttachment implements StrategyModel<DocumentDataContainer,OutputStream> {
 
 	private Strategy strategyValue;
-	private StrategyModel<?> strategyModel;
+	private StrategyModel<?,?> strategyModel;
 
 	private String fieldName;
 	private Closure<?> fieldNameCl;
@@ -54,8 +58,7 @@ public class SelectAttachment implements StrategyModel<OutputStream> {
 	}
 
 	@Override
-	public OutputStream getModel(Context context) throws ExecutorException {
-		// TODO Auto-generated method stub
+	public OutputStream buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
 		return null;
 	}
 
@@ -88,5 +91,11 @@ public class SelectAttachment implements StrategyModel<OutputStream> {
 	public AttachmentUpdateType getUpdateType() {
 		return updateTypeValue;
 	}
+
+	@Override
+	public DocumentDataContainer buildDataContainer(Context context) throws ExecutorException {
+		return null;
+	}
+
 
 }
