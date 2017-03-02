@@ -20,7 +20,8 @@ import lotus.domino.View;
 import lotus.domino.ViewEntry;
 import lotus.domino.ViewNavigator;
 
-public class AllByViewPaged extends AbstractViewDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
+public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
+		StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 	private Database dbAccess;
 	private View viewAccess;
 	private ViewNavigator vnav;
@@ -37,8 +38,8 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			vnav = viewAccess.createViewNav();
 
-			int start = getParam(context.getRequest().getParameter("start"), DEFAULT_START);
-			int count = getParam(context.getRequest().getParameter("count"), DEFAULT_COUNT);
+			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
+			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 
 			List<Document> docs = new ArrayList<Document>();
 
@@ -109,8 +110,10 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 	}
 
 	@Override
-	public JsonObject buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor,
+			final DataContainer<?> dc) throws NotesException {
 		DocumentListPaginationDataContainer docListDC = (DocumentListPaginationDataContainer) dc;
 		DocumentListPaged2JsonConverter d2jc = new DocumentListPaged2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
-	}}
+	}
+}
