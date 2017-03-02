@@ -71,17 +71,17 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 	 * @return int value of param or defaulVal
 	 */
 	private int getParamIntValue(final String param, final int defaultVal) {
-		int count = defaultVal;
-		try {
-			if (null != param) {
-				count = Integer.parseInt(param);
-				if (count < 1) {
-					count = defaultVal;
+		int ret = defaultVal;
+		if (null != param && !param.isEmpty()) {
+			try {
+				ret = Integer.parseInt(param);
+				if (ret < 1) {
+					ret = defaultVal;
 				}
+			} catch (NumberFormatException e) {
 			}
-		} catch (NumberFormatException e) {
 		}
-		return count;
+		return ret;
 	}
 
 	@Override
