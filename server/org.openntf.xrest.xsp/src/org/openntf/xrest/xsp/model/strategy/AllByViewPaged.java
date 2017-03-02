@@ -43,12 +43,14 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 
 			List<Document> docs = new ArrayList<Document>();
 
-			int skippedEntries = 1;
+			int skippedEntries = 0;
+			// skip only when not starting at the beginning
 			if (start > 1) {
-				// skip only when not starting at the beginning
-				skippedEntries = vnav.skip(start);
+				// skip counts from 0, so for start==2 we should skip(1)
+				skippedEntries = vnav.skip(start - 1);
 			}
-			if (skippedEntries == start) {
+
+			if (skippedEntries == start - 1) {
 				entCurrent = vnav.getCurrent();
 				int i = 0;
 				while (entCurrent != null && entCurrent.isValid() && i < count) {
