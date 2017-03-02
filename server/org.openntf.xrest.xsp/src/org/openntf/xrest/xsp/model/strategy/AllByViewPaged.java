@@ -38,13 +38,19 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			vnav = viewAccess.createViewNav();
 
+			// TODO: test if creating another ViewNavigator is not in fact
+			// slower than vnav.getCount()
+			ViewNavigator vnavCnt = viewAccess.createViewNav();
+			int total = vnavCnt.skip(Integer.MAX_VALUE) + 1;
+			vnavCnt.recycle();
+
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 
 			List<Document> docs = new ArrayList<Document>();
 
 			int skippedEntries = 0;
-			// skip only when not starting at the beginning
+			// skip only when not starting at 1
 			if (start > 1) {
 				// skip counts from 0, so for start==2 we should skip(1)
 				skippedEntries = vnav.skip(start - 1);
@@ -63,9 +69,10 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 				}
 			} else {
 				// TODO: handle the situation when we did not skipped to desired
-				// start: is it because we are already at the end of view?
+				// start position: is it because we are already at the end of
+				// view? Or could it happen at all?
 			}
-			return new DocumentListPaginationDataContainer(docs, start, count, vnav.getCount());
+			return new DocumentListPaginationDataContainer(docs, start, count, total);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
