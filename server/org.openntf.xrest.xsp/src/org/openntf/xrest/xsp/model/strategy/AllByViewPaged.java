@@ -36,7 +36,11 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 			List<Document> docs = new ArrayList<Document>();
 
-			int skippedEntries = vnav.skip(start);
+			int skippedEntries = 1;
+			if (start > 1) {
+				// skip only when not starting at the beginning
+				skippedEntries = vnav.skip(start);
+			}
 			if (skippedEntries == start) {
 				entCurrent = vnav.getCurrent();
 				int i = 0;
