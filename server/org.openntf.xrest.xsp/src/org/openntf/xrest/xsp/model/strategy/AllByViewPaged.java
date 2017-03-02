@@ -17,7 +17,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 	private Database dbAccess;
 	private View viewAccess;
 	private ViewNavigator vnav;
-	private ViewEntry entNext;
+	private ViewEntry entCurrent;
 
 	private static final int DEFAULT_START = 1;
 	private static final int DEFAULT_COUNT = 10;
@@ -32,16 +32,25 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 			// TODO: should probably check if dbAccess, viewAccess and vnav are
 			// not null before proceeding
 
-			int start = getParam(context.getRequest().getParameter("start"), DEFAULT_START);
-			int count = getParam(context.getRequest().getParameter("count"), DEFAULT_COUNT);
+			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
+			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 			List<Document> docs = new ArrayList<Document>();
-			entNext = vnav.getNth(start);
-			int i = 0;
-			while (entNext != null && i < count) {
-				ViewEntry entProcess = entNext;
-				entNext = vnav.getNext(entNext);
-				docs.add(dbAccess.getDocumentByUNID(entProcess.getUniversalID()));
-				i++;
+
+			int skippedEntries = vnav.skip(start);
+			if (skippedEntries == start) {
+				entCurrent = vnav.getCurrent();
+				int i = 0;
+				while (entCurrent != null && entCurrent.isValid() && i < count) {
+					docs.add(dbAccess.getDocumentByUNID(entCurrent.getUniversalID()));
+					i++;
+					ViewEntry nextEntry = vnav.getNext();
+					// recycle!
+					entCurrent.recycle();
+					entCurrent = nextEntry;
+				}
+			} else {
+				// TODO: handle the situation when we did not skipped to desired
+				// start: is it because we are already at the end of view?
 			}
 			return docs;
 		} catch (Exception ex) {
@@ -49,7 +58,15 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 		}
 	}
 
-	private int getParam(final String param, final int defaultVal) {
+	/**
+	 * Convert given param to int, assing defaultVal when it is empty or less
+	 * than 1
+	 * 
+	 * @param param
+	 * @param defaultVal
+	 * @return int value of param or defaulVal
+	 */
+	private int getParamIntValue(final String param, final int defaultVal) {
 		int count = defaultVal;
 		try {
 			if (null != param) {
