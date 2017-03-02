@@ -1,5 +1,6 @@
 println ("building routing...")
 
+
 router.GET('topics') {
 	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
 		viewName('($All)')
@@ -39,6 +40,7 @@ router.POST('topics/{id}') {
 	mapJson 'NewCats', json:'categories', type:'ARRAY_OF_STRING', writeonly:true
 	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)', readonly:true
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)', readonly:true
+	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID', readonly:true
 	
 	events PRE_SAVE_DOCUMENT: {
 		context, document ->

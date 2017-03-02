@@ -1,16 +1,8 @@
 package org.openntf.xrest.xsp.exec.impl;
 
-import java.util.List;
-
-import org.openntf.xrest.xsp.exec.DataModel;
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
-
-import com.ibm.commons.util.io.json.JsonArray;
-import com.ibm.commons.util.io.json.JsonJavaArray;
-import com.ibm.commons.util.io.json.JsonObject;
-
-import lotus.domino.Document;
 
 public class GETRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
@@ -19,22 +11,9 @@ public class GETRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataModel<?> model) {
+	protected void executeMethodeSpecific(Context context, DataContainer<?> container) {
 		try {
-			if (model.isList()) {
-				JsonArray jsa = new JsonJavaArray();
-				@SuppressWarnings("unchecked")
-				List<Document> documents = (List<Document>) model.getData();
-				for (Document doc : documents) {
-					JsonObject jo = buildJsonFromDocument(doc);
-					jsa.add(jo);
-				}
-				setResultPayload(jsa);
-			} else {
-				Document doc = (Document) model.getData();
-				JsonObject jo = buildJsonFromDocument(doc);
-				setResultPayload(jo);
-			}
+			setResultPayload(getRouteProcessor().getStrategyModel().buildResponse(context, getRouteProcessor(), container));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
