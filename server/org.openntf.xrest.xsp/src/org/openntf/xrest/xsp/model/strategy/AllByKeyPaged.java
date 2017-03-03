@@ -56,7 +56,7 @@ public class AllByKeyPaged extends AbstractKeyViewDatabaseStrategy implements
 				i++;
 			}
 			dcl.recycle();
-			return new DocumentListPaginationDataContainer(docs, start, count, total);
+			return new DocumentListPaginationDataContainer(docs, start, docs.size(), total);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
