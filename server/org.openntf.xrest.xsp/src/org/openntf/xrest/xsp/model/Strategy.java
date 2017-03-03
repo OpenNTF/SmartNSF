@@ -1,6 +1,7 @@
 package org.openntf.xrest.xsp.model;
 
 import org.openntf.xrest.xsp.model.strategy.AllByKey;
+import org.openntf.xrest.xsp.model.strategy.AllByKeyPaged;
 import org.openntf.xrest.xsp.model.strategy.AllByView;
 import org.openntf.xrest.xsp.model.strategy.AllByViewPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByFT;
@@ -18,15 +19,16 @@ public enum Strategy {
 	SELECT_ALL_DOCUMENTS_BY_VIEW(AllByView.class),
 	SELECT_ALL_DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
 	SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY(AllByKey.class),
+	SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY_PAGED(AllByKeyPaged.class),
 	SELECT_ATTACHMENT(SelectAttachment.class),;
 
-	private final Class<? extends StrategyModel<?,?>> strategyClass;
+	private final Class<? extends StrategyModel<?, ?>> strategyClass;
 
-	private Strategy(final Class<? extends StrategyModel<?,?>> cl) {
+	private Strategy(final Class<? extends StrategyModel<?, ?>> cl) {
 		this.strategyClass = cl;
 	}
 
-	public StrategyModel<?,?> constructModel() throws InstantiationException, IllegalAccessException {
+	public StrategyModel<?, ?> constructModel() throws InstantiationException, IllegalAccessException {
 		return strategyClass.newInstance();
 	}
 }
