@@ -36,19 +36,24 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(),
 					context.getSession());
 			viewAccess = dbAccess.getView(getViewNameValue(context));
-			vnav = viewAccess.createViewNav();
+			viewAccess.setAutoUpdate(false);
 
-			// TODO: test if creating another ViewNavigator is not in fact
-			// slower than vnav.getCount()
-			ViewNavigator vnavCnt = viewAccess.createViewNav();
-			int total = vnavCnt.skip(Integer.MAX_VALUE) + 1;
-			vnavCnt.recycle();
+			int total = -1;
+			if (!context.getRequest().getParameter("totals").equals("off")) {
+				ViewNavigator vnavCnt = viewAccess.createViewNav();
+				vnavCnt.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
+				total = vnavCnt.skip(Integer.MAX_VALUE) + 1;
+				vnavCnt.recycle();
+			}
 
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 
 			List<Document> docs = new ArrayList<Document>();
 
+			vnav = viewAccess.createViewNav();
+			vnav.setCacheGuidance(count, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
+			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
 			int skippedEntries = 0;
 			// skip only when not starting at 1
 			if (start > 1) {
