@@ -24,8 +24,6 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 		StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 	private Database dbAccess;
 	private View viewAccess;
-	private ViewNavigator vnav;
-	private ViewEntry entCurrent;
 
 	private static final int DEFAULT_START = 1;
 	private static final int DEFAULT_COUNT = 10;
@@ -55,7 +53,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 
 			List<Document> docs = new ArrayList<Document>();
 
-			vnav = viewAccess.createViewNav();
+			ViewNavigator vnav = viewAccess.createViewNav();
 			vnav.setCacheGuidance(count, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
 			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
 			int skippedEntries = 0;
@@ -66,7 +64,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			}
 
 			if (skippedEntries == start - 1) {
-				entCurrent = vnav.getCurrent();
+				ViewEntry entCurrent = vnav.getCurrent();
 				int i = 0;
 				while (entCurrent != null && entCurrent.isValid() && i < count) {
 					docs.add(dbAccess.getDocumentByUNID(entCurrent.getUniversalID()));
@@ -81,6 +79,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 				// start position: is it because we are already at the end of
 				// view? Or could it happen at all?
 			}
+			vnav.recycle();
 			return new DocumentListPaginationDataContainer(docs, start, count, total);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
@@ -112,9 +111,6 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 	@Override
 	public void cleanUp() {
 		try {
-			if (null != vnav) {
-				vnav.recycle();
-			}
 			if (null != viewAccess) {
 				viewAccess.recycle();
 			}

@@ -44,6 +44,7 @@ public class AllByView extends AbstractViewDatabaseStrategy implements
 				entCurrent.recycle();
 				entCurrent = nextEntry;
 			}
+			vnav.recycle();
 			return new DocumentListDataContainer(docs);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
