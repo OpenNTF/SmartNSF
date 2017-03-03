@@ -40,7 +40,7 @@ public class AllByKeyPaged extends AbstractKeyViewDatabaseStrategy implements
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 
 			// TODO: add parameter to set exact/partial matching
-			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, true);
+			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, false);
 			int total = dcl.getCount();
 			Document docNext = null;
 			if (start > 1) {
