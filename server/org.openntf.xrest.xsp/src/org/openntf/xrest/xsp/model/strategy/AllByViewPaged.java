@@ -39,7 +39,11 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			viewAccess.setAutoUpdate(false);
 
 			int total = -1;
-			if (!context.getRequest().getParameter("totals").equals("off")) {
+			String totals = context.getRequest().getParameter("totals");
+			// skip counting only if we have parameter totals=off
+			// if parameter is omitted, we assume it is on
+			totals = null == totals ? "on" : totals;
+			if (!totals.equals("off")) {
 				ViewNavigator vnavCnt = viewAccess.createViewNav();
 				vnavCnt.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
 				total = vnavCnt.skip(Integer.MAX_VALUE) + 1;
