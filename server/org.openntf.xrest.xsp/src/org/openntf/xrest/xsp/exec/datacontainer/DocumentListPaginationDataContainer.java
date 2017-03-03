@@ -14,10 +14,10 @@ public class DocumentListPaginationDataContainer implements DataContainer<List<D
 	private final int count;
 	private final long max;
 
-	public DocumentListPaginationDataContainer(List<Document> docs, int start, int count, long max) {
+	public DocumentListPaginationDataContainer(final List<Document> docs, final int start, final long max) {
 		documents = docs;
 		this.start = start;
-		this.count = count;
+		this.count = docs.size();
 		this.max = max;
 	}
 

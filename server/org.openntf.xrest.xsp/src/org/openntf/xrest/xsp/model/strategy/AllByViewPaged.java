@@ -78,7 +78,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 				// view? Or could it happen at all?
 			}
 			vnav.recycle();
-			return new DocumentListPaginationDataContainer(docs, start, docs.size(), total);
+			return new DocumentListPaginationDataContainer(docs, start, total);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
