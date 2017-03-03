@@ -148,10 +148,6 @@ public class RouteProcessor {
 		return mappingFields;
 	}
 	
-	public void cleanUp() {
-		strategyModel.cleanUp();
-	}
-
 	public StrategyModel<?,?> getStrategyModel() {
 		return strategyModel;
 	}

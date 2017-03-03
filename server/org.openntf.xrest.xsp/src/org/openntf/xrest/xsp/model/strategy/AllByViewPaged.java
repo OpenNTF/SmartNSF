@@ -10,7 +10,6 @@ import org.openntf.xrest.xsp.exec.convertor.DocumentListPaged2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListPaginationDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
-import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
@@ -21,17 +20,13 @@ import lotus.domino.View;
 import lotus.domino.ViewEntry;
 import lotus.domino.ViewNavigator;
 
-public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
-		StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
-	private Database dbAccess;
-	private View viewAccess;
+public class AllByViewPaged extends AbstractViewDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(),
-					context.getSession());
-			viewAccess = dbAccess.getView(getViewNameValue(context));
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 
 			int total = -1;
@@ -42,7 +37,6 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			if (!totals.equals("off")) {
 				total = viewAccess.getEntryCount();
 			}
-
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 
@@ -75,20 +69,14 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 				// view? Or could it happen at all?
 			}
 			vnav.recycle();
-			return new DocumentListPaginationDataContainer(docs, start, total);
+			return new DocumentListPaginationDataContainer(docs, start, total, viewAccess, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
 	}
 
 	@Override
-	public void cleanUp() {
-		NotesObjectRecycler.recycle(viewAccess, dbAccess);
-	}
-
-	@Override
-	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor,
-			final DataContainer<?> dc) throws NotesException {
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc) throws NotesException {
 		DocumentListPaginationDataContainer docListDC = (DocumentListPaginationDataContainer) dc;
 		DocumentListPaged2JsonConverter d2jc = new DocumentListPaged2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();

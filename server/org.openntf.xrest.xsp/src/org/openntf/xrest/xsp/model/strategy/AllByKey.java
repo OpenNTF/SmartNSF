@@ -10,7 +10,6 @@ import org.openntf.xrest.xsp.exec.convertor.DocumentList2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
-import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonJavaArray;
 
@@ -20,18 +19,13 @@ import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 import lotus.domino.View;
 
-public class AllByKey extends AbstractKeyViewDatabaseStrategy implements
-		StrategyModel<DocumentListDataContainer, JsonJavaArray> {
-
-	private Database dbAccess;
-	private View viewAccess;
+public class AllByKey extends AbstractKeyViewDatabaseStrategy implements StrategyModel<DocumentListDataContainer, JsonJavaArray> {
 
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(),
-					context.getSession());
-			viewAccess = dbAccess.getView(getViewNameValue(context));
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<Document> docs = new ArrayList<Document>();
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
@@ -44,20 +38,14 @@ public class AllByKey extends AbstractKeyViewDatabaseStrategy implements
 				docs.add(docProcess);
 			}
 			dcl.recycle();
-			return new DocumentListDataContainer(docs);
+			return new DocumentListDataContainer(docs, viewAccess, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
 	}
 
 	@Override
-	public void cleanUp() {
-		NotesObjectRecycler.recycle(viewAccess, dbAccess);
-	}
-
-	@Override
-	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor,
-			final DataContainer<?> dc) throws NotesException {
+	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc) throws NotesException {
 		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
 		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();

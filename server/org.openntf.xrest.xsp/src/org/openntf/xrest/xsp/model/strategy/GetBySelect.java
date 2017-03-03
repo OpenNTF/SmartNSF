@@ -21,11 +21,10 @@ import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
-public class GetBySelect extends AbstractDatabaseStrategy implements StrategyModel<DocumentListDataContainer,JsonJavaArray> {
+public class GetBySelect extends AbstractDatabaseStrategy implements StrategyModel<DocumentListDataContainer, JsonJavaArray> {
 
 	private String selectQueryValue;
 	private Closure<?> selectQueryCl;
-	private Database dbAccess;
 
 	public void selectQuery(String name) {
 		this.selectQueryValue = name;
@@ -46,7 +45,7 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	@Override
 	public DocumentListDataContainer buildDataContainer(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
@@ -56,7 +55,7 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 				docNext = dcl.getNextDocument();
 				docs.add(docProcess);
 			}
-			return new DocumentListDataContainer (docs);
+			return new DocumentListDataContainer(docs, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
@@ -72,17 +71,9 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	}
 
 	@Override
-	public void cleanUp() {
-		try {
-			dbAccess.recycle();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
 	public JsonJavaArray buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
 		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
 		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
-	}}
+	}
+}

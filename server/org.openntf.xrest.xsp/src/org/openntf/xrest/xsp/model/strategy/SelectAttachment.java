@@ -62,12 +62,6 @@ public class SelectAttachment implements StrategyModel<DocumentDataContainer,Out
 		return null;
 	}
 
-	@Override
-	public void cleanUp() {
-		// TODO Auto-generated method stub
-
-	}
-
 	public String getFieldName(Context context) {
 		if (fieldNameCl != null) {
 			return (String) DSLBuilder.callClosure(fieldNameCl, context);

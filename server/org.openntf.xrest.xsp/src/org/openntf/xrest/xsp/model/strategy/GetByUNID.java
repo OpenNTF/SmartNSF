@@ -24,8 +24,6 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	private String formValue;
 	private Closure<?> formCl;
 
-	private Database dbAccess;
-
 	public void keyVariableName(String name) {
 		this.keyVariableValue = name;
 	}
@@ -61,7 +59,7 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	@Override
 	public DocumentDataContainer buildDataContainer(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			String unid = context.getRouterVariables().get(keyVariableValue);
 			if (unid.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
@@ -69,26 +67,17 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 				if (!StringUtil.isEmpty(form)) {
 					doc.replaceItemValue("Form", form);
 				}
-				return new DocumentDataContainer(doc);
+				return new DocumentDataContainer(doc, null, dbAccess);
 			}
-			return new DocumentDataContainer (dbAccess.getDocumentByUNID(unid));
+			return new DocumentDataContainer(dbAccess.getDocumentByUNID(unid), null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
 	}
 
 	@Override
-	public void cleanUp() {
-		try {
-			dbAccess.recycle();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
 	public JsonObject buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
-		Document2JsonConverter d2j = new Document2JsonConverter(((DocumentDataContainer)dc).getData(), routeProcessor, context);
+		Document2JsonConverter d2j = new Document2JsonConverter(((DocumentDataContainer) dc).getData(), routeProcessor, context);
 		return d2j.buildJsonFromDocument();
 	}
 

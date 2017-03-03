@@ -1,15 +1,16 @@
 package org.openntf.xrest.xsp.exec.datacontainer;
 
-import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
+import lotus.domino.Database;
 import lotus.domino.Document;
+import lotus.domino.View;
 
-public class DocumentDataContainer implements DataContainer<Document> {
+public class DocumentDataContainer extends AbstractDataContainer<Document>  {
 
 	public final Document document;
-
-	public DocumentDataContainer(Document doc) {
+	public DocumentDataContainer(Document doc, View view, Database db) {
+		super(view,db);
 		document = doc;
 	}
 
@@ -29,8 +30,9 @@ public class DocumentDataContainer implements DataContainer<Document> {
 	}
 
 	@Override
-	public void cleanUp() {
-		NotesObjectRecycler.recycle(document);
+	protected void executeCleanUp() {
+		NotesObjectRecycler.recycle(document);		
 	}
 
+	
 }

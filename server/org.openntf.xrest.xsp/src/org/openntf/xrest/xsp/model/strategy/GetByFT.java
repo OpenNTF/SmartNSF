@@ -25,7 +25,6 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 
 	private String ftQueryValue;
 	private Closure<?> ftQueryValueCl;
-	private Database dbAccess;
 
 	public String getFtQueryValue(Context context) {
 		if (ftQueryValueCl != null) {
@@ -46,7 +45,7 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 	@Override
 	public DocumentListDataContainer buildDataContainer(Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSearchString(context);
 			DocumentCollection dcl = dbAccess.FTSearch(search);
@@ -56,7 +55,7 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 				docNext = dcl.getNextDocument();
 				docs.add(docProcess);
 			}
-			return new DocumentListDataContainer( docs);
+			return new DocumentListDataContainer(docs, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
@@ -68,16 +67,6 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
 		}
 		return rc;
-	}
-
-	@Override
-	public void cleanUp() {
-		try {
-			dbAccess.recycle();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
