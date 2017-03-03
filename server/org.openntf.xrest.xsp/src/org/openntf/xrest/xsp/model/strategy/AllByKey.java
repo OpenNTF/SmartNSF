@@ -20,16 +20,19 @@ import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 import lotus.domino.View;
 
-public class AllByKey extends AbstractKeyViewDatabaseStrategy implements StrategyModel<DocumentListDataContainer, JsonJavaArray> {
+public class AllByKey extends AbstractKeyViewDatabaseStrategy implements
+		StrategyModel<DocumentListDataContainer, JsonJavaArray> {
 
 	private Database dbAccess;
 	private View viewAccess;
 
 	@Override
-	public DocumentListDataContainer buildDataContainer(Context context) throws ExecutorException {
+	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(),
+					context.getSession());
 			viewAccess = dbAccess.getView(getViewNameValue(context));
+			viewAccess.setAutoUpdate(false);
 			List<Document> docs = new ArrayList<Document>();
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue);
@@ -53,7 +56,8 @@ public class AllByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	}
 
 	@Override
-	public JsonJavaArray buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor,
+			final DataContainer<?> dc) throws NotesException {
 		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
 		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
