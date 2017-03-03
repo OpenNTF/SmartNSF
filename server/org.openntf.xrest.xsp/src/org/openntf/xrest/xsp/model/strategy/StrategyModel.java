@@ -11,5 +11,4 @@ public interface StrategyModel<T extends DataContainer<?>, R> {
 
 	public R buildResponse(Context context, RouteProcessor rp, DataContainer<?> dc) throws NotesException;
 	public T buildDataContainer(Context context) throws ExecutorException;
-	public void cleanUp();
 }

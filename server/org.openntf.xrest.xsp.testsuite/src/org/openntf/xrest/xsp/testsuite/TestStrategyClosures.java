@@ -25,9 +25,9 @@ public class TestStrategyClosures extends AbstractRouterBasics {
 		RouteProcessor rpPOST = router.find("POST", "customers/1292/contract");
 		assertNotNull(rpPOST);
 		assertNotNull(rpGET);
-		StrategyModel<?> modelGET = rpGET.getStrategyModel();
+		StrategyModel<?,?> modelGET = rpGET.getStrategyModel();
 		assertTrue(modelGET instanceof SelectAttachment);
-		StrategyModel<?> modelPOST = rpPOST.getStrategyModel();
+		StrategyModel<?,?> modelPOST = rpPOST.getStrategyModel();
 		assertTrue(modelPOST instanceof SelectAttachment);
 		SelectAttachment saModelGET = (SelectAttachment) modelGET;
 		SelectAttachment saModelPOST = (SelectAttachment) modelPOST;

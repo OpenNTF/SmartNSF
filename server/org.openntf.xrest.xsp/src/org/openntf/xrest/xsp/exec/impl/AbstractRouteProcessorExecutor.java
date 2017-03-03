@@ -172,7 +172,6 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	private void submitValues() throws IOException, JsonException {
 		JsonPayloadProcessor.INSTANCE.processJsonPayload(resultPayload, context.getResponse());
 		dataContainer.cleanUp();
-		routeProcessor.cleanUp();
 	}
 
 	abstract protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException;
