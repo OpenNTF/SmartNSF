@@ -10,6 +10,7 @@ import org.openntf.xrest.xsp.exec.convertor.DocumentListPaged2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListPaginationDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
@@ -24,9 +25,6 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 		StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 	private Database dbAccess;
 	private View viewAccess;
-
-	private static final int DEFAULT_START = 1;
-	private static final int DEFAULT_COUNT = 10;
 
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
@@ -86,41 +84,9 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 		}
 	}
 
-	/**
-	 * Convert given param to int, assing defaultVal when it is empty or less
-	 * than 1
-	 * 
-	 * @param param
-	 * @param defaultVal
-	 * @return int value of param or defaulVal
-	 */
-	private int getParamIntValue(final String param, final int defaultVal) {
-		int ret = defaultVal;
-		if (null != param && !param.isEmpty()) {
-			try {
-				ret = Integer.parseInt(param);
-				if (ret < 1) {
-					ret = defaultVal;
-				}
-			} catch (NumberFormatException e) {
-			}
-		}
-		return ret;
-	}
-
 	@Override
 	public void cleanUp() {
-		try {
-			if (null != viewAccess) {
-				viewAccess.recycle();
-			}
-			if (null != dbAccess) {
-				dbAccess.recycle();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		NotesObjectRecycler.recycle(viewAccess, dbAccess);
 	}
 
 	@Override
