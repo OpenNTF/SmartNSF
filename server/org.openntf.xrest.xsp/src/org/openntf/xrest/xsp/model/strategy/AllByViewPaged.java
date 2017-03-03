@@ -40,10 +40,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements
 			// if parameter is omitted, we assume it is on
 			totals = null == totals ? "on" : totals;
 			if (!totals.equals("off")) {
-				ViewNavigator vnavCnt = viewAccess.createViewNav();
-				vnavCnt.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
-				total = vnavCnt.skip(Integer.MAX_VALUE) + 1;
-				vnavCnt.recycle();
+				total = viewAccess.getEntryCount();
 			}
 
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
