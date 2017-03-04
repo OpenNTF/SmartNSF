@@ -42,11 +42,20 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 		try {
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
 					.getSession());
-			Double st = (Double) context.getJsonPayload().getJsonProperty("start");
-			Double cnt = (Double) context.getJsonPayload().getJsonProperty("count");
-			int start = null != st ? st.intValue() : DEFAULT_START;
-			int count = null != cnt ? cnt.intValue() : DEFAULT_COUNT;
-			String search = (String) context.getJsonPayload().getJsonProperty("ftSearchValue");
+			int start = DEFAULT_START;
+			int count = DEFAULT_COUNT;
+			String search = "";
+			if (context.getRequest().getMethod().equals("POST")) {
+				Double st = (Double) context.getJsonPayload().getJsonProperty("start");
+				Double cnt = (Double) context.getJsonPayload().getJsonProperty("count");
+				start = null != st ? st.intValue() : DEFAULT_START;
+				count = null != cnt ? cnt.intValue() : DEFAULT_COUNT;
+				search = (String) context.getJsonPayload().getJsonProperty("search");
+			} else if (context.getRequest().getMethod().equals("GET")) {
+				start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
+				count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
+				search = context.getRequest().getParameter("search");
+			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			int total = dcl.getCount();
 			return new DocumentListPaginationDataContainer(getPagedListFromDocCollection(dcl, start, count), start, total, null, dbAccess);

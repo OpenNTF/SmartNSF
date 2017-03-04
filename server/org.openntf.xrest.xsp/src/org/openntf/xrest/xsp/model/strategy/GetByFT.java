@@ -2,7 +2,6 @@ package org.openntf.xrest.xsp.model.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
@@ -26,7 +25,7 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 	private String ftQueryValue;
 	private Closure<?> ftQueryValueCl;
 
-	public String getFtQueryValue(Context context) {
+	public String getFtQueryValue(final Context context) {
 		if (ftQueryValueCl != null) {
 			return (String) DSLBuilder.callClosure(ftQueryValueCl, context);
 		} else {
@@ -34,20 +33,26 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 		}
 	}
 
-	public void ftQueryValue(String keyVariableValue) {
+	public void ftQueryValue(final String keyVariableValue) {
 		this.ftQueryValue = keyVariableValue;
 	}
 
-	public void ftQueryValue(Closure<?> keyVariableCl) {
+	public void ftQueryValue(final Closure<?> keyVariableCl) {
 		this.ftQueryValueCl = keyVariableCl;
 	}
 
 	@Override
-	public DocumentListDataContainer buildDataContainer(Context context) throws ExecutorException {
+	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
+					.getSession());
 			List<Document> docs = new ArrayList<Document>();
-			String search = buildSearchString(context);
+			String search = "";
+			if (context.getRequest().getMethod().equals("POST")) {
+				search = (String) context.getJsonPayload().getJsonProperty("search");
+			} else if (context.getRequest().getMethod().equals("GET")) {
+				search = context.getRequest().getParameter("search");
+			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
@@ -61,16 +66,9 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 		}
 	}
 
-	private String buildSearchString(Context context) {
-		String rc = getFtQueryValue(context);
-		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
-			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
-		}
-		return rc;
-	}
-
 	@Override
-	public JsonJavaArray buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+			throws NotesException {
 		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
 		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
