@@ -8,6 +8,7 @@ import org.openntf.xrest.xsp.model.strategy.GetByFT;
 import org.openntf.xrest.xsp.model.strategy.GetByFTPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByKey;
 import org.openntf.xrest.xsp.model.strategy.GetBySelect;
+import org.openntf.xrest.xsp.model.strategy.GetBySelectPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByUNID;
 import org.openntf.xrest.xsp.model.strategy.SelectAttachment;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
@@ -18,6 +19,7 @@ public enum Strategy {
 	SELECT_DOCUMENTS_BY_SEARCH_FT(GetByFT.class),
 	SELECT_DOCUMENTS_BY_SEARCH_FT_PAGED(GetByFTPaged.class),
 	SELECT_DOCUMENTS_BY_FORMULA(GetBySelect.class),
+	SELECT_DOCUMENTS_BY_FORMULA_PAGED(GetBySelectPaged.class),
 	SELECT_ALL_DOCUMENTS_BY_VIEW(AllByView.class),
 	SELECT_ALL_DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
 	SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY(AllByKey.class),
