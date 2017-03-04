@@ -5,6 +5,7 @@ import org.openntf.xrest.xsp.model.strategy.AllByKeyPaged;
 import org.openntf.xrest.xsp.model.strategy.AllByView;
 import org.openntf.xrest.xsp.model.strategy.AllByViewPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByFT;
+import org.openntf.xrest.xsp.model.strategy.GetByFTPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByKey;
 import org.openntf.xrest.xsp.model.strategy.GetBySelect;
 import org.openntf.xrest.xsp.model.strategy.GetByUNID;
@@ -15,6 +16,7 @@ public enum Strategy {
 	SELECT_DOCUMENT_FROM_VIEW_BY_KEY(GetByKey.class),
 	SELECT_DOCUMENT_BY_UNID(GetByUNID.class),
 	SELECT_DOCUMENTS_BY_SEARCH_FT(GetByFT.class),
+	SELECT_DOCUMENTS_BY_SEARCH_FT_PAGED(GetByFTPaged.class),
 	SELECT_DOCUMENTS_BY_FORMULA(GetBySelect.class),
 	SELECT_ALL_DOCUMENTS_BY_VIEW(AllByView.class),
 	SELECT_ALL_DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
