@@ -1,7 +1,5 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
@@ -17,7 +15,6 @@ import com.ibm.commons.util.io.json.JsonObject;
 
 import groovy.lang.Closure;
 import lotus.domino.Database;
-import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
@@ -52,22 +49,7 @@ public class GetBySelectPaged extends AbstractDatabaseStrategy implements Strate
 			int total = dcl.getCount();
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
-			Document docNext = null;
-			if (start > 1) {
-				docNext = dcl.getNthDocument(start);
-			} else {
-				docNext = dcl.getFirstDocument();
-			}
-			List<Document> docs = new ArrayList<Document>();
-			int i = 0;
-			while (docNext != null && i < count) {
-				i++;
-				Document docProcess = docNext;
-				docNext = dcl.getNextDocument();
-				docs.add(docProcess);
-			}
-			dcl.recycle();
-			return new DocumentListPaginationDataContainer(docs, start, total, null, dbAccess);
+			return new DocumentListPaginationDataContainer(getPagedListFromDocCollection(dcl, start, count), start, total, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

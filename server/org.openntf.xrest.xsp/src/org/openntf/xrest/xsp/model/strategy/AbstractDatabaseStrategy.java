@@ -1,9 +1,14 @@
 package org.openntf.xrest.xsp.model.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 
 import groovy.lang.Closure;
+import lotus.domino.Document;
+import lotus.domino.DocumentCollection;
 
 public class AbstractDatabaseStrategy {
 
@@ -16,18 +21,17 @@ public class AbstractDatabaseStrategy {
 		super();
 	}
 
-	public void databaseName(String dbName) {
+	public void databaseName(final String dbName) {
 		databaseNameValue = dbName;
 	}
 
-	public void databaseName(Closure<?> dbNameCl) {
+	public void databaseName(final Closure<?> dbNameCl) {
 		databaseNameCl = dbNameCl;
 	}
 
-	
-	public String getDatabaseNameValue(Context context) {
+	public String getDatabaseNameValue(final Context context) {
 		if (databaseNameCl != null) {
-			return (String)DSLBuilder.callClosure(databaseNameCl, context);
+			return (String) DSLBuilder.callClosure(databaseNameCl, context);
 		} else {
 			return databaseNameValue;
 		}
@@ -53,6 +57,36 @@ public class AbstractDatabaseStrategy {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * For given DocumentColletion returns {@code count} number of documents
+	 * starting at {@code start}
+	 * 
+	 * @param dcl
+	 * @param start
+	 * @param count
+	 * @return
+	 * @throws Exception
+	 */
+	protected List<Document> getPagedListFromDocCollection(final DocumentCollection dcl, final int start, final int count)
+			throws Exception {
+		List<Document> docs = new ArrayList<Document>();
+		Document docNext = null;
+		if (start > 1) {
+			docNext = dcl.getNthDocument(start);
+		} else {
+			docNext = dcl.getFirstDocument();
+		}
+		int i = 0;
+		while (docNext != null && i < count) {
+			Document docProcess = docNext;
+			docNext = dcl.getNextDocument();
+			docs.add(docProcess);
+			i++;
+		}
+		dcl.recycle();
+		return docs;
 	}
 
 }
