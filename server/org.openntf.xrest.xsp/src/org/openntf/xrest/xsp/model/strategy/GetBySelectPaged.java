@@ -49,6 +49,7 @@ public class GetBySelectPaged extends AbstractDatabaseStrategy implements Strate
 					.getSession());
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
+			int total = dcl.getCount();
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 			Document docNext = null;
@@ -65,7 +66,8 @@ public class GetBySelectPaged extends AbstractDatabaseStrategy implements Strate
 				docNext = dcl.getNextDocument();
 				docs.add(docProcess);
 			}
-			return new DocumentListPaginationDataContainer(docs, start, dcl.getCount(), null, dbAccess);
+			dcl.recycle();
+			return new DocumentListPaginationDataContainer(docs, start, total, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

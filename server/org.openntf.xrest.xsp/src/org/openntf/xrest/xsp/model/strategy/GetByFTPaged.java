@@ -51,6 +51,7 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 			String search = buildSearchString(context);
 			DocumentCollection dcl = dbAccess.FTSearch(search);
+			int total = dcl.getCount();
 			Document docNext = null;
 			if (start > 1) {
 				docNext = dcl.getNthDocument(start);
@@ -65,7 +66,8 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 				docNext = dcl.getNextDocument();
 				docs.add(docProcess);
 			}
-			return new DocumentListPaginationDataContainer(docs, start, dcl.getCount(), null, dbAccess);
+			dcl.recycle();
+			return new DocumentListPaginationDataContainer(docs, start, total, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
