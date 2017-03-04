@@ -7,8 +7,6 @@ import groovy.lang.Closure;
 
 public class AbstractViewDatabaseStrategy extends AbstractDatabaseStrategy {
 
-	protected static final int DEFAULT_START = 1;
-	protected static final int DEFAULT_COUNT = 10;
 	private String viewNameValue;
 	private Closure<?> viewNameCl;
 
@@ -30,28 +28,6 @@ public class AbstractViewDatabaseStrategy extends AbstractDatabaseStrategy {
 		} else {
 			return viewNameValue;
 		}
-	}
-
-	/**
-	 * Converts given param to int, assings defaultVal when it is empty or less
-	 * than 1
-	 * 
-	 * @param param
-	 * @param defaultVal
-	 * @return int value of param or defaulVal
-	 */
-	protected int getParamIntValue(final String param, final int defaultVal) {
-		int ret = defaultVal;
-		if (null != param && !param.isEmpty()) {
-			try {
-				ret = Integer.parseInt(param);
-				if (ret < 1) {
-					ret = defaultVal;
-				}
-			} catch (NumberFormatException e) {
-			}
-		}
-		return ret;
 	}
 
 }
