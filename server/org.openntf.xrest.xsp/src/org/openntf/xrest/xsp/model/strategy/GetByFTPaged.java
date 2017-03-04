@@ -1,7 +1,5 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-import java.util.Map.Entry;
-
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
@@ -44,23 +42,17 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 		try {
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
 					.getSession());
-			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
-			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
-			String search = buildSearchString(context);
+			Double st = (Double) context.getJsonPayload().getJsonProperty("start");
+			Double cnt = (Double) context.getJsonPayload().getJsonProperty("count");
+			int start = null != st ? st.intValue() : DEFAULT_START;
+			int count = null != cnt ? cnt.intValue() : DEFAULT_COUNT;
+			String search = (String) context.getJsonPayload().getJsonProperty("ftSearchValue");
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			int total = dcl.getCount();
 			return new DocumentListPaginationDataContainer(getPagedListFromDocCollection(dcl, start, count), start, total, null, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
-	}
-
-	private String buildSearchString(final Context context) {
-		String rc = getFtQueryValue(context);
-		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
-			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
-		}
-		return rc;
 	}
 
 	@Override
