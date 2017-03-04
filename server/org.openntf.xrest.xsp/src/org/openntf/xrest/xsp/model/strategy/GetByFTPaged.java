@@ -8,13 +8,12 @@ import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
-import org.openntf.xrest.xsp.exec.convertor.DocumentList2JsonConverter;
-import org.openntf.xrest.xsp.exec.datacontainer.DocumentListDataContainer;
+import org.openntf.xrest.xsp.exec.convertor.DocumentListPaged2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListPaginationDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
-import com.ibm.commons.util.io.json.JsonJavaArray;
+import com.ibm.commons.util.io.json.JsonObject;
 
 import groovy.lang.Closure;
 import lotus.domino.Database;
@@ -22,7 +21,7 @@ import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
-public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonJavaArray> {
+public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 
 	private String ftQueryValue;
 	private Closure<?> ftQueryValueCl;
@@ -81,10 +80,10 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 	}
 
 	@Override
-	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
 			throws NotesException {
-		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
-		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
+		DocumentListPaginationDataContainer docListDC = (DocumentListPaginationDataContainer) dc;
+		DocumentListPaged2JsonConverter d2jc = new DocumentListPaged2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
 	}
 }
