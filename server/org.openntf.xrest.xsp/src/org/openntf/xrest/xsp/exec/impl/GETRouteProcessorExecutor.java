@@ -4,7 +4,7 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
-public class GETRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
+public class GETRouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
 	public GETRouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
 		super(context, routerProcessor, path);
