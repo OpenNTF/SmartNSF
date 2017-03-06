@@ -119,7 +119,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 	private void postNewDocument() throws ExecutorException {
-		if (dataContainer.isList()) {
+		if (dataContainer.isList() || dataContainer.isBinary()) {
 			return;
 		}
 		try {

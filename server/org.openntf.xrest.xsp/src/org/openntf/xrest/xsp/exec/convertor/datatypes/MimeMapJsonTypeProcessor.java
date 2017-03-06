@@ -15,6 +15,7 @@ import javax.mail.internet.MimeUtility;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openntf.xrest.xsp.model.MappingField;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
@@ -316,7 +317,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 				childNext = childNext.getNextSibling();
 				MIMEEntity matcher = findAttachment(childCurrent, attachmentName);
 				if (matcher != null) {
-					childNext.recycle();
+					NotesObjectRecycler.recycle(childNext);
 					return matcher;
 				}
 				childCurrent.recycle();
