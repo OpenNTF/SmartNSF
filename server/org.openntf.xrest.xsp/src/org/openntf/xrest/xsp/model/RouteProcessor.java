@@ -9,9 +9,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
-import org.openntf.xrest.xsp.exec.DataModel;
-import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
 import groovy.lang.Closure;
@@ -23,7 +22,7 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
-	private StrategyModel<?> strategyModel;
+	private StrategyModel<?,?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
 	private final Map<String,MappingField> mappingFields = new HashMap<String,MappingField>();
@@ -141,20 +140,15 @@ public class RouteProcessor {
 		return null;
 	}
 
-	public DataModel<?> getDataModel(Context context) throws ExecutorException {
-		Object obj = strategyModel.getModel(context);
-		return new DataModel<Object>(obj);
+	public DataContainer<?> getDataContainer(Context context) throws ExecutorException {
+		return strategyModel.buildDataContainer(context);
 	}
 
 	public Map<String,MappingField> getMappingFields() {
 		return mappingFields;
 	}
 	
-	public void cleanUp() {
-		strategyModel.cleanUp();
-	}
-
-	public StrategyModel<?> getStrategyModel() {
+	public StrategyModel<?,?> getStrategyModel() {
 		return strategyModel;
 	}
 	public Strategy getStrategyValue() {

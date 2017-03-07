@@ -115,13 +115,12 @@ public class XRestAPIServlet extends HttpServlet {
 			RouteProcessor rp = routerFactory.getRouter().find(method, path);
 			ContextImpl context = new ContextImpl();
 			if (rp != null) {
-				JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 				NotesContext c = NotesContext.getCurrentUnchecked();
 				context.addNotesContext(c).addRequest(req).addResponse(resp);
 				context.addRouterVariables(rp.extractValuesFromPath(path));
-				System.out.println(req.getContentType());
 				if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
 					try {
+						JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
 						context.addJsonPayload(json);
 					} catch (JsonException jE) {

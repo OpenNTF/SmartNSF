@@ -1,20 +1,26 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-import java.io.OutputStream;
-
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.AttachmentProcessor;
+import org.openntf.xrest.xsp.exec.datacontainer.AttachmentDataContainer;
+import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
 import org.openntf.xrest.xsp.model.AttachmentSelectionType;
 import org.openntf.xrest.xsp.model.AttachmentUpdateType;
+import org.openntf.xrest.xsp.model.DataContainer;
+import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Strategy;
 
 import groovy.lang.Closure;
+import lotus.domino.EmbeddedObject;
+import lotus.domino.MIMEEntity;
+import lotus.domino.NotesException;
 
-public class SelectAttachment implements StrategyModel<OutputStream> {
+public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?>, MIMEEntity> {
 
 	private Strategy strategyValue;
-	private StrategyModel<?> strategyModel;
+	private StrategyModel<?, ?> strategyModel;
 
 	private String fieldName;
 	private Closure<?> fieldNameCl;
@@ -54,15 +60,8 @@ public class SelectAttachment implements StrategyModel<OutputStream> {
 	}
 
 	@Override
-	public OutputStream getModel(Context context) throws ExecutorException {
-		// TODO Auto-generated method stub
+	public MIMEEntity buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
 		return null;
-	}
-
-	@Override
-	public void cleanUp() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public String getFieldName(Context context) {
@@ -87,6 +86,25 @@ public class SelectAttachment implements StrategyModel<OutputStream> {
 
 	public AttachmentUpdateType getUpdateType() {
 		return updateTypeValue;
+	}
+
+	@Override
+	public AttachmentDataContainer<?> buildDataContainer(Context context) throws ExecutorException {
+		try {
+			DocumentDataContainer dd = (DocumentDataContainer) strategyModel.buildDataContainer(context);
+			String calcFieldName = getFieldName(context);
+			String calcFileName = context.getRouterVariables().get(getAttachmentNameVariableName(context));
+			if (AttachmentProcessor.getInstance().isMime(dd.getData(), calcFieldName)) {
+				MIMEEntity mimeEntity = AttachmentProcessor.getInstance().getMimeAttachment(dd.getData(), calcFieldName, calcFileName);
+				return new AttachmentDataContainer<MIMEEntity>(dd, mimeEntity, calcFieldName, calcFileName);
+			} else {
+				EmbeddedObject embo = AttachmentProcessor.getInstance().getEmbeddedObjectAttachment(dd.getData(), calcFieldName, calcFileName);
+				return new AttachmentDataContainer<EmbeddedObject>(dd, embo, calcFieldName, calcFileName);
+
+			}
+		} catch (Exception ex) {
+			throw new ExecutorException(500, ex, "", "getmodel");
+		}
 	}
 
 }

@@ -15,9 +15,22 @@
  */
 package org.openntf.xrest.xsp.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lotus.domino.Base;
 
 public class NotesObjectRecycler {
+
+	public static void recycleObjects(Object... recyclingObjects) {
+		List<Base> baseObject = new ArrayList<Base>();
+		for (Object obj : recyclingObjects) {
+			if (obj instanceof Base) {
+				baseObject.add((Base) obj);
+			}
+		}
+		recycle(baseObject.toArray(new Base[baseObject.size()]));
+	}
 
 	public static void recycle(Base... recyclingObjects) {
 		for (Base torecycle : recyclingObjects) {

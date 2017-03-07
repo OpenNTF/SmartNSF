@@ -15,6 +15,7 @@ import javax.mail.internet.MimeUtility;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openntf.xrest.xsp.model.MappingField;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
@@ -39,8 +40,8 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	private static final String BINARY_HEADER_VALUE = "binary";
 	private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
-	private static final String MULTIPART_MIXED = "multipart/mixed";
-	private static final String CONTENT_TYPE = "Content-Type";
+	protected static final String MULTIPART_MIXED = "multipart/mixed";
+	protected static final String CONTENT_TYPE = "Content-Type";
 	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html;charset=UTF-8";
 	private static final String CHARSET_UTF_8 = "charset=UTF-8";
 
@@ -179,27 +180,32 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	private void processAttachments2Mime(List<String> fileNames, MIMEEntity baseEntity, String absolutePath, Session ses) throws NotesException {
 		for (String fileName : fileNames) {
-			String mimeType = mimeTypeOfFile(fileName);
-			Stream stream = ses.createStream();
-			stream.open(absolutePath + File.separator + fileName, BINARY_HEADER_VALUE);
-			MIMEEntity mimeAttachment = baseEntity.createChildEntity();
-			mimeAttachment.setContentFromBytes(stream, mimeType, MIMEEntity.ENC_IDENTITY_BINARY);
-			MIMEHeader mimeHeader = applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TYPE, mimeType);
-			String attachmentValue = null;
-			try {
-				attachmentValue = MimeUtility.encodeText(fileName, "utf-8", "B");
-			} catch (UnsupportedEncodingException ex) {
-				attachmentValue = fileName;
-			}
-			mimeHeader.setParamVal("name", attachmentValue);
-
-			MIMEHeader contentDispHeader = applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TYPE, ATTACHMENT_HEADER_VALUE);
-			contentDispHeader.setParamVal("filename", attachmentValue);
-
-			applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TRANSFER_ENCODING, BINARY_HEADER_VALUE);
-			stream.close();
-			stream.recycle();
+			String filePath = absolutePath + File.separator + fileName;
+			processSingleAttachment2Mime(baseEntity, ses, fileName, filePath);
 		}
+	}
+
+	protected void processSingleAttachment2Mime(MIMEEntity baseEntity, Session ses, String fileName, String filePath) throws NotesException {
+		String mimeType = mimeTypeOfFile(fileName);
+		Stream stream = ses.createStream();
+		stream.open(filePath, BINARY_HEADER_VALUE);
+		MIMEEntity mimeAttachment = baseEntity.createChildEntity();
+		mimeAttachment.setContentFromBytes(stream, mimeType, MIMEEntity.ENC_IDENTITY_BINARY);
+		MIMEHeader mimeHeader = applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TYPE, mimeType);
+		String attachmentValue = null;
+		try {
+			attachmentValue = MimeUtility.encodeText(fileName, "utf-8", "B");
+		} catch (UnsupportedEncodingException ex) {
+			attachmentValue = fileName;
+		}
+		mimeHeader.setParamVal("name", attachmentValue);
+
+		MIMEHeader contentDispHeader = applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_DISPOSITION, ATTACHMENT_HEADER_VALUE);
+		contentDispHeader.setParamVal("filename", attachmentValue);
+
+		applyMimeHeaderTypeAndValue(mimeAttachment, CONTENT_TRANSFER_ENCODING, BINARY_HEADER_VALUE);
+		stream.close();
+		stream.recycle();
 	}
 
 	private File buildTempDir() {
@@ -262,7 +268,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private void checkMulitPartMixedHeaders(MIMEEntity baseEntity) throws NotesException {
+	protected void checkMulitPartMixedHeaders(MIMEEntity baseEntity) throws NotesException {
 		MIMEHeader mimeHeader = baseEntity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader == null) {
 			mimeHeader = baseEntity.createHeader(CONTENT_TYPE);
@@ -298,6 +304,41 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 				}
 				childCurrent.recycle();
 			}
+		}
+		return null;
+	}
+
+	protected MIMEEntity findAttachment(MIMEEntity entity, String attachmentName) throws NotesException {
+		String contentType = getContentHeaderValue(entity);
+		if (contentType.startsWith("multipart")) {
+			MIMEEntity childNext = entity.getFirstChildEntity();
+			while (childNext != null) {
+				MIMEEntity childCurrent = childNext;
+				childNext = childNext.getNextSibling();
+				MIMEEntity matcher = findAttachment(childCurrent, attachmentName);
+				if (matcher != null) {
+					NotesObjectRecycler.recycle(childNext);
+					return matcher;
+				}
+				childCurrent.recycle();
+			}
+		}
+		String dispositionValue = getContentDispositionHeaderValue(entity);
+		if (!StringUtil.isEmpty(dispositionValue) && dispositionValue.startsWith(ATTACHMENT_HEADER_VALUE)) {
+			System.out.println(dispositionValue);
+			if (dispositionValue.contains(attachmentName)) {
+				return entity;
+			}
+		}
+		return null;
+	}
+
+	private String getContentDispositionHeaderValue(MIMEEntity entity) throws NotesException {
+		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_DISPOSITION);
+		if (mimeheader != null) {
+			String val = mimeheader.getHeaderValAndParams(false, true);
+			mimeheader.recycle();
+			return val;
 		}
 		return null;
 	}
