@@ -14,15 +14,15 @@ public class AbstractViewDatabaseStrategy extends AbstractDatabaseStrategy {
 		super();
 	}
 
-	public void viewName(String viewName) {
+	public void viewName(final String viewName) {
 		this.viewNameValue = viewName;
 	}
 
-	public void viewName(Closure<?> viewNameCl) {
+	public void viewName(final Closure<?> viewNameCl) {
 		this.viewNameCl = viewNameCl;
 	}
 
-	public String getViewNameValue(Context context) {
+	public String getViewNameValue(final Context context) {
 		if (this.viewNameCl != null) {
 			return (String) DSLBuilder.callClosure(viewNameCl, context);
 		} else {

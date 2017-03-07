@@ -1,13 +1,12 @@
 package org.openntf.xrest.xsp.exec.impl;
 
-import org.openntf.xrest.xsp.exec.DataModel;
-import org.openntf.xrest.xsp.exec.ExecutorException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
@@ -19,21 +18,21 @@ import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
-public class DELETERouteProcessorExecutor extends AbstractRouteProcessorExecutor {
+public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
 	public DELETERouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
 		super(context, routerProcessor, path);
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataModel<?> model) throws ExecutorException {
-		preDelete(context, model);
+	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
+		preDelete(context, container);
 		List<String> deletedDocuments;
 		Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_DELETE);
 		if (cl != null) {
-			deletedDocuments = executeAlternativeDelete(cl, context, model);
+			deletedDocuments = executeAlternativeDelete(cl, context, container);
 		} else {
-			deletedDocuments = executeDelteDocuments(model);
+			deletedDocuments = executeDelteDocuments(container);
 		}
 		JsonObject jso = new JsonJavaObject();
 		jso.putJsonProperty("deleted", deletedDocuments);
@@ -41,16 +40,16 @@ public class DELETERouteProcessorExecutor extends AbstractRouteProcessorExecutor
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> executeDelteDocuments(DataModel<?> model) throws ExecutorException {
+	private List<String> executeDelteDocuments(DataContainer<?> container) throws ExecutorException {
 		List<String> unids = new ArrayList<String>();
 		try {
-			if (model.isList()) {
-				for (Document doc : (List<Document>) model.getData()) {
+			if (container.isList()) {
+				for (Document doc : (List<Document>) container.getData()) {
 					unids.add(doc.getUniversalID());
 					doc.remove(true);
 				}
 			} else {
-				Document doc = (Document) model.getData();
+				Document doc = (Document) container.getData();
 				unids.add(doc.getUniversalID());
 				doc.remove(true);
 			}
@@ -60,11 +59,11 @@ public class DELETERouteProcessorExecutor extends AbstractRouteProcessorExecutor
 		return unids;
 	}
 
-	private void preDelete(Context context, DataModel<?> model) throws ExecutorException {
+	private void preDelete(Context context, DataContainer<?> container) throws ExecutorException {
 		try {
 			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_DELETE);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model);
+				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Pre Delete Error: " + e.getMessage(), e, getPath(), "predelete");
@@ -75,9 +74,9 @@ public class DELETERouteProcessorExecutor extends AbstractRouteProcessorExecutor
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> executeAlternativeDelete(Closure<?> cl, Context context, DataModel<?> model) throws ExecutorException {
+	private List<String> executeAlternativeDelete(Closure<?> cl, Context context, DataContainer<?> container) throws ExecutorException {
 		try {
-			return (List<String>) DSLBuilder.callClosure(cl, context, model);
+			return (List<String>) DSLBuilder.callClosure(cl, context, container.getData(), container);
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Alternate Delete Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
 		} catch (Exception e) {

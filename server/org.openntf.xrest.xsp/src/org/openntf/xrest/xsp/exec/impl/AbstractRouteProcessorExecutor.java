@@ -6,44 +6,37 @@ import java.util.List;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
-import org.openntf.xrest.xsp.exec.DataModel;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
-import org.openntf.xrest.xsp.exec.convertor.Document2JsonConverter;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
-import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
+import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.commons.util.io.json.JsonObject;
 
 import groovy.lang.Closure;
 import lotus.domino.Document;
-import lotus.domino.NotesException;
 
-public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor {
+public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor{
 
-	private final Context context;
-	private final RouteProcessor routeProcessor;
-	private final String path;
-	private DataModel<?> model;
-	private Object resultPayload;
+	protected final Context context;
 
-	public AbstractRouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
-		super();
-		this.context = context;
-		this.routeProcessor = routerProcessor;
+	protected abstract void submitValues() throws IOException, JsonException, ExecutorException;
+
+	protected abstract void preSubmitValues() throws ExecutorException;
+
+	protected final RouteProcessor routeProcessor;
+	protected final String path;
+	protected DataContainer<?> dataContainer;
+
+	public AbstractRouteProcessorExecutor(Context context, RouteProcessor routeProcessor, String path)  {
 		this.path = path;
+		this.routeProcessor = routeProcessor;
+		this.context = context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.xrest.xsp.exec.RouteProcessorExecutor#execute(java.lang.
-	 * String)
-	 */
 	@Override
 	public void execute() {
 		try {
@@ -53,7 +46,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			loadDocument();
 			postNewDocument();
 			postLoadDocument();
-			executeMethodeSpecific(this.context, this.model);
+			executeMethodeSpecific(this.context, this.dataContainer);
 			preSubmitValues();
 			submitValues();
 		} catch (ExecutorException ex) {
@@ -122,15 +115,15 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 	private void loadDocument() throws ExecutorException {
-		model = routeProcessor.getDataModel(context);
+		dataContainer = routeProcessor.getDataContainer(context);
 	}
 
 	private void postNewDocument() throws ExecutorException {
-		if (model.isList()) {
+		if (dataContainer.isList() || dataContainer.isBinary()) {
 			return;
 		}
 		try {
-			Document doc = (Document) model.getData();
+			Document doc = (Document) dataContainer.getData();
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_NEW);
 			if (cl != null && doc.isNewNote()) {
 				DSLBuilder.callClosure(cl, context, doc);
@@ -146,7 +139,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_LOAD_DOCUMENT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model.getData());
+				DSLBuilder.callClosure(cl, context, dataContainer.getData());
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
@@ -155,39 +148,10 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	private void preSubmitValues() throws ExecutorException {
-		try {
-			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SUBMIT);
-			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, model.getData());
-			}
-		} catch (EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "presubmit");
-		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "presubmit");
-		}
-		model.cleanUp();
-		routeProcessor.cleanUp();
+	protected abstract void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException;
 
-	}
-
-	private void submitValues() throws IOException, JsonException {
-		JsonPayloadProcessor.INSTANCE.processJsonPayload(resultPayload, context.getResponse());
-	}
-
-	abstract protected void executeMethodeSpecific(Context context, DataModel<?> model) throws ExecutorException;
-
-	public void setResultPayload(Object rp) {
-		resultPayload = rp;
-	}
-
-	public void setModel(DataModel<?> model) {
-		this.model = model;
-	}
-
-	protected JsonObject buildJsonFromDocument(Document doc) throws NotesException {
-		Document2JsonConverter d2jc = new Document2JsonConverter(doc, routeProcessor, context);
-		return d2jc.buildJsonFromDocument();
+	public void setDataContainer(DataContainer<?> container) {
+		this.dataContainer = container;
 	}
 
 	protected RouteProcessor getRouteProcessor() {
@@ -197,4 +161,5 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	protected String getPath() {
 		return path;
 	}
+
 }
