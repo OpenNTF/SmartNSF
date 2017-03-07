@@ -18,7 +18,7 @@ import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
-public class DELETERouteProcessorExecutor extends AbstractRouteProcessorExecutor {
+public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
 	public DELETERouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
 		super(context, routerProcessor, path);

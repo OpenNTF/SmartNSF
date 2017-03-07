@@ -16,7 +16,7 @@ import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
-public class POSTRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
+public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
 	public POSTRouteProcessorExecutor(Context context, RouteProcessor routeProcessor, String path) {
 		super(context, routeProcessor, path);
