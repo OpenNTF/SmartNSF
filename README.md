@@ -9,6 +9,9 @@ and the configuration is smart and simple.
 ### Issues
 Please report issues to the following project on OpenNTF's JIRA: https://jira.openntf.org/projects/XRAPI/issues
 
+### Documentation
+https://wiki.openntf.org/display/XRAPI/SmartNSF
+
 OPENNTF
 
     This project is an OpenNTF project, and is available under the Apache License V2.0.  
