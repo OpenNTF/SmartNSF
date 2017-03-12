@@ -14,19 +14,19 @@ public class GroovyValueBinding extends ValueBindingEx {
 	public GroovyValueBinding() {
 	}
 
-	public GroovyValueBinding(String formula) {
+	public GroovyValueBinding(final String formula) {
 		this.formula = formula;
 	}
 
 	@Override
-	public Class getType(FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
+	public Class getType(final FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
 		return super.getExpectedType();
 	}
 
 	@Override
-	public Object getValue(FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
-		
-		//TODO Execute DSLBuilder
+	public Object getValue(final FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
+
+		// TODO Execute DSLBuilder
 		// Force the type based on getExpectedType
 		// Converters is used after.
 		Object result = null;
@@ -34,25 +34,25 @@ public class GroovyValueBinding extends ValueBindingEx {
 	}
 
 	@Override
-	public boolean isReadOnly(FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
+	public boolean isReadOnly(final FacesContext facesContext) throws EvaluationException, PropertyNotFoundException {
 		return true;
 	}
 
 	@Override
-	public void setValue(FacesContext facesContext, Object arg1) throws EvaluationException, PropertyNotFoundException {
+	public void setValue(final FacesContext facesContext, final Object arg1) throws EvaluationException, PropertyNotFoundException {
 		throw new EvaluationExceptionEx("Not implemented", this);
 	}
 
 	@Override
-	public Object saveState(FacesContext arg0) {
-		Object[] state = new Object[1];
+	public Object saveState(final FacesContext arg0) {
+		Object[] state = new Object[2];
 		state[0] = super.saveState(arg0);
 		state[1] = formula;
 		return state;
 	}
 
 	@Override
-	public void restoreState(FacesContext facesContext, Object state) {
+	public void restoreState(final FacesContext facesContext, final Object state) {
 		Object[] stateObject = (Object[]) state;
 		super.restoreState(facesContext, stateObject[0]);
 		formula = (String) stateObject[1];
