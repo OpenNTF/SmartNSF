@@ -1,5 +1,5 @@
 router.GET('topics}') {
-	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
+	strategy(ALL_DOCUMENTS_BY_VIEW) {
 		viewName ('($all)')
 	}
 	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
@@ -7,7 +7,7 @@ router.GET('topics}') {
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
 router.GET('topics/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 	}
 	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
@@ -17,7 +17,7 @@ router.GET('topics/{id}') {
 	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
-	strategy(SELECT_ATTACHMENT) {
+	strategy(ATTACHMENT) {
 		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 		}
@@ -27,7 +27,7 @@ router.GET('topics/{id}/attachment/{attachmentName}') {
 	}
 }
 router.POST('topics/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
@@ -41,7 +41,7 @@ router.POST('topics/{id}') {
 }
 
 router.POST('topics/{id}/attachment') {
-	strategy(SELECT_ATTACHMENT){
+	strategy(ATTACHMENT){
 		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 		}
@@ -51,7 +51,7 @@ router.POST('topics/{id}/attachment') {
 }
 
 router.GET('comments/byparent/{parent_id}') {
-	strategy(SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY) {
+	strategy(DOCUMENTS_FROM_VIEW_BY_KEY) {
 			keyVariableName("{parent_id}")
 			viewName("commentsByParentId")
 	}
@@ -61,7 +61,7 @@ router.GET('comments/byparent/{parent_id}') {
 }
 
 router.GET('comments/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 	}
 	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
@@ -73,7 +73,7 @@ router.GET('comments/{id}') {
 }
 
 router.POST('comments/{id}/parent/{parent_id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
@@ -88,7 +88,7 @@ router.POST('comments/{id}/parent/{parent_id}') {
 }
 
 router.DELETE('document/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
 }
