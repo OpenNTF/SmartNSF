@@ -16,6 +16,8 @@ public interface MapJsonTypeProcessor {
 
 	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException;
 
+	public void processColumnValueToJsonObject(Object clmnValue, JsonObject jo, String jsonPropertyName) throws NotesException;
+
 	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonPropertyName) throws NotesException;
 
 	public void processJsonValueToDocument(JsonJavaObject jo, Document doc, MappingField mf) throws NotesException;

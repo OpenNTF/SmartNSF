@@ -18,20 +18,20 @@ import lotus.domino.NotesException;
 public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		Vector<?> values = item.getValues();
 		processValuesToJsonObject(values, jo, jsonPropertyName);
 	}
 
 	@Override
-	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			List<Double> stringValues = makeDoubleList(values);
 			jo.putJsonProperty(jsonPropertyName, stringValues);
 		}
 	}
 
-	private List<Double> makeDoubleList(List<?> values) {
+	private List<Double> makeDoubleList(final List<?> values) {
 		List<Double> doubleValues = new ArrayList<Double>();
 		for (Object value : values) {
 			doubleValues.add(TypeEnforcement.getAsDouble(value));
@@ -40,7 +40,7 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(JsonJavaObject jso, Document doc, MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
 		if (!jso.containsKey(mfField.getJsonName())) {
 			return;
 		}
@@ -53,8 +53,15 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		super.processJsonValueToDocument(new Vector<Double>(makeDoubleList(values)), doc, fieldName);
+	}
+
+	@Override
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+			throws NotesException {
+		// TODO Auto-generated method stub
+
 	}
 
 }
