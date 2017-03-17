@@ -64,7 +64,7 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 					entCurrent = nextEntry;
 				}
 			} else {
-				// TODO: handle the situation when we did not skipped to desired
+				// TODO: handle the situation when we did not skip to desired
 				// start position: is it because we are already at the end of
 				// view? Or could it happen at all?
 			}
