@@ -62,7 +62,7 @@ public class TestExecutor {
 	private RouteProcessor getRouterProcessorWithAttachmentStrategy() throws InstantiationException, IllegalAccessException {
 		// TODO Auto-generated method stub
 		RouteProcessor rp = new RouteProcessor("test");
-		rp.strategy(Strategy.SELECT_ATTACHMENT, null);
+		rp.strategy(Strategy.ATTACHMENT, null);
 		return new RouteProcessor("test");
 	}
 
