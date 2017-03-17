@@ -1,5 +1,5 @@
 router.GET('topics}') {
-	strategy(ALL_DOCUMENTS_BY_VIEW) {
+	strategy(DOCUMENTS_BY_VIEW) {
 		viewName ('($all)')
 	}
 	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
@@ -18,7 +18,7 @@ router.GET('topics/{id}') {
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
 	strategy(ATTACHMENT) {
-		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
+		documentStrategy(DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 		}
 		fieldName "Body"
@@ -42,7 +42,7 @@ router.POST('topics/{id}') {
 
 router.POST('topics/{id}/attachment') {
 	strategy(ATTACHMENT){
-		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
+		documentStrategy(DOCUMENT_BY_UNID) {
 			keyVariableName("{id}")
 		}
 		fieldName "Body"

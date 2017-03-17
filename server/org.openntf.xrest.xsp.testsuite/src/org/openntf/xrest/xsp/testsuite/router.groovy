@@ -19,7 +19,7 @@ router.GET('customers/{id}') {
 
 router.GET('customers/{id}/contract/{attachmentName}') {
 	strategy(ATTACHMENT) {
-		documentStrategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
+		documentStrategy(DOCUMENT_FROM_VIEW_BY_KEY) {
 			keyVariableName("{id}")
 			viewName("customerById")
 		}
@@ -31,7 +31,7 @@ router.GET('customers/{id}/contract/{attachmentName}') {
 
 router.POST('customers/{id}/contract') {
 	strategy(ATTACHMENT){
-		documentStrategy(SELECT_DOCUMENT_FROM_VIEW_BY_KEY) {
+		documentStrategy(DOCUMENT_FROM_VIEW_BY_KEY) {
 			keyVariableName("{id}")
 			viewName("customerById")
 		}
