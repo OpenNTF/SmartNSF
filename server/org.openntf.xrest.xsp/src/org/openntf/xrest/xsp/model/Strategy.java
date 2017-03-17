@@ -24,7 +24,7 @@ public enum Strategy {
 	DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
 	DOCUMENTS_FROM_VIEW_BY_KEY(AllByKey.class),
 	DOCUMENTS_FROM_VIEW_BY_KEY_PAGED(AllByKeyPaged.class),
-	ATTACHMENT(SelectAttachment.class),;
+	ATTACHMENT(SelectAttachment.class);
 
 	private final Class<? extends StrategyModel<?, ?>> strategyClass;
 

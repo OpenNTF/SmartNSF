@@ -14,7 +14,7 @@ public class RouteProcessorExecutorFactory {
 
 	public static RouteProcessorExecutor getExecutor(String method, String path, Context context, RouteProcessor rp) {
 		if ("GET".equals(method)) {
-			if (rp.getStrategyValue() == Strategy.SELECT_ATTACHMENT) {
+			if (rp.getStrategyValue() == Strategy.ATTACHMENT) {
 				return new GETAttachmentRouteProcessorExecutor(context, rp, path);
 			}
 			return new GETRouteProcessorExecutor(context, rp, path);
