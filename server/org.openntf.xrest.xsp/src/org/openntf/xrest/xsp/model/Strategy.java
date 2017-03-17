@@ -14,17 +14,17 @@ import org.openntf.xrest.xsp.model.strategy.SelectAttachment;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
 public enum Strategy {
-	SELECT_DOCUMENT_FROM_VIEW_BY_KEY(GetByKey.class),
-	SELECT_DOCUMENT_BY_UNID(GetByUNID.class),
-	SELECT_DOCUMENTS_BY_SEARCH_FT(GetByFT.class),
-	SELECT_DOCUMENTS_BY_SEARCH_FT_PAGED(GetByFTPaged.class),
-	SELECT_DOCUMENTS_BY_FORMULA(GetBySelect.class),
-	SELECT_DOCUMENTS_BY_FORMULA_PAGED(GetBySelectPaged.class),
-	SELECT_ALL_DOCUMENTS_BY_VIEW(AllByView.class),
-	SELECT_ALL_DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
-	SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY(AllByKey.class),
-	SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY_PAGED(AllByKeyPaged.class),
-	SELECT_ATTACHMENT(SelectAttachment.class),;
+	DOCUMENT_FROM_VIEW_BY_KEY(GetByKey.class),
+	DOCUMENT_BY_UNID(GetByUNID.class),
+	DOCUMENTS_BY_SEARCH_FT(GetByFT.class),
+	DOCUMENTS_BY_SEARCH_FT_PAGED(GetByFTPaged.class),
+	DOCUMENTS_BY_FORMULA(GetBySelect.class),
+	DOCUMENTS_BY_FORMULA_PAGED(GetBySelectPaged.class),
+	DOCUMENTS_BY_VIEW(AllByView.class),
+	DOCUMENTS_BY_VIEW_PAGED(AllByViewPaged.class),
+	DOCUMENTS_FROM_VIEW_BY_KEY(AllByKey.class),
+	DOCUMENTS_FROM_VIEW_BY_KEY_PAGED(AllByKeyPaged.class),
+	ATTACHMENT(SelectAttachment.class),;
 
 	private final Class<? extends StrategyModel<?, ?>> strategyClass;
 
