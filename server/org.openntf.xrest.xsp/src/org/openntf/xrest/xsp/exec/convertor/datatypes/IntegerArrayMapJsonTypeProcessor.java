@@ -60,8 +60,8 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		// TODO Auto-generated method stub
-
+		Vector<?> values = (Vector<?>) clmnValue;
+		processValuesToJsonObject(values, jo, jsonPropertyName);
 	}
 
 }
