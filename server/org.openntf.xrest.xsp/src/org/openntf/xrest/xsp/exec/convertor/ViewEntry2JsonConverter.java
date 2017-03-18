@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openntf.xrest.xsp.exec.convertor.ViewEntryList2JsonConverter.ColumnInfo;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.ColumnInfo;
 import org.openntf.xrest.xsp.model.MapJsonType;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
@@ -19,7 +19,7 @@ public class ViewEntry2JsonConverter {
 
 	private final RouteProcessor routeProcessor;
 	private final List<Object> columnValues;
-	private final Map<String, ViewEntryList2JsonConverter.ColumnInfo> columnInfoMap;
+	private final Map<String, ColumnInfo> columnInfoMap;
 
 	public ViewEntry2JsonConverter(final List<Object> viewEntry, final RouteProcessor routeProcessor,
 			final Map<String, ColumnInfo> columnInfoMap) throws NotesException {

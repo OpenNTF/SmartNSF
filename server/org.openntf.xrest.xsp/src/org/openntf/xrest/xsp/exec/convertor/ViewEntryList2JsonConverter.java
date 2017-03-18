@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.ColumnInfo;
 import org.openntf.xrest.xsp.exec.datacontainer.ViewEntryListDataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -60,60 +61,11 @@ public class ViewEntryList2JsonConverter {
 			Vector<ViewColumn> columns = view.getColumns();
 			List<ColumnInfo> result = new ArrayList<ColumnInfo>(columns.size());
 			for (ViewColumn col : columns) {
-				result.add(new ColumnInfo(col));
+				result.add(new ColumnInfo(col, context));
 			}
 			columnInfo = result;
 		}
 		return columnInfo;
 	}
 
-	class ColumnInfo {
-		private final String itemName;
-		private final int columnValuesIndex;
-		private final Object constantValue;
-
-		public ColumnInfo(final ViewColumn column) throws NotesException {
-			itemName = column.getItemName();
-			columnValuesIndex = column.getColumnValuesIndex();
-			if (columnValuesIndex == 65535) {
-				List<?> v = context.getNSFHelper().executeFormula(column.getFormula());
-				constantValue = v.get(0);
-			} else {
-				constantValue = null;
-			}
-		}
-
-		/**
-		 * Gets the programmatic name of the column
-		 *
-		 * @return String programmatic column name
-		 */
-		public String getItemName() {
-			return itemName;
-		}
-
-		/**
-		 * Gets the index for the column in the view, beginning at 0
-		 *
-		 * @return int index of the column
-		 */
-		public int getColumnValuesIndex() {
-			return columnValuesIndex;
-		}
-
-		/**
-		 * Gets constant (stored as result of evaluated column formula)
-		 * 
-		 * @return Object constant or null if column doesn't contain constant
-		 */
-		public Object getConstantValue() {
-			return constantValue;
-		}
-
-		@Override
-		public String toString() {
-			return "ColumnInfo [" + (itemName != null ? "itemName=" + itemName + ", " : "") + "columnValuesIndex=" + columnValuesIndex
-					+ ", " + (constantValue != null ? "constantValue=" + constantValue : "") + "]";
-		}
-	}
 }
