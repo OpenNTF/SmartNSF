@@ -46,7 +46,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	private static final String CHARSET_UTF_8 = "charset=UTF-8";
 
 	@Override
-	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		Document doc = item.getParent();
 		Session session = doc.getParentDatabase().getParent();
 		String fieldName = item.getName();
@@ -65,7 +65,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private String getContentFormRT(Document doc, String fieldName) throws NotesException {
+	private String getContentFormRT(final Document doc, final String fieldName) throws NotesException {
 		DominoUtils.HtmlConverterWrapper converter = null;
 		String htmlContent;
 		try {
@@ -85,12 +85,12 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonProperty) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty) throws NotesException {
 		// TODO Auto-generated method stub
 
 	}
 
-	private String getContentFromMime(MIMEEntity entity, Session parent) throws NotesException {
+	private String getContentFromMime(final MIMEEntity entity, final Session parent) throws NotesException {
 		String content = "";
 
 		MIMEEntity contentEntity = findContent(entity, "text/html");
@@ -105,7 +105,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return content;
 	}
 
-	private String extractContentsAsText(MIMEEntity child, Session sesCurrent) throws NotesException {
+	private String extractContentsAsText(final MIMEEntity child, final Session sesCurrent) throws NotesException {
 		Stream stream = sesCurrent.createStream();
 		child.getContentAsText(stream, true);
 		stream.setPosition(0);
@@ -115,7 +115,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processJsonValueToDocument(JsonJavaObject jso, Document doc, MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
 		String fieldName = mfField.getNotesFieldName();
 		String value = jso.getAsString(mfField.getJsonName());
 		Stream stream = doc.getParentDatabase().getParent().createStream();
@@ -142,13 +142,13 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private void addContentToHTMLEntity(Stream stream, MIMEEntity htmlEntity) throws NotesException {
+	private void addContentToHTMLEntity(final Stream stream, final MIMEEntity htmlEntity) throws NotesException {
 		stream.setPosition(0);
 		htmlEntity.setContentFromText(stream, TEXT_HTML_CHARSET_UTF_8, MIMEEntity.ENC_NONE);
 		stream.close();
 	}
 
-	private void updateAndConvertRTItemToMime(RichTextItem notesItem, Stream stream) throws NotesException {
+	private void updateAndConvertRTItemToMime(final RichTextItem notesItem, final Stream stream) throws NotesException {
 		File tempDir = buildTempDir();
 		Document doc = notesItem.getParent();
 		Session session = doc.getParentDatabase().getParent();
@@ -178,14 +178,16 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private void processAttachments2Mime(List<String> fileNames, MIMEEntity baseEntity, String absolutePath, Session ses) throws NotesException {
+	private void processAttachments2Mime(final List<String> fileNames, final MIMEEntity baseEntity, final String absolutePath,
+			final Session ses) throws NotesException {
 		for (String fileName : fileNames) {
 			String filePath = absolutePath + File.separator + fileName;
 			processSingleAttachment2Mime(baseEntity, ses, fileName, filePath);
 		}
 	}
 
-	protected void processSingleAttachment2Mime(MIMEEntity baseEntity, Session ses, String fileName, String filePath) throws NotesException {
+	protected void processSingleAttachment2Mime(final MIMEEntity baseEntity, final Session ses, final String fileName,
+			final String filePath) throws NotesException {
 		String mimeType = mimeTypeOfFile(fileName);
 		Stream stream = ses.createStream();
 		stream.open(filePath, BINARY_HEADER_VALUE);
@@ -218,7 +220,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return dir;
 	}
 
-	private String mimeTypeOfFile(String fileName) {
+	private String mimeTypeOfFile(final String fileName) {
 		String extension = FilenameUtils.getExtension(fileName);
 		if (extension != null) {
 			String mimeType = MIME.getMIMETypeFromExtension(extension);
@@ -230,7 +232,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> extractAllAttachments(RichTextItem notesItem, String tempDir) throws NotesException {
+	private List<String> extractAllAttachments(final RichTextItem notesItem, final String tempDir) throws NotesException {
 		Vector<Object> embObjects = notesItem.getEmbeddedObjects();
 		if (embObjects == null || embObjects.isEmpty()) {
 			return Collections.emptyList();
@@ -257,7 +259,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return attachmentNames;
 	}
 
-	private void checkHTMLEntityHeaders(MIMEEntity htmlEntity) throws NotesException {
+	private void checkHTMLEntityHeaders(final MIMEEntity htmlEntity) throws NotesException {
 
 		MIMEHeader mimeHeader = htmlEntity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader == null) {
@@ -268,7 +270,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	protected void checkMulitPartMixedHeaders(MIMEEntity baseEntity) throws NotesException {
+	protected void checkMulitPartMixedHeaders(final MIMEEntity baseEntity) throws NotesException {
 		MIMEHeader mimeHeader = baseEntity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader == null) {
 			mimeHeader = baseEntity.createHeader(CONTENT_TYPE);
@@ -277,7 +279,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	}
 
-	private MIMEHeader applyMimeHeaderTypeAndValue(MIMEEntity entity, String type, String value) throws NotesException {
+	private MIMEHeader applyMimeHeaderTypeAndValue(final MIMEEntity entity, final String type, final String value) throws NotesException {
 		MIMEHeader mimeHeader = entity.getNthHeader(type);
 		if (mimeHeader == null) {
 			mimeHeader = entity.createHeader(type);
@@ -287,7 +289,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	}
 
-	private MIMEEntity findContent(MIMEEntity entity, String mimeType) throws NotesException {
+	private MIMEEntity findContent(final MIMEEntity entity, final String mimeType) throws NotesException {
 		String contentType = getContentHeaderValue(entity);
 		if (contentType.startsWith(mimeType)) {
 			return entity;
@@ -308,7 +310,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	protected MIMEEntity findAttachment(MIMEEntity entity, String attachmentName) throws NotesException {
+	protected MIMEEntity findAttachment(final MIMEEntity entity, final String attachmentName) throws NotesException {
 		String contentType = getContentHeaderValue(entity);
 		if (contentType.startsWith("multipart")) {
 			MIMEEntity childNext = entity.getFirstChildEntity();
@@ -333,7 +335,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	private String getContentDispositionHeaderValue(MIMEEntity entity) throws NotesException {
+	private String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_DISPOSITION);
 		if (mimeheader != null) {
 			String val = mimeheader.getHeaderValAndParams(false, true);
@@ -343,7 +345,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	private String getContentHeaderValue(MIMEEntity entity) throws NotesException {
+	private String getContentHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader != null) {
 			String contenType = mimeHeader.getHeaderVal();
@@ -351,6 +353,13 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			return contenType;
 		}
 		return "";
+
+	}
+
+	@Override
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+			throws NotesException {
+		// TODO Auto-generated method stub
 
 	}
 }

@@ -4,10 +4,10 @@ public class TypeEnforcement {
 
 	private TypeEnforcement() {
 	}
-	
-	//Interger, Double, Boolean, 
 
-	public static Integer getAsInteger(Object obj) {
+	// Integer, Double, Boolean,
+
+	public static Integer getAsInteger(final Object obj) {
 		if (obj instanceof Integer) {
 			return (Integer) obj;
 		}
@@ -20,8 +20,10 @@ public class TypeEnforcement {
 		return (Integer) obj;
 	}
 
-	public static Double getAsDouble(Object value) {
-		// TODO Auto-generated method stub
+	public static Double getAsDouble(final Object value) {
+		if (value instanceof Double) {
+			return ((Double) value).doubleValue();
+		}
 		return null;
 	}
 }

@@ -12,7 +12,7 @@ public class MappingField {
 	private final boolean isWriteonly;
 	private final String formula;
 
-	public MappingField(String name) {
+	public MappingField(final String name) {
 		notesFieldName = name;
 		jsonName = name;
 		type = MapJsonType.DEFAULT;
@@ -22,7 +22,7 @@ public class MappingField {
 		isWriteonly = false;
 	}
 
-	public MappingField(String name, Map<String, Object> options) {
+	public MappingField(final String name, final Map<String, Object> options) {
 		notesFieldName = name;
 		jsonName = getFromMap("json", options, name);
 		type = getFromMapAsMTP("type", options, MapJsonType.DEFAULT);
@@ -32,7 +32,7 @@ public class MappingField {
 		formula = getFromMap("formula", options, "");
 	}
 
-	private MapJsonType getFromMapAsMTP(String key, Map<String, Object> options, MapJsonType defaultValue) {
+	private MapJsonType getFromMapAsMTP(final String key, final Map<String, Object> options, final MapJsonType defaultValue) {
 		if (options.containsKey(key)) {
 			String type = (String) options.get(key);
 			return MapJsonType.valueOf(type);
@@ -40,14 +40,14 @@ public class MappingField {
 		return defaultValue;
 	}
 
-	private String getFromMap(String key, Map<String, Object> options, String name) {
+	private String getFromMap(final String key, final Map<String, Object> options, final String name) {
 		if (options.containsKey(key)) {
 			return (String) options.get(key);
 		}
 		return name;
 	}
 
-	private boolean getFromMapAsBoolean(String key, Map<String, Object> options, Boolean defaultValue) {
+	private boolean getFromMapAsBoolean(final String key, final Map<String, Object> options, final Boolean defaultValue) {
 		if (options.containsKey(key)) {
 			return (Boolean) options.get(key);
 		}
@@ -73,13 +73,21 @@ public class MappingField {
 	public String getFormula() {
 		return formula;
 	}
-	
+
 	public boolean isReadOnly() {
 		return isReadonly;
 	}
+
 	public boolean isWriteOnly() {
 		return isWriteonly;
 	}
 
+	@Override
+	public String toString() {
+		return "MappingField [" + (notesFieldName != null ? "notesFieldName=" + notesFieldName + ", " : "") + (jsonName != null
+				? "jsonName=" + jsonName + ", " : "") + (type != null ? "type=" + type + ", " : "") + "isFormula=" + isFormula
+				+ ", isReadonly=" + isReadonly + ", isWriteonly=" + isWriteonly + ", " + (formula != null ? "formula=" + formula : "")
+				+ "]";
+	}
 
 }
