@@ -61,7 +61,7 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 		}
 		ViewEntryListDataContainer veldc = (ViewEntryListDataContainer) dc;
-		ViewEntryList2JsonConverter d2jc = new ViewEntryList2JsonConverter(veldc, routeProcessor, viewAccess);
+		ViewEntryList2JsonConverter d2jc = new ViewEntryList2JsonConverter(veldc, routeProcessor, viewAccess, context);
 		return d2jc.buildJsonFromDocument();
 	}
 }

@@ -36,9 +36,10 @@ public class ViewEntry2JsonConverter {
 
 		for (String fieldDefinition : fieldDefinitions.keySet()) {
 			MappingField mf = fieldDefinitions.get(fieldDefinition);
-			Object columnValue = columnValues.get(columnInfoMap.get(mf.getNotesFieldName()).getColumnValuesIndex());
-			if (!mf.isWriteOnly()) {
-				processColumn(jo, columnValue, mf);
+			if (!mf.isWriteOnly() && !mf.isFormula() && columnInfoMap.containsKey(mf.getNotesFieldName())) {
+				ColumnInfo ci = columnInfoMap.get(mf.getNotesFieldName());
+				int idx = ci.getColumnValuesIndex();
+				processColumn(jo, idx == 65535 ? ci.getConstantValue() : columnValues.get(idx), mf);
 				itemsProcessed.add(mf.getNotesFieldName());
 			}
 		}
