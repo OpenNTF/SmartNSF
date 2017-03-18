@@ -32,7 +32,6 @@ public class DoubleMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			throws NotesException {
 		double value = (Double) clmnValue;
 		jo.putJsonProperty(jsonPropertyName, value);
-
 	}
 
 }

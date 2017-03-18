@@ -26,8 +26,8 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			List<Double> stringValues = makeDoubleList(values);
-			jo.putJsonProperty(jsonPropertyName, stringValues);
+			List<Double> doubleValues = makeDoubleList(values);
+			jo.putJsonProperty(jsonPropertyName, doubleValues);
 		}
 	}
 
@@ -60,9 +60,8 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		Vector<?> values = (Vector<?>) clmnValue;
+		List<?> values = (List<?>) clmnValue;
 		processValuesToJsonObject(values, jo, jsonPropertyName);
-
 	}
 
 }

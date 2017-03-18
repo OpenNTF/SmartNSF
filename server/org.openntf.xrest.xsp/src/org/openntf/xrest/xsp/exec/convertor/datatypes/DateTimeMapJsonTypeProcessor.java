@@ -78,6 +78,5 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 		DateTime dtCurrent = (DateTime) clmnValue;
 		Date javaDate = dtCurrent.toJavaDate();
 		jo.putJsonProperty(jsonPropertyName, buildISO8601Date(javaDate));
-
 	}
 }

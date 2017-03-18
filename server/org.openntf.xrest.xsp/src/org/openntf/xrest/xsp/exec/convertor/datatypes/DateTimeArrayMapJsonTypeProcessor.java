@@ -95,7 +95,6 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 			throws NotesException {
 		List<?> values = (List<?>) clmnValue;
 		processValuesToJsonObject(values, jo, jsonPropertyName);
-
 	}
 
 }
