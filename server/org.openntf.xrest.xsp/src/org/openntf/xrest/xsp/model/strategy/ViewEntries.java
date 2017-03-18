@@ -21,13 +21,15 @@ import lotus.domino.ViewNavigator;
 
 public class ViewEntries extends AbstractViewDatabaseStrategy implements StrategyModel<ViewEntryListDataContainer, JsonJavaArray> {
 
+	private Database dbAccess;
+	private View viewAccess;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntryListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
-			View viewAccess = dbAccess.getView(getViewNameValue(context));
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<List<Object>> entries = new ArrayList<List<Object>>();
 
@@ -52,8 +54,14 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 	@Override
 	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
 			throws NotesException {
+		// at this point we should already have dbAccess and viewAccess, but
+		// just to be on the safe side
+		if (null == dbAccess) {
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			viewAccess = dbAccess.getView(getViewNameValue(context));
+		}
 		ViewEntryListDataContainer veldc = (ViewEntryListDataContainer) dc;
-		ViewEntryList2JsonConverter d2jc = new ViewEntryList2JsonConverter(veldc, routeProcessor, context);
+		ViewEntryList2JsonConverter d2jc = new ViewEntryList2JsonConverter(veldc, routeProcessor, viewAccess);
 		return d2jc.buildJsonFromDocument();
 	}
 }
