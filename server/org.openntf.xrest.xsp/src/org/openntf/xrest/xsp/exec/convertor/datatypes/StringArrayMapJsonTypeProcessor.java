@@ -61,7 +61,9 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		// TODO Auto-generated method stub
+		@SuppressWarnings("unchecked")
+		Vector<?> values = (Vector<String>) clmnValue;
+		processValuesToJsonObject(values, jo, jsonPropertyName);
 
 	}
 

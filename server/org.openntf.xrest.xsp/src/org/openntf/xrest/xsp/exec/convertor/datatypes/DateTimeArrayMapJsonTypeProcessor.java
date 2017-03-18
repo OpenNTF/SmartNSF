@@ -93,7 +93,8 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		// TODO Auto-generated method stub
+		List<?> values = (List<?>) clmnValue;
+		processValuesToJsonObject(values, jo, jsonPropertyName);
 
 	}
 
