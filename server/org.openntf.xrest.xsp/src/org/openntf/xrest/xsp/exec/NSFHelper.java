@@ -2,6 +2,9 @@ package org.openntf.xrest.xsp.exec;
 
 import java.util.List;
 
+import com.ibm.commons.util.io.json.JsonJavaArray;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
@@ -21,4 +24,7 @@ public interface NSFHelper {
 
 	public List<?> executeFormula(String formula, Document doc) throws NotesException;
 
+	public JsonJavaObject createJsonObject();
+	
+	public JsonJavaArray createJsonArray();
 }
