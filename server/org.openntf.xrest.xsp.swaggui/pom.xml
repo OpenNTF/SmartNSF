@@ -51,7 +51,7 @@
 						<executions>
 							<execution>
 								<id>removedownloads</id>
-								<phase>generate-sources</phase>
+								<phase>clean</phase>
 								<configuration>
 									<target>
 										<!-- Remove Other Sources -->
@@ -65,8 +65,12 @@
 								<phase>process-resources</phase>
 								<configuration>
 									<target>
-										<copy todir="resources/web/swagger-ui">
+										<copy todir="resources/web/swagger-ui/dist">
 											<fileset dir="temp/swagger-ui/swagger-ui-master/dist">
+											</fileset>
+										</copy>
+										<copy todir="resources/web/swagger-ui/public">
+											<fileset dir="temp/swagger-ui/swagger-ui-master/public">
 											</fileset>
 										</copy>
 									</target>
