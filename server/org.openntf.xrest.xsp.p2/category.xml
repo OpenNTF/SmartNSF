@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.openntf.xrest.xsp.feature_1.0.0.qualifier.jar" id="org.openntf.xrest.xsp.feature" version="1.0.0.qualifier">
+      <category name="SmartNSF_XSP"/>
+   </feature>
+   <category-def name="SmartNSF_XSP" label="SmartNSF Server Part"/>
+</site>

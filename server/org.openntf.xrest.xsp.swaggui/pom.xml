@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.xrest</groupId>
+		<artifactId>xrest.xsp.parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>org.openntf.xrest.xsp.swaggui</groupId>
+	<artifactId>org.openntf.xrest.xsp.swaggui</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<name>XREST SwaggerUI Wrapper</name>
+	<!-- Update the Swagger Source by running -P updateSwagger -->
+	<profiles>
+		<profile>
+			<id>updateSwagger</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>maven-download-plugin</artifactId>
+						<version>1.1.0</version>
+						<executions>
+							<execution>
+								<id>download-sources</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>wget</goal>
+								</goals>
+								<configuration>
+									<url>https://codeload.github.com/swagger-api/swagger-ui/zip/master</url>
+									<unpack>true</unpack>
+									<skipCache>true</skipCache>
+									<outputFileName>swagger-ui-master.zip</outputFileName>
+									<outputDirectory>temp/swagger-ui</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.codehaus.plexus</groupId>
+								<artifactId>plexus-archiver</artifactId>
+								<version>2.4.4</version>
+							</dependency>
+						</dependencies>
+
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>removedownloads</id>
+								<phase>clean</phase>
+								<configuration>
+									<target>
+										<!-- Remove Other Sources -->
+										<delete dir="temp/swagger-ui" />
+										<delete dir="resources/web/swagger-ui" />
+									</target>
+								</configuration>
+							</execution>
+							<execution>
+								<id>toDistribution</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<copy todir="resources/web/swagger-ui/dist">
+											<fileset dir="temp/swagger-ui/swagger-ui-master/dist">
+											</fileset>
+										</copy>
+										<copy todir="resources/web/swagger-ui/public">
+											<fileset dir="temp/swagger-ui/swagger-ui-master/public">
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
