@@ -2,7 +2,7 @@ println ("building routing...")
 
 
 router.GET('topics') {
-	strategy(SELECT_ALL_DOCUMENTS_BY_VIEW) {
+	strategy(DOCUMENTS_BY_VIEW) {
 		viewName('($All)')
 	}
 	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID'
@@ -11,7 +11,7 @@ router.GET('topics') {
 	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
 }
 router.GET('topics/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 			keyVariableName("id")
 	}
 	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
@@ -19,10 +19,17 @@ router.GET('topics/{id}') {
 	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
 	mapJson "body", json:'content', type:'MIME'
 	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	events PRE_SUBMIT: {
+		context, document ->
+		def now = new Date()
+		def timestamp = now.toTimestamp().toString();
+		def payload = context.getResultPayload()
+		payload.put('timestampe',timestamp)
+	}
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
-	strategy(SELECT_ATTACHMENT) {
-		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(ATTACHMENT) {
+		documentStrategy(DOCUMENT_BY_UNID) {
 			keyVariableName("id")
 		}
 		fieldName "Body"
@@ -31,7 +38,7 @@ router.GET('topics/{id}/attachment/{attachmentName}') {
 	}
 }
 router.POST('topics/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("id")
 	}
 	mapJson "Subject", json:'topic', type:'STRING'
@@ -50,8 +57,8 @@ router.POST('topics/{id}') {
 }
 
 router.POST('topics/{id}/attachment') {
-	strategy(SELECT_ATTACHMENT){
-		documentStrategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(ATTACHMENT){
+		documentStrategy(DOCUMENT_BY_UNID) {
 			keyVariableName("id")
 		}
 		fieldName "Body"
@@ -60,7 +67,7 @@ router.POST('topics/{id}/attachment') {
 }
 
 router.GET('topics/{parent_id}/comments') {
-	strategy(SELECT_ALL_DOCUMENTS_FROM_VIEW_BY_KEY) {
+	strategy(DOCUMENTS_FROM_VIEW_BY_KEY) {
 			keyVariableName("parent_id")
 			viewName("commentsByParentId")
 	}
@@ -72,7 +79,7 @@ router.GET('topics/{parent_id}/comments') {
 }
 
 router.GET('topics/{parent_id}/comments/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 			keyVariableName("id")
 	}
 	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Created'
@@ -83,7 +90,7 @@ router.GET('topics/{parent_id}/comments/{id}') {
 }
 
 router.POST('topics/{parent_id}/comments/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("id")
 		form 'Response'
 	}
@@ -103,7 +110,7 @@ router.POST('topics/{parent_id}/comments/{id}') {
 }
 
 router.DELETE('document/{id}') {
-	strategy(SELECT_DOCUMENT_BY_UNID) {
+	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
 	}
 }

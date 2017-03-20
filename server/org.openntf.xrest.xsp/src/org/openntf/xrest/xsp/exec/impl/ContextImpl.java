@@ -30,22 +30,24 @@ public class ContextImpl implements Context {
 	private List<String> groups;
 	private List<String> roles;
 	private JsonObject jsonPayload;
-	private Map<String,String> routerVariables;
+	private Map<String, String> routerVariables;
 	private NSFHelper nsfHelper;
-	
+	private Object resultPayload;
+
 	public ContextImpl() {
-		
+
 	}
-	
+
 	public ContextImpl addRequest(HttpServletRequest request) {
 		this.request = request;
 		return this;
 	}
-	
+
 	public Context addResponse(HttpServletResponse response) {
 		this.response = response;
 		return this;
 	}
+
 	public ContextImpl addNotesContext(NotesContext notesContext) throws NotesException {
 		this.session = notesContext.getCurrentSession();
 		this.database = notesContext.getCurrentDatabase();
@@ -53,73 +55,100 @@ public class ContextImpl implements Context {
 		this.nsfHelper = new NSFHelperImpl(this.database);
 		return this;
 	}
+
 	public Context addJsonPayload(JsonObject jsonObject) {
 		this.jsonPayload = jsonObject;
 		return this;
 	}
-	public Context addRouterVariables(Map<String,String> rv) {
+
+	public Context addRouterVariables(Map<String, String> rv) {
 		this.routerVariables = rv;
 		return this;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getRequest()
 	 */
 	@Override
 	public HttpServletRequest getRequest() {
 		return request;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getResponse()
 	 */
 	@Override
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getSession()
 	 */
 	@Override
 	public Session getSession() {
 		return session;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getDatabase()
 	 */
 	@Override
 	public Database getDatabase() {
 		return database;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getUserName()
 	 */
 	@Override
 	public String getUserName() {
 		return userName;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getGroups()
 	 */
 	@Override
 	public List<String> getGroups() {
 		return groups;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getRoles()
 	 */
 	@Override
 	public List<String> getRoles() {
 		return roles;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getJsonPayload()
 	 */
 	@Override
 	public JsonObject getJsonPayload() {
 		return jsonPayload;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getNotesContext()
 	 */
 
@@ -132,32 +161,45 @@ public class ContextImpl implements Context {
 		this.roles = new ArrayList<String>(database.queryAccessRoles(userNotesName.getAbbreviated()));
 		this.userName = userName;
 		userNotesName.recycle();
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.xrest.xsp.exec.impl.IContext#getRouterVariables()
 	 */
 	@Override
-	public Map<String,String> getRouterVariables() {
+	public Map<String, String> getRouterVariables() {
 		return routerVariables;
 	}
 
 	@Override
 	public boolean throwException(String message) {
 		throw new EventException(message);
-		
+
 	}
 
 	@Override
 	public boolean throwException(String message, Throwable e) {
-		throw new EventException(message,e);
-		
+		throw new EventException(message, e);
+
 	}
 
 	@Override
 	public NSFHelper getNSFHelper() {
 		return nsfHelper;
 	}
-	
+
+	@Override
+	public void setResultPayload(Object resultPayLoad) {
+		this.resultPayload = resultPayLoad;
+
+	}
+
+	@Override
+	public Object getResultPayload() {
+		return resultPayload;
+	}
+
 }

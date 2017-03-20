@@ -13,14 +13,14 @@ import lotus.domino.NotesException;
 public class DateOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		DateTime dtCurrent = item.getDateTimeValue();
 		Date javaDate = dtCurrent.toJavaDate();
 		jo.putJsonProperty(jsonPropertyName, buildISO8601DateOnly(javaDate));
 	}
 
 	@Override
-	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			Object value = values.get(0);
 			if (value instanceof DateTime) {
@@ -30,7 +30,7 @@ public class DateOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 	}
 
-	private String buildISO8601DateOnly(Date javaDate) {
+	private String buildISO8601DateOnly(final Date javaDate) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		return df.format(javaDate);
@@ -56,6 +56,13 @@ public class DateOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 
 		return df.parse(input);
+
+	}
+
+	@Override
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+			throws NotesException {
+		// TODO Auto-generated method stub
 
 	}
 }

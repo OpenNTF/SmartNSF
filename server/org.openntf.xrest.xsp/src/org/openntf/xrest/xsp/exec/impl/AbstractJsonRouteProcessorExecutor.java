@@ -20,8 +20,6 @@ import lotus.domino.NotesException;
 
 public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRouteProcessorExecutor  {
 
-	private Object resultPayload;
-
 	public AbstractJsonRouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
 		super(context,routerProcessor,path);
 	}
@@ -43,12 +41,12 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 
 	@Override
 	protected void submitValues() throws IOException, JsonException {
-		JsonPayloadProcessor.INSTANCE.processJsonPayload(resultPayload, context.getResponse());
+		JsonPayloadProcessor.INSTANCE.processJsonPayload(context.getResultPayload(), context.getResponse());
 		dataContainer.cleanUp();
 	}
 
 	public void setResultPayload(Object rp) {
-		resultPayload = rp;
+		context.setResultPayload(rp);
 	}
 
 	protected JsonObject buildJsonFromDocument(Document doc) throws NotesException {

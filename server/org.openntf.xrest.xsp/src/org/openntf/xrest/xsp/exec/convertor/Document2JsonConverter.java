@@ -24,15 +24,18 @@ public class Document2JsonConverter {
 	private final RouteProcessor routeProcessor;
 	private final Document doc;
 
-	public Document2JsonConverter(Document doc, RouteProcessor routeProcessor, Context context) {
+	public Document2JsonConverter(final Document doc, final RouteProcessor routeProcessor, final Context context) {
 		this.context = context;
 		this.routeProcessor = routeProcessor;
 		this.doc = doc;
 	}
 
 	public JsonObject buildJsonFromDocument() throws NotesException {
-		Set<String> itemProcessed = new HashSet<String>();
 		JsonObject jo = new JsonJavaObject();
+		if (null == doc) {
+			return jo;
+		}
+		Set<String> itemProcessed = new HashSet<String>();
 		@SuppressWarnings("unchecked")
 		Vector<Item> documentItems = doc.getItems();
 		Map<String, MappingField> fieldDefinition = routeProcessor.getMappingFields();
@@ -46,7 +49,7 @@ public class Document2JsonConverter {
 			}
 		}
 		for (MappingField field : routeProcessor.getFormulaFields()) {
-			if (!field.isWriteOnly()){
+			if (!field.isWriteOnly()) {
 				processFormulaToJson(jo, field, doc);
 			}
 		}
@@ -54,13 +57,13 @@ public class Document2JsonConverter {
 		return jo;
 	}
 
-	private void processFormulaToJson(JsonObject jo, MappingField field, Document doc) throws NotesException {
+	private void processFormulaToJson(final JsonObject jo, final MappingField field, final Document doc) throws NotesException {
 		Vector<?> result = context.getSession().evaluate(field.getFormula(), doc);
 		field.getType().processValuesToJsonObject(result, jo, field.getJsonName());
 		NotesObjectRecycler.recycleObjects(result.toArray());
 	}
 
-	private void processItem(JsonObject jo, Item item, MappingField mappingField) throws NotesException {
+	private void processItem(final JsonObject jo, final Item item, final MappingField mappingField) throws NotesException {
 		MapJsonType mjType = mappingField.getType();
 		switch (item.getType()) {
 		case Item.OTHEROBJECT:

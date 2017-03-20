@@ -29,13 +29,15 @@ public interface Context {
 
 	JsonObject getJsonPayload();
 
-	//NotesContext getNotesContext();
-	
 	Map<String, String> getRouterVariables();
-	
+
 	boolean throwException(String message);
-	
-	boolean throwException (String message, Throwable e);
+
+	boolean throwException(String message, Throwable e);
 
 	NSFHelper getNSFHelper();
+
+	void setResultPayload(Object resultPayLoad);
+
+	Object getResultPayload();
 }

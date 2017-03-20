@@ -25,32 +25,44 @@ import lotus.domino.Item;
 import lotus.domino.NotesException;
 
 public enum MapJsonType {
-	DEFAULT(new DefaultMapJsonTypeProcessor()), STRING(new StringMapJsonTypeProcessor()), INTEGER(new IntegerMapJsonTypeProcessor()), DOUBLE(new DoubleMapJsonTypeProcessor()), MIME(
-			new MimeMapJsonTypeProcessor()), DATETIME(new DateTimeMapJsonTypeProcessor()), DATEONLY(new DateOnlyMapJsonTypeProcessor()), TIMEONLY(new TimeOnlyMapJsonTypeProcessor()), ARRAY_OF_STRING(
-					new StringArrayMapJsonTypeProcessor()), ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor()), ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor()), ARRY_OF_DATETIME(
-							new DateTimeArrayMapJsonTypeProcessor());
+	DEFAULT(new DefaultMapJsonTypeProcessor()),
+	STRING(new StringMapJsonTypeProcessor()),
+	INTEGER(new IntegerMapJsonTypeProcessor()),
+	DOUBLE(new DoubleMapJsonTypeProcessor()),
+	MIME(new MimeMapJsonTypeProcessor()),
+	DATETIME(new DateTimeMapJsonTypeProcessor()),
+	DATEONLY(new DateOnlyMapJsonTypeProcessor()),
+	TIMEONLY(new TimeOnlyMapJsonTypeProcessor()),
+	ARRAY_OF_STRING(new StringArrayMapJsonTypeProcessor()),
+	ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor()),
+	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor()),
+	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor());
 
 	final MapJsonTypeProcessor processor;
 
-	public void processJsonValueToDocument(JsonJavaObject jo, Document doc, MappingField mf) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf) throws NotesException {
 		processor.processJsonValueToDocument(jo, doc, mf);
 	}
 
-	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		processor.processJsonValueToDocument(values, doc, fieldName);
 	}
 
-	public void processItemToJsonObject(Item item, JsonObject jo, String jsonProperty) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonProperty) throws NotesException {
 		processor.processItemToJsonObject(item, jo, jsonProperty);
 	}
 
-	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonProperty) throws NotesException {
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonProperty)
+			throws NotesException {
+		processor.processColumnValueToJsonObject(clmnValue, jo, jsonProperty);
+	}
+
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty) throws NotesException {
 		processor.processValuesToJsonObject(values, jo, jsonProperty);
 	}
 
-	private MapJsonType(MapJsonTypeProcessor processor) {
+	private MapJsonType(final MapJsonTypeProcessor processor) {
 		this.processor = processor;
 	}
-	
-	
+
 }

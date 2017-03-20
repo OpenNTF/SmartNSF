@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openntf.xrest</groupId>
 	<artifactId>xrest.xsp.parent</artifactId>
@@ -16,6 +17,15 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 		<groovy-version>2.4.8</groovy-version>
+		
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<osgi.qualifier>${maven.build.timestamp}</osgi.qualifier>
+		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-SNAPSHOT</kit.buildVersion>
+		<p2.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</p2.buildVersion>
+		<kit.result>snapshots</kit.result>
+		<kit.sourceCodeUrl>https://stash.openntf.org/plugins/servlet/archive/projects/XRAPI/repos/org.openntf.xrestapi/?at=refs%2Fheads%2F</kit.sourceCodeUrl>
+		<kit.sourceBranch>develop</kit.sourceBranch>
+		
 	</properties>
 
 	<repositories>
@@ -28,7 +38,7 @@
 			<id>kepler</id>
 			<url>http://download.eclipse.org/releases/kepler/</url>
 			<layout>p2</layout>
-		</repository>		
+		</repository>
 	</repositories>
 	<build>
 		<plugins>
@@ -43,6 +53,20 @@
 					<verbose>true</verbose>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
@@ -255,10 +279,13 @@
 			</activation>
 			<modules>
 				<module>org.openntf.xrest.libraries</module>
+				<module>org.openntf.xrest.xsp.swaggui</module>
 				<module>org.openntf.xrest.xsp</module>
 				<module>org.openntf.xrest.xsp.testsuite</module>
 				<module>org.openntf.xrest.xsp.feature</module>
 				<module>org.openntf.xrest.xsp.updatesite</module>
+				<module>org.openntf.xrest.xsp.p2</module>
+				<module>xrest.xsp.assembly</module>
 			</modules>
 		</profile>
 	</profiles>

@@ -18,20 +18,20 @@ import lotus.domino.NotesException;
 public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(Item item, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		Vector<?> values = item.getValues();
 		processValuesToJsonObject(values, jo, jsonPropertyName);
 	}
 
 	@Override
-	public void processValuesToJsonObject(List<?> values, JsonObject jo, String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			List<Integer> stringValues = makeIntegerList(values);
 			jo.putJsonProperty(jsonPropertyName, stringValues);
 		}
 	}
 
-	private List<Integer> makeIntegerList(List<?> values) {
+	private List<Integer> makeIntegerList(final List<?> values) {
 		List<Integer> convertedValues = new ArrayList<Integer>();
 		for (Object value : values) {
 			convertedValues.add(TypeEnforcement.getAsInteger(value));
@@ -40,7 +40,7 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	}
 
 	@Override
-	public void processJsonValueToDocument(JsonJavaObject jso, Document doc, MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
 		if (!jso.containsKey(mfField.getJsonName())) {
 			return;
 		}
@@ -53,8 +53,15 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	}
 
 	@Override
-	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		super.processJsonValueToDocument(new Vector<Integer>(makeIntegerList(values)), doc, fieldName);
+	}
+
+	@Override
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+			throws NotesException {
+		List<?> values = (List<?>) clmnValue;
+		processValuesToJsonObject(values, jo, jsonPropertyName);
 	}
 
 }
