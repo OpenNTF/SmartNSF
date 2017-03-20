@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XRest Swagger UI Wrapper
+Bundle-SymbolicName: org.openntf.xrest.xsp.swaggui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: WebGate Consulting AG
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime;resolution:=optional,
+ com.ibm.commons,
+ com.ibm.xsp.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/commons-io.jar

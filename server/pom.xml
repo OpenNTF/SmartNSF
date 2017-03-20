@@ -279,6 +279,7 @@
 			</activation>
 			<modules>
 				<module>org.openntf.xrest.libraries</module>
+				<module>org.openntf.xrest.xsp.swaggui</module>
 				<module>org.openntf.xrest.xsp</module>
 				<module>org.openntf.xrest.xsp.testsuite</module>
 				<module>org.openntf.xrest.xsp.feature</module>
