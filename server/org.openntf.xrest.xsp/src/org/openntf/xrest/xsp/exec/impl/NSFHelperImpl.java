@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.openntf.xrest.xsp.exec.NSFHelper;
 
+import com.ibm.commons.util.io.json.JsonJavaArray;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+
 import lotus.domino.Agent;
 import lotus.domino.Database;
 import lotus.domino.Document;
@@ -60,6 +63,16 @@ public class NSFHelperImpl implements NSFHelper {
 		Session session = database.getParent();
 		return session.evaluate(formula, doc);
 
+	}
+
+	@Override
+	public JsonJavaObject createJsonObject() {
+		return new JsonJavaObject();
+	}
+
+	@Override
+	public JsonJavaArray createJsonArray() {
+		return new JsonJavaArray();
 	}
 
 }
