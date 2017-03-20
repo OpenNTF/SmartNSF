@@ -96,7 +96,7 @@
 						</goals>
 						<configuration>
 							<descriptor>assembly.xml</descriptor>
-							<finalName>org.openntf.wf-${kit.buildVersion}</finalName>
+							<finalName>SmartNSF-${kit.buildVersion}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<outputDirectory>${kit.finalAssemblyFolder}</outputDirectory>
 						</configuration>
