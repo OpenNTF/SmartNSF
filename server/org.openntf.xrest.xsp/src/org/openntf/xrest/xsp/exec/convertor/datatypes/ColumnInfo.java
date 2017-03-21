@@ -24,6 +24,20 @@ public class ColumnInfo {
 	}
 
 	/**
+	 * This constructor allows direct setting of fields without actual
+	 * ViewColumn. Used now to add special "@unid" column
+	 * 
+	 * @param name
+	 * @param index
+	 * @param value
+	 */
+	public ColumnInfo(final String name, final int index, final Object value) {
+		this.itemName = name;
+		this.columnValuesIndex = index;
+		this.constantValue = value;
+	}
+
+	/**
 	 * Gets the programmatic name of the column
 	 *
 	 * @return String programmatic column name

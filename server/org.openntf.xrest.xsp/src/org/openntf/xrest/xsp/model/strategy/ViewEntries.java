@@ -35,9 +35,11 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 
 			ViewNavigator vnav = viewAccess.createViewNav();
 			ViewEntry entCurrent = vnav.getFirst();
-			while (entCurrent != null && entCurrent.isValid()) {
+			while (entCurrent != null && entCurrent.isValid() && !entCurrent.isCategory() && !entCurrent.isConflict()) {
 				List<Object> columnValues = new ArrayList<Object>();
 				columnValues.addAll(entCurrent.getColumnValues());
+				// add UNID to the list of values for this row
+				columnValues.add(entCurrent.getUniversalID());
 				entries.add(columnValues);
 				ViewEntry nextEntry = vnav.getNext();
 				// recycle!
