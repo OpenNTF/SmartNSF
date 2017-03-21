@@ -42,10 +42,12 @@ public class ViewEntryList2JsonConverterBase {
 		if (columnInfo == null) {
 			@SuppressWarnings("unchecked")
 			Vector<ViewColumn> columns = view.getColumns();
-			List<ColumnInfo> result = new ArrayList<ColumnInfo>(columns.size());
+			List<ColumnInfo> result = new ArrayList<ColumnInfo>(columns.size() + 1);
 			for (ViewColumn col : columns) {
 				result.add(new ColumnInfo(col, context));
 			}
+			// add "system @unid" column at last index position
+			result.add(new ColumnInfo("@unid", result.size() - 1, null));
 			columnInfo = result;
 		}
 		return columnInfo;

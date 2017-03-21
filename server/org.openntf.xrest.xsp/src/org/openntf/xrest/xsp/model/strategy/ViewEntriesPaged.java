@@ -58,10 +58,12 @@ public class ViewEntriesPaged extends AbstractViewDatabaseStrategy implements
 			if (skippedEntries == start - 1) {
 				int i = 0;
 				ViewEntry entCurrent = vnav.getFirst();
-				while (entCurrent != null && entCurrent.isValid() && i < count) {
+				while (entCurrent != null && entCurrent.isValid() && !entCurrent.isCategory() && !entCurrent.isConflict() && i < count) {
 					List<Object> columnValues = new ArrayList<Object>();
 					columnValues.addAll(entCurrent.getColumnValues());
 					entries.add(columnValues);
+					// add UNID to the list of values for this row
+					columnValues.add(entCurrent.getUniversalID());
 					i++;
 					ViewEntry nextEntry = vnav.getNext();
 					// recycle!
