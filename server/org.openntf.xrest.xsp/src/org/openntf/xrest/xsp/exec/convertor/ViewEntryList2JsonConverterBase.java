@@ -43,13 +43,20 @@ public class ViewEntryList2JsonConverterBase {
 			@SuppressWarnings("unchecked")
 			Vector<ViewColumn> columns = view.getColumns();
 			List<ColumnInfo> result = new ArrayList<ColumnInfo>(columns.size() + 1);
+			int constCols = 0;
 			for (ViewColumn col : columns) {
-				result.add(new ColumnInfo(col, context));
+				ColumnInfo ci = new ColumnInfo(col, context);
+				result.add(ci);
+				if (ci.getColumnValuesIndex() == 65535) {
+					constCols++;
+				}
 			}
 			// add "system @unid" column at last index position
-			result.add(new ColumnInfo("@unid", result.size() - 1, null));
+			// to get real last index we need tu substract all const columns
+			result.add(new ColumnInfo("@unid", result.size() - constCols, null));
 			columnInfo = result;
 		}
+		System.out.println("DEBUG:" + columnInfo);
 		return columnInfo;
 	}
 
