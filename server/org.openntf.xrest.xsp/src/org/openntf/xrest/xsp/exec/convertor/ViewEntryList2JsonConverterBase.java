@@ -56,7 +56,7 @@ public class ViewEntryList2JsonConverterBase {
 			result.add(new ColumnInfo("@unid", result.size() - constCols, null));
 			columnInfo = result;
 		}
-		System.out.println("DEBUG:" + columnInfo);
+		// System.out.println("DEBUG:" + columnInfo);
 		return columnInfo;
 	}
 
