@@ -38,7 +38,7 @@ public enum MapJsonType {
 	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor()),
 	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor());
 
-	final MapJsonTypeProcessor processor;
+	final transient MapJsonTypeProcessor processor;
 
 	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf) throws NotesException {
 		processor.processJsonValueToDocument(jo, doc, mf);
