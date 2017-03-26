@@ -19,7 +19,7 @@ import com.ibm.commons.util.io.json.JsonException;
 import groovy.lang.Closure;
 import lotus.domino.Document;
 
-public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor{
+public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor {
 
 	protected final Context context;
 
@@ -31,7 +31,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	protected final String path;
 	protected DataContainer<?> dataContainer;
 
-	public AbstractRouteProcessorExecutor(Context context, RouteProcessor routeProcessor, String path)  {
+	public AbstractRouteProcessorExecutor(final Context context, final RouteProcessor routeProcessor, final String path) {
 		this.path = path;
 		this.routeProcessor = routeProcessor;
 		this.context = context;
@@ -71,7 +71,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 	private void checkAccess() throws ExecutorException {
-		//TODO: Looser! You missing the context
+		// TODO: Looser! You missing the context
 		List<String> allowedUsersAndGroups = routeProcessor.getAccessGroups();
 		if (allowedUsersAndGroups == null || allowedUsersAndGroups.isEmpty()) {
 			return;
@@ -97,7 +97,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Validation Error: " + e.getMessage(), e, path, "validation");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "validation");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "validation");
 		}
 	}
 
@@ -110,7 +110,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, path, "preloadmodel");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "preloadmodel");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "preloadmodel");
 		}
 	}
 
@@ -131,7 +131,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "postloadmodel");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "postloadmodel");
 		}
 	}
 
@@ -144,13 +144,13 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "postloadmodel");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "postloadmodel");
 		}
 	}
 
 	protected abstract void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException;
 
-	public void setDataContainer(DataContainer<?> container) {
+	public void setDataContainer(final DataContainer<?> container) {
 		this.dataContainer = container;
 	}
 
