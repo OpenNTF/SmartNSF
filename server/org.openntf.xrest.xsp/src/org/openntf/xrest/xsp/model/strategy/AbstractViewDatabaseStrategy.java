@@ -30,4 +30,13 @@ public class AbstractViewDatabaseStrategy extends AbstractDatabaseStrategy {
 		}
 	}
 
+	protected boolean isReturnTotals(final Context context) {
+		String totals = context.getRequest().getParameter("totals");
+		// skip counting only if we have parameter totals=off
+		// if parameter is omitted, we assume it is on
+		if (null == totals || totals.equals("on"))
+			return true;
+		return false;
+	}
+
 }

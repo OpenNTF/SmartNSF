@@ -18,10 +18,10 @@ import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
-public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRouteProcessorExecutor  {
+public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
-	public AbstractJsonRouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
-		super(context,routerProcessor,path);
+	public AbstractJsonRouteProcessorExecutor(final Context context, final RouteProcessor routerProcessor, final String path) {
+		super(context, routerProcessor, path);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "presubmit");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "presubmit");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "presubmit");
 		}
 
 	}
@@ -45,11 +45,11 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 		dataContainer.cleanUp();
 	}
 
-	public void setResultPayload(Object rp) {
+	public void setResultPayload(final Object rp) {
 		context.setResultPayload(rp);
 	}
 
-	protected JsonObject buildJsonFromDocument(Document doc) throws NotesException {
+	protected JsonObject buildJsonFromDocument(final Document doc) throws NotesException {
 		Document2JsonConverter d2jc = new Document2JsonConverter(doc, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();
 	}

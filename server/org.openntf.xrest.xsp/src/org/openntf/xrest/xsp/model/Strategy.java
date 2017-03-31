@@ -13,6 +13,8 @@ import org.openntf.xrest.xsp.model.strategy.GetByUNID;
 import org.openntf.xrest.xsp.model.strategy.SelectAttachment;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 import org.openntf.xrest.xsp.model.strategy.ViewEntries;
+import org.openntf.xrest.xsp.model.strategy.ViewEntriesByCategory;
+import org.openntf.xrest.xsp.model.strategy.ViewEntriesByCategoryPaged;
 import org.openntf.xrest.xsp.model.strategy.ViewEntriesPaged;
 
 public enum Strategy {
@@ -29,9 +31,8 @@ public enum Strategy {
 	ATTACHMENT(SelectAttachment.class),
 	VIEWENTRIES(ViewEntries.class),
 	VIEWENTRIES_PAGED(ViewEntriesPaged.class),
-	// TODO: VIEWENTRIES_BY_CATEGORY(ViewEntriesByCategory.class),
-	// TODO: VIEWENTRIES_BY_CATEGORY_PAGED(ViewEntriesByCategoryPaged.class)
-	;
+	VIEWENTRIES_BY_CATEGORY(ViewEntriesByCategory.class),
+	VIEWENTRIES_BY_CATEGORY_PAGED(ViewEntriesByCategoryPaged.class);
 
 	private final Class<? extends StrategyModel<?, ?>> strategyClass;
 

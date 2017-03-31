@@ -20,12 +20,12 @@ import lotus.domino.NotesException;
 
 public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
-	public DELETERouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
+	public DELETERouteProcessorExecutor(final Context context, final RouteProcessor routerProcessor, final String path) {
 		super(context, routerProcessor, path);
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container) throws ExecutorException {
 		preDelete(context, container);
 		List<String> deletedDocuments;
 		Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_DELETE);
@@ -40,7 +40,7 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> executeDelteDocuments(DataContainer<?> container) throws ExecutorException {
+	private List<String> executeDelteDocuments(final DataContainer<?> container) throws ExecutorException {
 		List<String> unids = new ArrayList<String>();
 		try {
 			if (container.isList()) {
@@ -54,12 +54,12 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 				doc.remove(true);
 			}
 		} catch (NotesException e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, getPath(), "executeDelete");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "executeDelete");
 		}
 		return unids;
 	}
 
-	private void preDelete(Context context, DataContainer<?> container) throws ExecutorException {
+	private void preDelete(final Context context, final DataContainer<?> container) throws ExecutorException {
 		try {
 			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_DELETE);
 			if (cl != null) {
@@ -68,13 +68,14 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 		} catch (EventException e) {
 			throw new ExecutorException(400, "Pre Delete Error: " + e.getMessage(), e, getPath(), "predelete");
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, getPath(), "predelete");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "predelete");
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> executeAlternativeDelete(Closure<?> cl, Context context, DataContainer<?> container) throws ExecutorException {
+	private List<String> executeAlternativeDelete(final Closure<?> cl, final Context context, final DataContainer<?> container)
+			throws ExecutorException {
 		try {
 			return (List<String>) DSLBuilder.callClosure(cl, context, container.getData(), container);
 		} catch (EventException e) {

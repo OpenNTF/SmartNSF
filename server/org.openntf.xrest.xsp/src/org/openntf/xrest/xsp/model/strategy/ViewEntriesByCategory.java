@@ -19,7 +19,8 @@ import lotus.domino.View;
 import lotus.domino.ViewEntry;
 import lotus.domino.ViewNavigator;
 
-public class ViewEntries extends AbstractViewDatabaseStrategy implements StrategyModel<ViewEntryListDataContainer, JsonJavaArray> {
+public class ViewEntriesByCategory extends AbstractAllByKeyViewDatabaseStrategy implements
+		StrategyModel<ViewEntryListDataContainer, JsonJavaArray> {
 
 	private Database dbAccess;
 	private View viewAccess;
@@ -32,8 +33,8 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<List<Object>> entries = new ArrayList<List<Object>>();
-
-			ViewNavigator vnav = viewAccess.createViewNav();
+			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
+			ViewNavigator vnav = viewAccess.createViewNavFromCategory(varValue);
 			ViewEntry entCurrent = vnav.getFirst();
 			while (entCurrent != null && entCurrent.isValid() && !entCurrent.isCategory() && !entCurrent.isConflict()) {
 				List<Object> columnValues = new ArrayList<Object>();

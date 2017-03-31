@@ -19,7 +19,7 @@ import lotus.domino.View;
 import lotus.domino.ViewEntry;
 import lotus.domino.ViewNavigator;
 
-public class ViewEntriesPaged extends AbstractViewDatabaseStrategy implements
+public class ViewEntriesByCategoryPaged extends AbstractAllByKeyViewDatabaseStrategy implements
 		StrategyModel<ViewEntryListPaginationDataContainer, JsonObject> {
 
 	private Database dbAccess;
@@ -32,22 +32,21 @@ public class ViewEntriesPaged extends AbstractViewDatabaseStrategy implements
 			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
-			int total = -1;
-			String totals = context.getRequest().getParameter("totals");
-			// skip counting only if we have parameter totals=off
-			// if parameter is omitted, we assume it is on
-			totals = null == totals ? "on" : totals;
-			if (!totals.equals("off")) {
-				total = viewAccess.getEntryCount();
-			}
+
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
-
+			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 			List<List<Object>> entries = new ArrayList<List<Object>>();
 
-			ViewNavigator vnav = viewAccess.createViewNav();
+			ViewNavigator vnav = viewAccess.createViewNavFromCategory(varValue);
 			vnav.setCacheGuidance(count, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
 			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
+
+			int total = -1;
+			if (isReturnTotals(context)) {
+				total = vnav.getCount();
+			}
+
 			int skippedEntries = 0;
 			// skip only when not starting at 1
 			if (start > 1) {
