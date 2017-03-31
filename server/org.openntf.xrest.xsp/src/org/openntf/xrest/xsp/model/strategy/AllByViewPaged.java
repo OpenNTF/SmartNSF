@@ -25,16 +25,13 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
+					.getSession());
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 
 			int total = -1;
-			String totals = context.getRequest().getParameter("totals");
-			// skip counting only if we have parameter totals=off
-			// if parameter is omitted, we assume it is on
-			totals = null == totals ? "on" : totals;
-			if (!totals.equals("off")) {
+			if (isReturnTotals(context)) {
 				total = viewAccess.getEntryCount();
 			}
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
@@ -76,7 +73,8 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 	}
 
 	@Override
-	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc) throws NotesException {
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+			throws NotesException {
 		DocumentListPaginationDataContainer docListDC = (DocumentListPaginationDataContainer) dc;
 		DocumentListPaged2JsonConverter d2jc = new DocumentListPaged2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();

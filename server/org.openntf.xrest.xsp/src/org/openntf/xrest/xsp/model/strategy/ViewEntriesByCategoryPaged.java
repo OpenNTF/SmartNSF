@@ -43,11 +43,7 @@ public class ViewEntriesByCategoryPaged extends AbstractAllByKeyViewDatabaseStra
 			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
 
 			int total = -1;
-			String totals = context.getRequest().getParameter("totals");
-			// skip counting only if we have parameter totals=off
-			// if parameter is omitted, we assume it is on
-			totals = null == totals ? "on" : totals;
-			if (!totals.equals("off")) {
+			if (isReturnTotals(context)) {
 				total = vnav.getCount();
 			}
 
