@@ -17,7 +17,6 @@ package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.ExecutionException;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -39,13 +38,18 @@ import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.model.Router;
+import org.openntf.xrest.xsp.yaml.YamlProducer;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
+
+import lotus.domino.NotesException;
 
 public class XRestAPIServlet extends HttpServlet {
 	/**
@@ -112,25 +116,10 @@ public class XRestAPIServlet extends HttpServlet {
 		try {
 			String method = req.getMethod();
 			String path = req.getPathInfo();
-			RouteProcessor rp = routerFactory.getRouter().find(method, path);
-			ContextImpl context = new ContextImpl();
-			if (rp != null) {
-				NotesContext c = NotesContext.getCurrentUnchecked();
-				context.addNotesContext(c).addRequest(req).addResponse(resp);
-				context.addRouterVariables(rp.extractValuesFromPath(path));
-				if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
-					try {
-						JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
-						context.addJsonPayload(json);
-					} catch (JsonException jE) {
-						jE.printStackTrace();
-					}
-				}
-				RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
-				executor.execute();
+			if (StringUtil.isEmpty(path) && "yaml".equals(req.getQueryString())) {
+				processYamlRequest(resp, req);
 			} else {
-				throw new ExecutorException(500, "Path not found", path, "SERVLET");
+				processRouteProcessorBased(req, resp, method, path);
 			}
 		} catch (ExecutorException ex) {
 			try {
@@ -149,6 +138,37 @@ public class XRestAPIServlet extends HttpServlet {
 		} finally {
 			//releaseContext(fcCurrent);
 
+		}
+	}
+
+	private void processYamlRequest(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException {
+		Router router = routerFactory.getRouter();
+		PrintWriter pw = resp.getWriter();
+		YamlProducer yamlProducer = new YamlProducer(router, request, pw);
+		yamlProducer.processYamlToPrintWriter();
+		pw.close();
+	}
+
+	private void processRouteProcessorBased(HttpServletRequest req, HttpServletResponse resp, String method, String path) throws NotesException, IOException, ExecutorException {
+		RouteProcessor rp = routerFactory.getRouter().find(method, path);
+		ContextImpl context = new ContextImpl();
+		if (rp != null) {
+			NotesContext c = NotesContext.getCurrentUnchecked();
+			context.addNotesContext(c).addRequest(req).addResponse(resp);
+			context.addRouterVariables(rp.extractValuesFromPath(path));
+			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
+				try {
+					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
+					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
+					context.addJsonPayload(json);
+				} catch (JsonException jE) {
+					jE.printStackTrace();
+				}
+			}
+			RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
+			executor.execute();
+		} else {
+			throw new ExecutorException(500, "Path not found", path, "SERVLET");
 		}
 	}
 

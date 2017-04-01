@@ -27,9 +27,11 @@ public class RouteProcessor {
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
 	private final Map<String,MappingField> mappingFields = new HashMap<String,MappingField>();
 	private final List<MappingField> formulaFields = new ArrayList<MappingField>();
+	private final String method;
 
-	public RouteProcessor(String path) {
+	public RouteProcessor(String path, String method) {
 		route = path;
+		this.method = method;
 		pathElements = path.split("/");
 		extratVariableFromPath();
 	}
@@ -157,6 +159,10 @@ public class RouteProcessor {
 
 	public List<MappingField> getFormulaFields() {
 		return formulaFields;
+	}
+
+	public String getMethod() {
+		return method;
 	}
 
 }
