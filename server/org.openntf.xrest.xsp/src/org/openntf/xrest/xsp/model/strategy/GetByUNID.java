@@ -24,23 +24,23 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	private String formValue;
 	private Closure<?> formCl;
 
-	public void keyVariableName(String name) {
+	public void keyVariableName(final String name) {
 		this.keyVariableValue = name;
 	}
 
-	public void keyVariableName(Closure<?> keyVariableCl) {
+	public void keyVariableName(final Closure<?> keyVariableCl) {
 		this.keyVariableCl = keyVariableCl;
 	}
 
-	public void form(String name) {
+	public void form(final String name) {
 		this.formValue = name;
 	}
 
-	public void form(Closure<?> formCl) {
+	public void form(final Closure<?> formCl) {
 		this.formCl = formCl;
 	}
 
-	public String getKeyVariableValue(Context context) {
+	public String getKeyVariableValue(final Context context) {
 		if (keyVariableCl != null) {
 			return (String) DSLBuilder.callClosure(keyVariableCl, context);
 		} else {
@@ -48,7 +48,7 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 		}
 	}
 
-	public String getFormValue(Context context) {
+	public String getFormValue(final Context context) {
 		if (formCl != null) {
 			return (String) DSLBuilder.callClosure(formCl, context);
 		} else {
@@ -57,9 +57,10 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	}
 
 	@Override
-	public DocumentDataContainer buildDataContainer(Context context) throws ExecutorException {
+	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
+					.getSession());
 			String unid = context.getRouterVariables().get(keyVariableValue);
 			if (unid.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
@@ -69,14 +70,23 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 				}
 				return new DocumentDataContainer(doc, null, dbAccess);
 			}
-			return new DocumentDataContainer(dbAccess.getDocumentByUNID(unid), null, dbAccess);
+			Document doc = null;
+			try {
+				doc = dbAccess.getDocumentByUNID(unid);
+			} catch (NotesException ne) {
+				throw new ExecutorException(404, "Not found", "", "getmodel");
+			}
+			return new DocumentDataContainer(doc, null, dbAccess);
+		} catch (ExecutorException exe) {
+			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
 	}
 
 	@Override
-	public JsonObject buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+			throws NotesException {
 		Document2JsonConverter d2j = new Document2JsonConverter(((DocumentDataContainer) dc).getData(), routeProcessor, context);
 		return d2j.buildJsonFromDocument();
 	}

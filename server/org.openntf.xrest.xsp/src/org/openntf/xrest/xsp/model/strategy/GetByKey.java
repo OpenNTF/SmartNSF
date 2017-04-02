@@ -23,15 +23,15 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	private String formValue;
 	private Closure<?> formCl;
 
-	public void form(String name) {
+	public void form(final String name) {
 		this.formValue = name;
 	}
 
-	public void form(Closure<?> formCl) {
+	public void form(final Closure<?> formCl) {
 		this.formCl = formCl;
 	}
 
-	public String getFormValue(Context context) {
+	public String getFormValue(final Context context) {
 		if (formCl != null) {
 			return (String) DSLBuilder.callClosure(formCl, context);
 		} else {
@@ -40,9 +40,10 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	}
 
 	@Override
-	public DocumentDataContainer buildDataContainer(Context context) throws ExecutorException {
+	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
+					.getSession());
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 
 			String key = context.getRouterVariables().get(getKeyVariableValue(context));
@@ -54,7 +55,13 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 				}
 				return new DocumentDataContainer(doc, viewAccess, dbAccess);
 			}
-			return new DocumentDataContainer(viewAccess.getDocumentByKey(key, true), viewAccess, dbAccess);
+			Document doc = viewAccess.getDocumentByKey(key, true);
+			if (null == doc) {
+				throw new ExecutorException(404, "Not found", "", "getmodel");
+			}
+			return new DocumentDataContainer(doc, viewAccess, dbAccess);
+		} catch (ExecutorException exe) {
+			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
@@ -62,7 +69,8 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	}
 
 	@Override
-	public JsonObject buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+			throws NotesException {
 		Document2JsonConverter d2j = new Document2JsonConverter(((DocumentDataContainer) dc).getData(), routeProcessor, context);
 		return d2j.buildJsonFromDocument();
 	}
