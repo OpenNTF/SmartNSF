@@ -9,7 +9,7 @@ public class RoutesDSLEdtior extends TextEditor {
 	public RoutesDSLEdtior() {
 		super();
 		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager));
+		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager, this));
 		// setDocumentProvider(new XMLDocumentProvider());
 	}
 
