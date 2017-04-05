@@ -32,7 +32,7 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 				DSLBuilder.callClosure(cl, context, dataContainer.getData());
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "presubmit");
+			throw new ExecutorException(e, path, "presubmit");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "presubmit");
 		}

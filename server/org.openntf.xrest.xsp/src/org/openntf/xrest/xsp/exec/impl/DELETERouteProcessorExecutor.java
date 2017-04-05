@@ -66,7 +66,7 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Pre Delete Error: " + e.getMessage(), e, getPath(), "predelete");
+			throw new ExecutorException(e, getPath(), "predelete");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "predelete");
 		}
@@ -79,7 +79,7 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 		try {
 			return (List<String>) DSLBuilder.callClosure(cl, context, container.getData(), container);
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Alternate Delete Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
+			throw new ExecutorException(e, getPath(), "executealternatedelete");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Alternate Delete Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
 		}

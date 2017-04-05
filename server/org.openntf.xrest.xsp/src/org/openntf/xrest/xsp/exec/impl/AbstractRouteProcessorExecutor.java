@@ -95,7 +95,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 				DSLBuilder.callClosure(cl, context);
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Validation Error: " + e.getMessage(), e, path, "validation");
+			throw new ExecutorException(e, path, "validation");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "validation");
 		}
@@ -108,7 +108,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 				DSLBuilder.callClosure(cl, context);
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, path, "preloadmodel");
+			throw new ExecutorException(e, path, "preloadmodel");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "preloadmodel");
 		}
@@ -129,7 +129,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 				DSLBuilder.callClosure(cl, context, doc);
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
+			throw new ExecutorException(e, path, "postloadmodel");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "postloadmodel");
 		}
@@ -142,7 +142,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 				DSLBuilder.callClosure(cl, context, dataContainer.getData());
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Post Load Error: " + e.getMessage(), e, path, "postloadmodel");
+			throw new ExecutorException(e, path, "postloadmodel");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "postloadmodel");
 		}

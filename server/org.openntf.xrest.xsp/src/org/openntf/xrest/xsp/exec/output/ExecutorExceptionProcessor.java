@@ -21,7 +21,7 @@ public enum ExecutorExceptionProcessor {
 	INSTANCE;
 
 	public void processExecutorException(ExecutorException ex, HttpServletResponse resp) throws IOException, JsonException {
-		resp.setStatus(ex.getHttpErrorNr());
+		resp.setStatus(ex.getHttpStatusCode());
 		resp.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
 		JsonObject jso = buildJsonError(ex);

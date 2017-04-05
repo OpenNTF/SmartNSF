@@ -48,7 +48,7 @@ public class ExecutorException extends Exception {
 		return phase;
 	}
 
-	public int getHttpErrorNr() {
+	public int getHttpStatusCode() {
 		return httpStatusCode;
 	}
 }
