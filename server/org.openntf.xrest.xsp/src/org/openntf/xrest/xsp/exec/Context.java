@@ -35,6 +35,10 @@ public interface Context {
 
 	boolean throwException(String message, Throwable e);
 
+	boolean throwException(int httpStatus, String message);
+
+	boolean throwException(int httpStatus, String message, Throwable e);
+
 	NSFHelper getNSFHelper();
 
 	void setResultPayload(Object resultPayLoad);

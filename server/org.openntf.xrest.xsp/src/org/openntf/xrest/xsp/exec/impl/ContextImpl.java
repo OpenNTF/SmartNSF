@@ -187,6 +187,16 @@ public class ContextImpl implements Context {
 	}
 
 	@Override
+	public boolean throwException(int httpStatus, String message) {
+		throw new EventException(httpStatus, message);
+	}
+
+	@Override
+	public boolean throwException(int httpStatus, String message, Throwable e) {
+		throw new EventException(httpStatus, message, e);
+	}
+
+	@Override
 	public NSFHelper getNSFHelper() {
 		return nsfHelper;
 	}
