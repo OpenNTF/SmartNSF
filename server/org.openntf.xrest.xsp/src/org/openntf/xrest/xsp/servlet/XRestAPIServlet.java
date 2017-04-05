@@ -108,7 +108,7 @@ public class XRestAPIServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//FacesContext fcCurrent = initContext(req, resp);
+		// FacesContext fcCurrent = initContext(req, resp);
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -123,7 +123,7 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 		} catch (ExecutorException ex) {
 			try {
-				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, resp);
+				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, resp, routerFactory.getRouter().isTrace());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -136,7 +136,7 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 
 		} finally {
-			//releaseContext(fcCurrent);
+			// releaseContext(fcCurrent);
 
 		}
 	}
@@ -156,6 +156,7 @@ public class XRestAPIServlet extends HttpServlet {
 			NotesContext c = NotesContext.getCurrentUnchecked();
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
+			context.setTrace(routerFactory.getRouter().isTrace());
 			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;

@@ -18,6 +18,9 @@ public class Router {
 	private final List<RouteProcessor> routesPOST = new ArrayList<RouteProcessor>();
 	private final List<RouteProcessor> routesDELETE = new ArrayList<RouteProcessor>();
 	private final Map<String, List<RouteProcessor>> allroutes = new HashMap<String, List<RouteProcessor>>();
+	private String versionValue = "1.0.0";
+	private String descriptionValue = "";
+	private boolean traceValue = false;
 
 	public Router() {
 		allroutes.put("GET", routesGET);
@@ -48,6 +51,18 @@ public class Router {
 		RouteProcessor rp = new RouteProcessor(route, "DELETE");
 		routesDELETE.add(rp);
 		DSLBuilder.applyClosureToObject(cl, rp);
+	}
+
+	public void version(String version) {
+		this.versionValue = version;
+	}
+
+	public void trace(boolean trace) {
+		this.traceValue = trace;
+	}
+
+	public void description(String description) {
+		this.descriptionValue = description;
 	}
 
 	public List<RouteProcessor> getRoutesGET() {
@@ -103,4 +118,18 @@ public class Router {
 			}
 		}
 	}
+
+	public String getVersionValue() {
+		return versionValue;
+	}
+
+	public String getDescriptionValue() {
+		return descriptionValue;
+	}
+
+	public boolean isTrace() {
+		return traceValue;
+	}
+	
+	
 }

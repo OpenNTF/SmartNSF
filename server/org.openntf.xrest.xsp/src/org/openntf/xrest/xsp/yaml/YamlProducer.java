@@ -59,7 +59,9 @@ public class YamlProducer {
 			NotesContext c = NotesContext.getCurrentUnchecked();
 			Database db = c.getCurrentDatabase();
 			writeProperty(1, "title", db.getTitle());
-			writeProperty(1, "version", "\"1.0.0\"");
+			writeProperty(1, "version", "\"" + this.router.getVersionValue() + "\"");
+			writePropertyNotNull(1, "description", this.router.getDescriptionValue());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,6 +90,8 @@ public class YamlProducer {
 
 	private void buildOperation(RouteProcessor rp) {
 		writeProperty(3, "consumes", "[application/json]");
+		writePropertyNotNull(3, "description", rp.getDescriptionValue());
+		writePropertyNotNull(3, "summary", rp.getSummaryValue());
 		writeKey(3, "responses");
 		writeKey(4, "200");
 		okResponse(rp);
@@ -273,10 +277,18 @@ public class YamlProducer {
 		sb.append(":");
 		printWriter.println(sb.toString());
 	}
-	
+
 	private void writeNoKeyChar(int indent, String key) {
 		StringBuilder sb = getSBwithCorrectIntend(indent);
 		sb.append(key);
 		printWriter.println(sb.toString());
 	}
+
+	private void writePropertyNotNull(int indent, String key, String value) {
+		if (!StringUtil.isEmpty(value)) {
+			writeProperty(indent, key, value);
+		}
+
+	}
+
 }

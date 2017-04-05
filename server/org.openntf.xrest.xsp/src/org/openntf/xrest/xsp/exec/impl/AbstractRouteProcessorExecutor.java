@@ -51,7 +51,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 			submitValues();
 		} catch (ExecutorException ex) {
 			try {
-				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse());
+				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse(), context.traceEnabled());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -22,12 +22,14 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
-	private StrategyModel<?,?> strategyModel;
+	private StrategyModel<?, ?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
-	private final Map<String,MappingField> mappingFields = new HashMap<String,MappingField>();
+	private final Map<String, MappingField> mappingFields = new HashMap<String, MappingField>();
 	private final List<MappingField> formulaFields = new ArrayList<MappingField>();
 	private final String method;
+	private String descriptionValue;
+	private String summaryValue;
 
 	public RouteProcessor(String path, String method) {
 		route = path;
@@ -79,13 +81,21 @@ public class RouteProcessor {
 		if (mf.isFormula()) {
 			formulaFields.add(mf);
 		} else {
-			mappingFields.put(fieldName.toLowerCase(),mf);
+			mappingFields.put(fieldName.toLowerCase(), mf);
 		}
 	}
 
 	public void mapJson(String fieldName) {
 		MappingField mf = new MappingField(fieldName);
-		mappingFields.put(fieldName.toLowerCase(),mf);
+		mappingFields.put(fieldName.toLowerCase(), mf);
+	}
+
+	public void description(String description) {
+		this.descriptionValue = description;
+	}
+
+	public void summary(String summary) {
+		this.summaryValue = summary;
 	}
 
 	public String getRoute() {
@@ -146,13 +156,14 @@ public class RouteProcessor {
 		return strategyModel.buildDataContainer(context);
 	}
 
-	public Map<String,MappingField> getMappingFields() {
+	public Map<String, MappingField> getMappingFields() {
 		return mappingFields;
 	}
-	
-	public StrategyModel<?,?> getStrategyModel() {
+
+	public StrategyModel<?, ?> getStrategyModel() {
 		return strategyModel;
 	}
+
 	public Strategy getStrategyValue() {
 		return strategyValue;
 	}
@@ -165,4 +176,11 @@ public class RouteProcessor {
 		return method;
 	}
 
+	public String getDescriptionValue() {
+		return this.descriptionValue;
+	}
+
+	public String getSummaryValue() {
+		return this.summaryValue;
+	}
 }

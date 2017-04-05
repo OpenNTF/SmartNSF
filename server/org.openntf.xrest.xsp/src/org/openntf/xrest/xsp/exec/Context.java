@@ -44,4 +44,6 @@ public interface Context {
 	void setResultPayload(Object resultPayLoad);
 
 	Object getResultPayload();
+	
+	boolean traceEnabled();
 }
