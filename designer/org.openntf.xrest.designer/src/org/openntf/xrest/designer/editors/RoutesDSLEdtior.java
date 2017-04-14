@@ -1,8 +1,8 @@
 package org.openntf.xrest.designer.editors;
 
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 
-public class RoutesDSLEdtior extends TextEditor {
+public class RoutesDSLEdtior extends CompilationUnitEditor {
 
 	private ColorManager colorManager;
 
@@ -10,7 +10,6 @@ public class RoutesDSLEdtior extends TextEditor {
 		super();
 		colorManager = new ColorManager();
 		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager, this));
-		// setDocumentProvider(new XMLDocumentProvider());
 	}
 
 	@Override
