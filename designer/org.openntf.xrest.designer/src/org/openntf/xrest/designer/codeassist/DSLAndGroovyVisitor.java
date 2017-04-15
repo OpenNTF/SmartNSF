@@ -2,9 +2,8 @@ package org.openntf.xrest.designer.codeassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-
-import javax.print.DocFlavor.STRING;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.GroovyCodeVisitor;
@@ -54,7 +53,6 @@ import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.ForStatement;
 import org.codehaus.groovy.ast.stmt.IfStatement;
 import org.codehaus.groovy.ast.stmt.ReturnStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.ast.stmt.SwitchStatement;
 import org.codehaus.groovy.ast.stmt.SynchronizedStatement;
 import org.codehaus.groovy.ast.stmt.ThrowStatement;
@@ -72,6 +70,7 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 	private final int column;
 	private ASTNode resultNode;
 	private ScanOperation operation = ScanOperation.DEEPER;
+	private List<ASTNode> nodeHierarchie = new LinkedList<ASTNode>();
 
 	public DSLAndGroovyVisitor(int line, int column) {
 		this.line = line;
@@ -81,23 +80,6 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 	@Override
 	public void visitArgumentlistExpression(ArgumentListExpression arg0) {
 		ScanOperation ops = scanDeeper(arg0);
-	}
-
-	private ScanOperation scanDeeper(ASTNode arg0) {
-		System.out.println(arg0.getClass() + " : " + arg0.getLineNumber() + " - " + arg0.getLastLineNumber());
-		if (arg0.getLineNumber() == -1) {
-			return ScanOperation.DEEPER;
-		}
-		if (arg0.getLineNumber() <= line && arg0.getLastLineNumber() >= line) {
-			if (arg0.getLineNumber() == line && arg0.getLastLineNumber() == line) {
-				System.out.println("STRIKE!!!--- FOUND: " + arg0.getColumnNumber() + " - " + arg0.getLastColumnNumber());
-				operation = ScanOperation.STRIKE;
-				return ScanOperation.STRIKE;
-			}
-			System.out.println("RANGE MATCHED");
-			return ScanOperation.DEEPER;
-		}
-		return ScanOperation.EXIT;
 	}
 
 	@Override
@@ -133,11 +115,7 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 		if (ops == ScanOperation.EXIT) {
 			return;
 		}
-		for (Statement st : arg0.getStatements()) {
-			if (operation != ScanOperation.STRIKE) {
-				st.visit(this);
-			}
-		}
+		walkChildren(arg0.getStatements());
 	}
 
 	@Override
@@ -279,7 +257,6 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 	@Override
 	public void visitMethodCallExpression(MethodCallExpression arg0) {
 		ScanOperation ops = scanDeeper(arg0);
-		System.out.println(arg0.getText());
 		if (ops == ScanOperation.EXIT) {
 			return;
 		}
@@ -289,17 +266,10 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 		elements.add(arg0.getDeclaringClass());
 		elements.add(arg0.getMethod());
 		elements.add(arg0.getObjectExpression());
-		// elements.addAll(Arrays.asList(arg0.getGenericsTypes()));
-		int nCounter = 0;
-		for (ASTNode node : elements) {
-			if (node != null) {
-				System.out.println(nCounter +" MCE: " + node.getText());
-				node.visit(this);
-			} else {
-				System.out.println(nCounter +" MCE: null");
-			}
-			nCounter++;
+		if (arg0.getGenericsTypes() != null) {
+			elements.addAll(Arrays.asList(arg0.getGenericsTypes()));
 		}
+		walkChildren(elements);
 	}
 
 	@Override
@@ -419,7 +389,9 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 	@Override
 	public void visitVariableExpression(VariableExpression arg0) {
 		ScanOperation ops = scanDeeper(arg0);
-
+		if (ops == ScanOperation.STRIKE) {
+			resultNode = arg0;
+		}
 	}
 
 	@Override
@@ -430,6 +402,47 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 
 	public ASTNode getNode() {
 		return resultNode;
+	}
+
+	public List<ASTNode> getHierarchie() {
+		return nodeHierarchie;
+	}
+
+	private void walkChildren(List<? extends ASTNode> children) {
+		for (ASTNode child : children) {
+			if (child != null) {
+				System.out.println("CHILD TO TEST:" + child.getText());
+				if (operation != ScanOperation.STRIKE) {
+					nodeHierarchie.add(child);
+					System.out.println("CHILD ADDED: "+ nodeHierarchie.size() );
+					child.visit(this);
+					System.out.println("VISIT DONE");
+					if (operation != ScanOperation.STRIKE) {
+						System.out.println("REMOVE CHILD: " + nodeHierarchie.size());
+						nodeHierarchie.remove(child);
+						System.out.println("CHILD REMOVED: " + nodeHierarchie.size());
+						
+					}
+				}
+			}
+		}
+
+	}
+
+	private ScanOperation scanDeeper(ASTNode arg0) {
+		if (arg0.getLineNumber() == -1) {
+			return ScanOperation.DEEPER;
+		}
+		if (arg0.getLineNumber() <= line && arg0.getLastLineNumber() >= line) {
+			if (arg0.getLineNumber() == line && arg0.getLastLineNumber() == line) {
+				if (arg0.getColumnNumber() <= column && arg0.getLastColumnNumber() >= column) {
+					operation = ScanOperation.STRIKE;
+					return ScanOperation.STRIKE;
+				}
+			}
+			return ScanOperation.DEEPER;
+		}
+		return ScanOperation.EXIT;
 	}
 
 }
