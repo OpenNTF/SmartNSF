@@ -6,41 +6,41 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
+import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.jface.viewers.ISelection;
 
 public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer arg0, int arg1) {
 		String code = arg0.getDocument().get();
-		AstBuilder sb = new AstBuilder();
-
-		List<ASTNode> nodes = sb.buildFromString(code);
-		System.out.println(nodes.size());
-
-		for (ASTNode node: nodes) {
-			System.out.println(node.getClass().getCanonicalName());
-			if (node instanceof BlockStatement) {
-				BlockStatement bs = (BlockStatement)node;
-				for (Statement st : bs.getStatements()) {
-					System.out.println("AST: "+st.getText() +" / "+ st.getColumnNumber() +" / "+ st.getLineNumber() +" - "+ st.getLastLineNumber());
-					
-				}
-			}
-		}
-		System.out.println("DA sind wir ---> "+ arg1);
 		try {
-			System.out.println(arg0.getDocument().get(arg1-10, arg1) );
+			int line = arg0.getDocument().getLineOfOffset(arg1);
+			int lineStart = arg0.getDocument().getLineOffset(line);
+			int column = arg1 - lineStart;
+			line++;
+			System.out.println("DA sind wir ---> " + arg1);
+			ISelection sel = arg0.getSelectionProvider().getSelection();
+			System.out.println("Line: " + line + " / Column: " + column);
+			ASTAnalyser analyzer = new ASTAnalyser(code, line, column);
+			if (analyzer.parse()) {
+				ASTNode node = analyzer.getNode();
+				List<ASTNode> hir = analyzer.getHierarchie();
+				System.out.println(node.getText());
+			}
+			System.out.println("computeCompletionProposals");
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("computeCompletionProposals");
 		return null;
 	}
 
@@ -52,7 +52,7 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[] { '.' ,'{'};
+		return new char[] { '.', '{' };
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public String getErrorMessage() {
-		return null;
+		return "nix proposal";
 	}
 
 }

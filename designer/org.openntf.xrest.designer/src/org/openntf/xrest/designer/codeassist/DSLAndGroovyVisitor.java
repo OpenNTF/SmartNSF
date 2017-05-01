@@ -209,7 +209,9 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 			return;
 		}
 		Expression ex = arg0.getExpression();
+		registerNodeToHierarchie(ex);
 		ex.visit(this);
+		dergisterNodeFromHierarchie(ex);
 	}
 
 	@Override
@@ -414,14 +416,14 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 				System.out.println("CHILD TO TEST:" + child.getText());
 				if (operation != ScanOperation.STRIKE) {
 					nodeHierarchie.add(child);
-					System.out.println("CHILD ADDED: "+ nodeHierarchie.size() );
+					System.out.println("CHILD ADDED: " + nodeHierarchie.size());
 					child.visit(this);
 					System.out.println("VISIT DONE");
 					if (operation != ScanOperation.STRIKE) {
 						System.out.println("REMOVE CHILD: " + nodeHierarchie.size());
 						nodeHierarchie.remove(child);
 						System.out.println("CHILD REMOVED: " + nodeHierarchie.size());
-						
+
 					}
 				}
 			}
@@ -445,4 +447,13 @@ public class DSLAndGroovyVisitor implements GroovyCodeVisitor {
 		return ScanOperation.EXIT;
 	}
 
+	private void registerNodeToHierarchie(ASTNode node) {
+		nodeHierarchie.add(node);
+	}
+
+	private void dergisterNodeFromHierarchie(ASTNode node) {
+		if (operation != ScanOperation.STRIKE) {
+			nodeHierarchie.remove(node);
+		}
+	}
 }

@@ -16,7 +16,7 @@ public class TestASTAnalyzer {
 	@Test
 	public void testFindAst() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,2);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,7);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -24,7 +24,7 @@ public class TestASTAnalyzer {
 		assertNotNull(hierarchie);
 		System.out.println("LAST ND: "+ node.getText());
 		for (ASTNode hierNode: hierarchie) {
-			System.out.println(node.getText());
+			System.out.println(hierNode.getText());
 		}
 	}
 
@@ -33,4 +33,49 @@ public class TestASTAnalyzer {
 		return IOUtils.toString(is, "utf-8");
 	}
 
+	@Test
+	public void testCheckWordSegment() throws IOException {
+		String dsl = readFile("router-middle.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,5);
+		assertTrue(analyser.parse());
+		ASTNode node = analyser.getNode();
+		List<ASTNode> hierarchie = analyser.getHierarchie();
+		assertNotNull(node);
+		assertNotNull(hierarchie);
+		System.out.println("LAST ND: "+ node.getText());
+		for (ASTNode hierNode: hierarchie) {
+			System.out.println(hierNode.getText());
+		}
+		
+	}
+	@Test
+	public void testCheckEndOfEntry() throws IOException {
+		String dsl = readFile("routerEnd.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,7);
+		assertTrue(analyser.parse());
+		ASTNode node = analyser.getNode();
+		List<ASTNode> hierarchie = analyser.getHierarchie();
+		assertNotNull(node);
+		assertNotNull(hierarchie);
+		System.out.println("LAST ND: "+ node.getText());
+		for (ASTNode hierNode: hierarchie) {
+			System.out.println(hierNode.getText());
+		}
+		
+	}
+	@Test
+	public void testCheckRouterFail() throws IOException {
+		String dsl = readFile("routerFail.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,7);
+		assertFalse(analyser.parse());
+		ASTNode node = analyser.getNode();
+		List<ASTNode> hierarchie = analyser.getHierarchie();
+		assertNotNull(node);
+		assertNotNull(hierarchie);
+		System.out.println("LAST ND: "+ node.getText());
+		for (ASTNode hierNode: hierarchie) {
+			System.out.println(hierNode.getText());
+		}
+		
+	}
 }
