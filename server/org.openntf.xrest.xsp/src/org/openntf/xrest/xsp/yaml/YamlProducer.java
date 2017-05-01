@@ -46,7 +46,7 @@ public class YamlProducer {
 		writeProperty(2, "type", "basic");
 
 		writeKey(0, "security");
-		writeProperty(2, "basic", "[]");
+		writeProperty(2, "- basic", "[]");
 	}
 
 	private void buildInfo(HttpServletRequest request) {
