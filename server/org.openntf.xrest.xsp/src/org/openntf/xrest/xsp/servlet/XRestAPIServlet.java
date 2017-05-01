@@ -17,6 +17,7 @@ package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -57,58 +58,23 @@ public class XRestAPIServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// The FacesContext factory requires a lifecycle parameter which is not
-	// used,
-	// but when not present, it generates
-	// a NUllPointer exception. Silly thing! So we create an empty one that does
-	// nothing...
-	private static Lifecycle dummyLifeCycle = new Lifecycle() {
-
-		@Override
-		public void render(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void removePhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public PhaseListener[] getPhaseListeners() {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void execute(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void addPhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-
-	};
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
 
 	public XRestAPIServlet(RouterFactory routerFactory) {
-		System.out.println("Servlet created...");
 		this.routerFactory = routerFactory;
 	}
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		this.config = config;
-		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		//contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// FacesContext fcCurrent = initContext(req, resp);
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -116,8 +82,8 @@ public class XRestAPIServlet extends HttpServlet {
 		try {
 			String method = req.getMethod();
 			String path = req.getPathInfo();
-			if (StringUtil.isEmpty(path) && "yaml".equals(req.getQueryString())) {
-				processYamlRequest(resp, req);
+			if (StringUtil.isEmpty(path)) {
+				processBuildInCommands(resp, req);
 			} else {
 				processRouteProcessorBased(req, resp, method, path);
 			}
@@ -136,9 +102,27 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 
 		} finally {
-			// releaseContext(fcCurrent);
 
 		}
+	}
+
+	private void processBuildInCommands(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException, ExecutorException {
+		if ("yaml".equals(request.getQueryString())) {
+			processYamlRequest(resp, request);
+			return;
+		}
+		if ("swagger".equals(request.getQueryString())) {
+			processSwaggerRequest(resp, request);
+			return;
+		}
+		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
+	}
+
+	private void processSwaggerRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
+		String path = request.getRequestURL().toString();
+		URL url =  new URL(path +"?yaml");
+		URL urlSwagger = new URL(url.getProtocol(),url.getHost(),url.getPort(),"/xsp/.ibmxspres/.swaggerui/dist/index.html?url="+url.toExternalForm());
+		resp.sendRedirect(urlSwagger.toExternalForm());
 	}
 
 	private void processYamlRequest(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException {
@@ -176,16 +160,6 @@ public class XRestAPIServlet extends HttpServlet {
 	private void publishError(HttpServletRequest req, HttpServletResponse resp, Throwable error) {
 		error.printStackTrace();
 
-	}
-
-	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		return contextFactory.getFacesContext(config.getServletContext(), request, response, dummyLifeCycle);
-	}
-
-	public void releaseContext(FacesContext context) throws ServletException, IOException {
-		context.release();
 	}
 
 	public void refresh() {
