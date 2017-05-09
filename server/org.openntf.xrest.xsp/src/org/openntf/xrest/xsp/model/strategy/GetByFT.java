@@ -54,18 +54,15 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 				search = context.getRequest().getParameter("search");
 			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
-			if (dcl.getCount() == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
 				Document docProcess = docNext;
 				docNext = dcl.getNextDocument();
-				docs.add(docProcess);
+				if (docProcess.isValid() && !docProcess.isDeleted()) {
+					docs.add(docProcess);
+				}
 			}
 			return new DocumentListDataContainer(docs, null, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

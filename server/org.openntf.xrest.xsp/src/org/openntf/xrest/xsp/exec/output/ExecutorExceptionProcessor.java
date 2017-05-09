@@ -20,25 +20,25 @@ import com.ibm.domino.services.HttpServiceConstants;
 public enum ExecutorExceptionProcessor {
 	INSTANCE;
 
-	public void processExecutorException(ExecutorException ex, HttpServletResponse resp) throws IOException, JsonException {
-		resp.setStatus(ex.getHttpErrorNr());
+	public void processExecutorException(ExecutorException ex, HttpServletResponse resp, boolean trace) throws IOException, JsonException {
+		resp.setStatus(ex.getHttpStatusCode());
 		resp.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
-		JsonObject jso = buildJsonError(ex);
+		JsonObject jso = buildJsonError(ex, trace);
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
 		JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, jso, false);
 		os.close();
 	}
-	
+
 	public void processGeneralException(int httpStatus, Exception ex, HttpServletResponse resp) throws JsonException, IOException {
 		resp.setStatus(httpStatus);
-		resp.setContentType( HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
+		resp.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON_UTF8);
 		resp.setCharacterEncoding(HttpServiceConstants.ENCODING_UTF8);
 		JsonObject jso = buildJsonErrorFromException(ex);
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
 		JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, jso, false);
 		os.close();
-		
+
 	}
 
 	private JsonObject buildJsonErrorFromException(Exception ex) {
@@ -49,13 +49,15 @@ public enum ExecutorExceptionProcessor {
 		return jso;
 	}
 
-	private JsonObject buildJsonError(ExecutorException ex) {
+	private JsonObject buildJsonError(ExecutorException ex, boolean traceEnabled) {
 		JsonObject jso = new JsonJavaObject();
 		jso.putJsonProperty("error", ex.getMessage());
 		jso.putJsonProperty("path", ex.getPath());
 		jso.putJsonProperty("phase", ex.getPhase());
-		String trace = extractTrace(ex);
-		jso.putJsonProperty("trace", trace);
+		if (traceEnabled) {
+			String trace = extractTrace(ex);
+			jso.putJsonProperty("trace", trace);
+		}
 		return jso;
 	}
 

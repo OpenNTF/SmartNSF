@@ -39,11 +39,11 @@ public class TestRouterBasics {
 
 	@Test
 	public void testRouteProcessorVariables() {
-		RouteProcessor rp = new RouteProcessor("customer/{id}");
+		RouteProcessor rp = new RouteProcessor("customer/{id}", "GET");
 		Assert.assertEquals(1, rp.getVariables().size());
 		Assert.assertEquals("id",rp.getVariables().get(0));
 		
-		RouteProcessor rp2 = new RouteProcessor("customer/{id}/comment/{commentid}");
+		RouteProcessor rp2 = new RouteProcessor("customer/{id}/comment/{commentid}","GET");
 		Assert.assertEquals(2, rp2.getVariables().size());
 		Assert.assertEquals("commentid",rp2.getVariables().get(1));
 
@@ -51,11 +51,11 @@ public class TestRouterBasics {
 
 	@Test
 	public void testRouteProcessorExtractVariablesValues() {
-		RouteProcessor rp = new RouteProcessor("customer/{id}");
+		RouteProcessor rp = new RouteProcessor("customer/{id}","GET");
 		Map<String,String> extrValues = rp.extractValuesFromPath("customer/99182");
 		Assert.assertEquals("99182", extrValues.get("id"));
 		
-		RouteProcessor rp2 = new RouteProcessor("customer/{id}/comment/{commentid}");
+		RouteProcessor rp2 = new RouteProcessor("customer/{id}/comment/{commentid}","GET");
 		Map<String,String> extrValue2 = rp2.extractValuesFromPath("customer/9182/comment/99112");
 		Assert.assertEquals("9182", extrValue2.get("id"));
 		Assert.assertEquals("99112", extrValue2.get("commentid"));

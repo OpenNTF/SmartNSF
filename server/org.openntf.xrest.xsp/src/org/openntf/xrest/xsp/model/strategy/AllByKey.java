@@ -32,9 +32,6 @@ public class AllByKey extends AbstractAllByKeyViewDatabaseStrategy implements St
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, isExact(context));
-			if (dcl.getCount() == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
 				Document docProcess = docNext;
@@ -43,8 +40,6 @@ public class AllByKey extends AbstractAllByKeyViewDatabaseStrategy implements St
 			}
 			dcl.recycle();
 			return new DocumentListDataContainer(docs, viewAccess, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

@@ -42,10 +42,6 @@ public class ViewEntriesByCategoryPaged extends AbstractAllByKeyViewDatabaseStra
 			vnav.setCacheGuidance(count, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
 			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
 
-			if (vnav.getCount() == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
-
 			int total = -1;
 			if (isReturnTotals(context)) {
 				total = vnav.getCount();
@@ -76,8 +72,6 @@ public class ViewEntriesByCategoryPaged extends AbstractAllByKeyViewDatabaseStra
 			}
 			vnav.recycle();
 			return new ViewEntryListPaginationDataContainer(entries, start, total, viewAccess, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

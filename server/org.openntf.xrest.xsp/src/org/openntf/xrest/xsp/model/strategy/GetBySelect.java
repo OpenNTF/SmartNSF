@@ -50,9 +50,6 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
-			if (dcl.getCount() == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
 				Document docProcess = docNext;
@@ -60,8 +57,6 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 				docs.add(docProcess);
 			}
 			return new DocumentListDataContainer(docs, null, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

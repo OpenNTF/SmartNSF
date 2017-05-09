@@ -52,4 +52,21 @@
             name="Editor for Routes">
       </editor>
    </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+           base-type="org.eclipse.jdt.core.javaSource"
+           file-extensions="groovy"
+           id="org.eclipse.jdt.groovy.core.groovySource"
+           name="Groovy Source File"
+           priority="high"
+      />
+	</extension>
+	      <extension point="org.eclipse.core.filebuffers.documentSetup"
+         id="org.openntf.xrest.designer.GroovyDocumentSetupParticipant"
+         name="GroovyDocumentSetupParticipant">
+      <participant
+            class="org.openntf.xrest.designer.editors.GroovyDocumentSetupParticipant"
+            contentTypeId="org.eclipse.jdt.groovy.core.groovySource">
+      </participant>
+	</extension>
 </plugin>

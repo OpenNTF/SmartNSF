@@ -51,7 +51,7 @@ public class TestExecutor {
 	
 	private RouteProcessor getRouterProcessor() {
 		// TODO Auto-generated method stub
-		return new RouteProcessor("test");
+		return new RouteProcessor("test", "GET");
 	}
 
 	private Context getContext() {
@@ -61,9 +61,9 @@ public class TestExecutor {
 	
 	private RouteProcessor getRouterProcessorWithAttachmentStrategy() throws InstantiationException, IllegalAccessException {
 		// TODO Auto-generated method stub
-		RouteProcessor rp = new RouteProcessor("test");
+		RouteProcessor rp = new RouteProcessor("test", "GET");
 		rp.strategy(Strategy.ATTACHMENT, null);
-		return new RouteProcessor("test");
+		return new RouteProcessor("test","GET");
 	}
 
 }

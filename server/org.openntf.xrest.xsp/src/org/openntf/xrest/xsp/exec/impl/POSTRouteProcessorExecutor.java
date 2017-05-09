@@ -42,12 +42,11 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 
 	}
 
-	private void executeAlternateDocumentUpdate(final Closure<?> cl, final Context context, final DataContainer<?> model)
-			throws ExecutorException {
+	private void executeAlternateDocumentUpdate(final Closure<?> cl, final Context context, final DataContainer<?> model) throws ExecutorException {
 		try {
 			DSLBuilder.callClosure(cl, context, model.getData());
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Alternate Document Update Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
+			throw new ExecutorException(e, getPath(), "executealternatedelete");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Alternate Document Update Error: " + e.getMessage(), e, getPath(), "executealternatedelete");
 		}
@@ -60,7 +59,7 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 				DSLBuilder.callClosure(cl, context, container.getData());
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, getPath(), "presavedocument");
+			throw new ExecutorException(e, getPath(), "presavedocument");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "presavedocument");
 		}
@@ -94,18 +93,18 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}
 		} catch (EventException e) {
-			throw new ExecutorException(400, "Pre Load Error: " + e.getMessage(), e, getPath(), "postsavedocument");
+			throw new ExecutorException(e, getPath(), "postsavedocument");
 		} catch (Exception e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "postsavedocument");
 		}
 
 	}
 
-	private void buildResultMapping(final Context context, final DataContainer<?> container) {
+	private void buildResultMapping(final Context context, final DataContainer<?> container) throws ExecutorException {
 		try {
 			setResultPayload(getRouteProcessor().getStrategyModel().buildResponse(context, getRouteProcessor(), container));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new ExecutorException(500, ex, getPath(), "buildResult");
 		}
 	}
 }

@@ -58,12 +58,7 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			int total = dcl.getCount();
-			if (total == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
 			return new DocumentListPaginationDataContainer(getPagedListFromDocCollection(dcl, start, count), start, total, null, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

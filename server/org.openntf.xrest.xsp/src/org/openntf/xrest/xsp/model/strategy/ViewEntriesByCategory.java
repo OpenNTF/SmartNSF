@@ -35,10 +35,6 @@ public class ViewEntriesByCategory extends AbstractAllByKeyViewDatabaseStrategy 
 			List<List<Object>> entries = new ArrayList<List<Object>>();
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 			ViewNavigator vnav = viewAccess.createViewNavFromCategory(varValue);
-			if (vnav.getCount() == 0) {
-				throw new ExecutorException(404, "Not found", "", "getmodel");
-			}
-
 			ViewEntry entCurrent = vnav.getFirst();
 			while (entCurrent != null && entCurrent.isValid() && !entCurrent.isCategory() && !entCurrent.isConflict()) {
 				List<Object> columnValues = new ArrayList<Object>();
@@ -53,8 +49,6 @@ public class ViewEntriesByCategory extends AbstractAllByKeyViewDatabaseStrategy 
 			}
 			vnav.recycle();
 			return new ViewEntryListDataContainer(entries, viewAccess, dbAccess);
-		} catch (ExecutorException exe) {
-			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}

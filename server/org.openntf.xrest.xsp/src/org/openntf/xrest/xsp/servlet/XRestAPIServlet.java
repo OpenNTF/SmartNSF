@@ -17,7 +17,7 @@ package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.ExecutionException;
+import java.net.URL;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -39,13 +39,18 @@ import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.model.Router;
+import org.openntf.xrest.xsp.yaml.YamlProducer;
 
 import com.ibm.commons.util.NotImplementedException;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
+
+import lotus.domino.NotesException;
 
 public class XRestAPIServlet extends HttpServlet {
 	/**
@@ -53,58 +58,23 @@ public class XRestAPIServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	// The FacesContext factory requires a lifecycle parameter which is not
-	// used,
-	// but when not present, it generates
-	// a NUllPointer exception. Silly thing! So we create an empty one that does
-	// nothing...
-	private static Lifecycle dummyLifeCycle = new Lifecycle() {
-
-		@Override
-		public void render(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void removePhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public PhaseListener[] getPhaseListeners() {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void execute(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void addPhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-
-	};
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
 
 	public XRestAPIServlet(RouterFactory routerFactory) {
-		System.out.println("Servlet created...");
 		this.routerFactory = routerFactory;
 	}
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		this.config = config;
-		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		//contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//FacesContext fcCurrent = initContext(req, resp);
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -112,29 +82,14 @@ public class XRestAPIServlet extends HttpServlet {
 		try {
 			String method = req.getMethod();
 			String path = req.getPathInfo();
-			RouteProcessor rp = routerFactory.getRouter().find(method, path);
-			ContextImpl context = new ContextImpl();
-			if (rp != null) {
-				NotesContext c = NotesContext.getCurrentUnchecked();
-				context.addNotesContext(c).addRequest(req).addResponse(resp);
-				context.addRouterVariables(rp.extractValuesFromPath(path));
-				if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
-					try {
-						JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-						JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
-						context.addJsonPayload(json);
-					} catch (JsonException jE) {
-						jE.printStackTrace();
-					}
-				}
-				RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
-				executor.execute();
+			if (StringUtil.isEmpty(path)) {
+				processBuildInCommands(resp, req);
 			} else {
-				throw new ExecutorException(500, "Path not found", path, "SERVLET");
+				processRouteProcessorBased(req, resp, method, path);
 			}
 		} catch (ExecutorException ex) {
 			try {
-				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, resp);
+				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, resp, routerFactory.getRouter().isTrace());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -147,24 +102,64 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 
 		} finally {
-			//releaseContext(fcCurrent);
 
+		}
+	}
+
+	private void processBuildInCommands(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException, ExecutorException {
+		if ("yaml".equals(request.getQueryString())) {
+			processYamlRequest(resp, request);
+			return;
+		}
+		if ("swagger".equals(request.getQueryString())) {
+			processSwaggerRequest(resp, request);
+			return;
+		}
+		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
+	}
+
+	private void processSwaggerRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
+		String path = request.getRequestURL().toString();
+		URL url =  new URL(path +"?yaml");
+		URL urlSwagger = new URL(url.getProtocol(),url.getHost(),url.getPort(),"/xsp/.ibmxspres/.swaggerui/dist/index.html?url="+url.toExternalForm());
+		resp.sendRedirect(urlSwagger.toExternalForm());
+	}
+
+	private void processYamlRequest(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException {
+		Router router = routerFactory.getRouter();
+		PrintWriter pw = resp.getWriter();
+		YamlProducer yamlProducer = new YamlProducer(router, request, pw);
+		yamlProducer.processYamlToPrintWriter();
+		pw.close();
+	}
+
+	private void processRouteProcessorBased(HttpServletRequest req, HttpServletResponse resp, String method, String path) throws NotesException, IOException, ExecutorException {
+		RouteProcessor rp = routerFactory.getRouter().find(method, path);
+		ContextImpl context = new ContextImpl();
+		if (rp != null) {
+			NotesContext c = NotesContext.getCurrentUnchecked();
+			context.addNotesContext(c).addRequest(req).addResponse(resp);
+			context.addRouterVariables(rp.extractValuesFromPath(path));
+			context.setTrace(routerFactory.getRouter().isTrace());
+			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
+				try {
+					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
+					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
+					context.addJsonPayload(json);
+				} catch (JsonException jE) {
+					jE.printStackTrace();
+				}
+			}
+			RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
+			executor.execute();
+		} else {
+			throw new ExecutorException(500, "Path not found", path, "SERVLET");
 		}
 	}
 
 	private void publishError(HttpServletRequest req, HttpServletResponse resp, Throwable error) {
 		error.printStackTrace();
 
-	}
-
-	public FacesContext initContext(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		return contextFactory.getFacesContext(config.getServletContext(), request, response, dummyLifeCycle);
-	}
-
-	public void releaseContext(FacesContext context) throws ServletException, IOException {
-		context.release();
 	}
 
 	public void refresh() {

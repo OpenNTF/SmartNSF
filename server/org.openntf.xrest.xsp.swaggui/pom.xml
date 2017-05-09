@@ -69,10 +69,6 @@
 											<fileset dir="temp/swagger-ui/swagger-ui-master/dist">
 											</fileset>
 										</copy>
-										<copy todir="resources/web/swagger-ui/public">
-											<fileset dir="temp/swagger-ui/swagger-ui-master/public">
-											</fileset>
-										</copy>
 									</target>
 								</configuration>
 								<goals>
