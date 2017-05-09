@@ -58,7 +58,9 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 			while (docNext != null) {
 				Document docProcess = docNext;
 				docNext = dcl.getNextDocument();
-				docs.add(docProcess);
+				if (docProcess.isValid() && !docProcess.isDeleted()) {
+					docs.add(docProcess);
+				}
 			}
 			return new DocumentListDataContainer(docs, null, dbAccess);
 		} catch (Exception ex) {
