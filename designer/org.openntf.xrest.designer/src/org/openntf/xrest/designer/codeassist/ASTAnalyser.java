@@ -1,15 +1,18 @@
 package org.openntf.xrest.designer.codeassist;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.control.CompilePhase;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 
 public class ASTAnalyser {
 	private final String dsl;
 	private DSLAndGroovyVisitor visitor;
+	private MultipleCompilationErrorsException exception;
 
 	public ASTAnalyser(String dsl, int line, int column) {
 		this.dsl = dsl;
@@ -18,7 +21,13 @@ public class ASTAnalyser {
 
 	public boolean parse() {
 		AstBuilder astBuilder = new AstBuilder();
-		List<ASTNode> allNodes = astBuilder.buildFromString(CompilePhase.SEMANTIC_ANALYSIS, false, this.dsl);
+		List<ASTNode> allNodes = Collections.emptyList();
+		try {
+			allNodes = astBuilder.buildFromString(CompilePhase.CANONICALIZATION, false, this.dsl);
+		} catch (MultipleCompilationErrorsException e) {
+			exception = e;
+			return false;
+		}
 		if (allNodes.isEmpty()) {
 			return false;
 		}
@@ -35,4 +44,9 @@ public class ASTAnalyser {
 	public List<ASTNode> getHierarchie() {
 		return visitor.getHierarchie();
 	}
+
+	public MultipleCompilationErrorsException getException() {
+		return exception;
+	}
+
 }

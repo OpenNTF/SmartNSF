@@ -1,23 +1,21 @@
 package org.openntf.xrest.designer.codeassist;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.builder.AstBuilder;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.eclipse.core.internal.resources.TestingSupport;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.viewers.ISelection;
+import org.openntf.xrest.xsp.model.Router;
 
 public class GroovyContentAssistProcessor implements IContentAssistProcessor {
+	private static final String TROUBLECHARS = ".{(";
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer arg0, int arg1) {
@@ -27,21 +25,40 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 			int lineStart = arg0.getDocument().getLineOffset(line);
 			int column = arg1 - lineStart;
 			line++;
-			System.out.println("DA sind wir ---> " + arg1);
-			ISelection sel = arg0.getSelectionProvider().getSelection();
-			System.out.println("Line: " + line + " / Column: " + column);
+			String triggerChar = "" + code.charAt(arg1 - 1);
+			code = sanatizeCode(code, triggerChar, arg1 - 1);
 			ASTAnalyser analyzer = new ASTAnalyser(code, line, column);
 			if (analyzer.parse()) {
 				ASTNode node = analyzer.getNode();
 				List<ASTNode> hir = analyzer.getHierarchie();
 				System.out.println(node.getText());
+				System.out.println(node.getNodeMetaData());
+				System.out.println(node.getClass());
+				System.out.println(hir.size());
+				if (node instanceof VariableExpression) {
+					VariableExpression ve = (VariableExpression) node;
+					Map<String, Class<?>> predefindeObject = new HashMap<String, Class<?>>();
+					predefindeObject.put("router", Router.class);
+					VEProposal veproposal = new VEProposal(ve, hir, predefindeObject);
+					List<ICompletionProposal> proposals = veproposal.suggestions(arg1);
+					return proposals.toArray(new ICompletionProposal[0]);
+				}
+			} else {
+
 			}
-			System.out.println("computeCompletionProposals");
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String sanatizeCode(String code, String triggerChar, int pos) {
+		if (TROUBLECHARS.contains(triggerChar)) {
+			StringBuilder sanCode = new StringBuilder(code);
+			sanCode.setCharAt(pos, ' ');
+			return sanCode.toString();
+		}
+		return code;
 	}
 
 	@Override
