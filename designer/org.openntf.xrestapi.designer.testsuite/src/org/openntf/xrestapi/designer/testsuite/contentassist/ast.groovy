@@ -14,4 +14,6 @@ router.GET('customers/{id}') {
 	mapJson "company", json:'company',type:'STRING'
 	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events ()
+	mapJson
+	strategy
 }

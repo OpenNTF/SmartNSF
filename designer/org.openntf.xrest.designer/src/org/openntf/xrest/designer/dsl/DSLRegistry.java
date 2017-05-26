@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 
 public class DSLRegistry {
 
@@ -32,7 +34,11 @@ public class DSLRegistry {
 	}
 
 	public Class<?> getObjectForClosureInMethod(Class<?> cl, String method) {
-		return registeredMethods.get(cl.getName() + "#" + method).getClosureClass();
+		return getObjectForClosureInMethod(cl.getName(), method);
+	}
+
+	public Class<?> getObjectForClosureInMethod(String className, String method) {
+		return registeredMethods.get(className + "#" + method).getClosureClass();
 	}
 
 	public void addClosureObjectForMethodWithCondtion(String method, Object condition, Class<?> executorClass) {
@@ -96,11 +102,38 @@ public class DSLRegistry {
 			return new ArrayList<MapContainer>(registeredMaps.get(mcKey));
 		}
 		return Collections.emptyList();
-		
+
 	}
 
 	private String buildKeyForMapContainer(Class<?> cl, String method) {
 		return cl.getName() + "#" + method;
+	}
+
+	public boolean isBaseAlias(String name) {
+		return baseAlias.equals(name);
+	}
+
+	public Class<?> getBaseClass() {
+		return baseClass;
+	}
+
+	public Class<?> searchMethodClass(String aliasOrClassName, String methodAsString) {
+		String className = aliasOrClassName;
+		if (baseAlias.equals(aliasOrClassName)) {
+			className = baseClass.getName();
+		}
+		return getObjectForClosureInMethod(className, methodAsString);
+	}
+
+	public List<MethodContainer> getMethodContainers(Class<?> cl, String method) {
+		String toSearchFor = cl.getName() + "#" + method + "!";
+		List<MethodContainer> mcs= new ArrayList<MethodContainer>();
+		for (Entry<String, MethodContainer> entry : registeredMethods.entrySet()) {
+			if (entry.getKey().startsWith(toSearchFor)) {
+				mcs.add(entry.getValue());
+			}
+		}
+		return mcs;
 	}
 
 }

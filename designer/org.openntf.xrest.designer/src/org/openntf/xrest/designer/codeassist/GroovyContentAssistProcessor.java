@@ -17,6 +17,7 @@ import org.openntf.xrest.xsp.model.Router;
 public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 	private static final String TROUBLECHARS = ".{(";
 
+	private ProposalFactory proposalFactory = new ProposalFactory();
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer arg0, int arg1) {
 		String code = arg0.getDocument().get();
@@ -31,17 +32,14 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 			if (analyzer.parse()) {
 				ASTNode node = analyzer.getNode();
 				List<ASTNode> hir = analyzer.getHierarchie();
-				System.out.println(node.getText());
+				System.out.println(node.getText() + "-->"+ node.getClass() );
 				System.out.println(node.getNodeMetaData());
-				System.out.println(node.getClass());
 				System.out.println(hir.size());
-				if (node instanceof VariableExpression) {
-					VariableExpression ve = (VariableExpression) node;
-					Map<String, Class<?>> predefindeObject = new HashMap<String, Class<?>>();
-					predefindeObject.put("router", Router.class);
-					VEProposal veproposal = new VEProposal(ve, hir, predefindeObject);
-					List<ICompletionProposal> proposals = veproposal.suggestions(arg1);
-					return proposals.toArray(new ICompletionProposal[0]);
+				CodeProposal cp = proposalFactory.getCodeProposa(node, hir);
+				if (cp != null) {
+					return cp.suggestions(arg1).toArray(new ICompletionProposal[0]);
+				} else {
+					System.out.println("NO Proposal for: " +node.getText() +" // "+node.getClass());
 				}
 			} else {
 

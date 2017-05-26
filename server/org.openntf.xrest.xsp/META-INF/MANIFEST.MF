@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: XRest API SErver
+Bundle-Name: XRest API Server
 Bundle-SymbolicName: org.openntf.xrest.xsp;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: WebGate Consulting AG
