@@ -19,16 +19,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 
-import javax.faces.FacesException;
-import javax.faces.FactoryFinder;
-import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
-import javax.faces.event.PhaseListener;
-import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,11 +31,11 @@ import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
+import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.yaml.YamlProducer;
 
-import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
@@ -51,13 +44,13 @@ import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 import lotus.domino.NotesException;
+import lotus.domino.Session;
 
 public class XRestAPIServlet extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
@@ -70,7 +63,8 @@ public class XRestAPIServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		this.config = config;
-		//contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		// contextFactory = (FacesContextFactory)
+		// FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
 
 	@Override
@@ -115,13 +109,33 @@ public class XRestAPIServlet extends HttpServlet {
 			processSwaggerRequest(resp, request);
 			return;
 		}
+		if ("login".equals(request.getQueryString())) {
+			processLoginRequest(resp, request);
+			return;
+		}
 		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
+	}
+
+	private void processLoginRequest(HttpServletResponse resp, HttpServletRequest request) throws ExecutorException {
+		JsonJavaObject loginObject = new JsonJavaObject();
+		try {
+			NotesContext c = NotesContext.getCurrentUnchecked();
+			Session ses = c.getCurrentSession();
+			loginObject.put("username", ses.getEffectiveUserName());
+			loginObject.put("groups", c.getGroupList());
+			loginObject.put("accesslevel", c.getCurrentDatabase().getCurrentAccessLevel());
+			loginObject.put("roles", c.getCurrentDatabase().queryAccessRoles(ses.getEffectiveUserName()));
+			JsonPayloadProcessor.INSTANCE.processJsonPayload(loginObject, resp);
+			return;
+		} catch (Exception ex) {
+			throw new ExecutorException(500, "Error during build response object", ex, request.getPathInfo(), "/?login");
+		}
 	}
 
 	private void processSwaggerRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
 		String path = request.getRequestURL().toString();
-		URL url =  new URL(path +"?yaml");
-		URL urlSwagger = new URL(url.getProtocol(),url.getHost(),url.getPort(),"/xsp/.ibmxspres/.swaggerui/dist/index.html?url="+url.toExternalForm());
+		URL url = new URL(path + "?yaml");
+		URL urlSwagger = new URL(url.getProtocol(), url.getHost(), url.getPort(), "/xsp/.ibmxspres/.swaggerui/dist/index.html?url=" + url.toExternalForm());
 		resp.sendRedirect(urlSwagger.toExternalForm());
 	}
 

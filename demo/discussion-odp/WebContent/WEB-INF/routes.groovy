@@ -25,7 +25,7 @@ router.GET('topics/{id}') {
 		def now = new Date()
 		def timestamp = now.toTimestamp().toString();
 		def payload = context.getResultPayload()
-		payload.put('timestampe',timestamp)
+		payload.put('timestamp',timestamp)
 	}
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
