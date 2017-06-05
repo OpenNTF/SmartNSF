@@ -125,6 +125,7 @@ public class XRestAPIServlet extends HttpServlet {
 			loginObject.put("groups", c.getGroupList());
 			loginObject.put("accesslevel", c.getCurrentDatabase().getCurrentAccessLevel());
 			loginObject.put("roles", c.getCurrentDatabase().queryAccessRoles(ses.getEffectiveUserName()));
+			loginObject.put("email",c.getInetMail());
 			JsonPayloadProcessor.INSTANCE.processJsonPayload(loginObject, resp);
 			return;
 		} catch (Exception ex) {
