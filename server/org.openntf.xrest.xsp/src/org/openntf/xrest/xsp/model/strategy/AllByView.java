@@ -30,9 +30,11 @@ public class AllByView extends AbstractViewDatabaseStrategy implements StrategyM
 			viewAccess.setAutoUpdate(false);
 			List<Document> docs = new ArrayList<Document>();
 			ViewNavigator vnav = viewAccess.createViewNav();
+			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES + ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
+			vnav.setCacheGuidance(Integer.MAX_VALUE, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
 			ViewEntry entCurrent = vnav.getFirst();
 			while (entCurrent != null && entCurrent.isValid()) {
-				docs.add(dbAccess.getDocumentByUNID(entCurrent.getUniversalID()));
+				docs.add(entCurrent.getDocument());
 				ViewEntry nextEntry = vnav.getNext();
 				// recycle!
 				entCurrent.recycle();

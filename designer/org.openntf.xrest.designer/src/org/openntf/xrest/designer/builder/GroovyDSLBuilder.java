@@ -25,6 +25,7 @@ import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import com.ibm.commons.util.io.StreamUtil;
 
 import groovy.lang.GroovyRuntimeException;
+import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
 public class GroovyDSLBuilder extends IncrementalProjectBuilder {
@@ -103,8 +104,8 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 				System.out.println("GEN EX");
 				System.out.println("Message:" +rc.getMessage());
 				System.out.println("Class: "+rc.getClass());
-				if (rc instanceof GroovyRuntimeException) {
-					GroovyRuntimeException grc = (GroovyRuntimeException)rc;
+				if (rc instanceof MissingPropertyException) {
+					MissingPropertyException grc = (MissingPropertyException)rc;
 					System.out.println(grc.getNode());
 					System.out.println(grc.getModule());
 					grc.printStackTrace();

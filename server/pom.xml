@@ -81,6 +81,20 @@
 				<version>${tycho-version}</version>
 			</plugin>
 			<plugin>
+         		<groupId>org.eclipse.tycho</groupId>
+          		<artifactId>tycho-source-plugin</artifactId>
+          		<version>${tycho-version}</version>
+          		<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+          		
+        	</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -283,6 +297,7 @@
 				<module>org.openntf.xrest.xsp</module>
 				<module>org.openntf.xrest.xsp.testsuite</module>
 				<module>org.openntf.xrest.xsp.feature</module>
+				<module>org.openntf.xrest.xsp.feature.source</module>
 				<module>org.openntf.xrest.xsp.updatesite</module>
 				<module>org.openntf.xrest.xsp.p2</module>
 				<module>xrest.xsp.assembly</module>
@@ -305,6 +320,4 @@
 		</dependency>
 	</dependencies>
 	<name>XRest API - Server Extension</name>
-	<modules>
-	</modules>
 </project>

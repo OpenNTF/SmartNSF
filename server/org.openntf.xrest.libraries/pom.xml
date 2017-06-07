@@ -36,7 +36,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
+				<version>3.0.1</version>
 
 				<configuration>
 					<excludeTransitive>true</excludeTransitive>
@@ -56,6 +56,18 @@
 									<groupId>org.codehaus.groovy</groupId>
 									<artifactId>groovy-all</artifactId>
 									<version>${groovy-version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.groovy</groupId>
+									<artifactId>groovy-all</artifactId>
+									<version>${groovy-version}</version>
+									<classifier>sources</classifier>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.groovy</groupId>
+									<artifactId>groovy-all</artifactId>
+									<version>${groovy-version}</version>
+									<classifier>javadoc</classifier>
 								</artifactItem>
 							</artifactItems>
 							<includeScope>compile</includeScope>
