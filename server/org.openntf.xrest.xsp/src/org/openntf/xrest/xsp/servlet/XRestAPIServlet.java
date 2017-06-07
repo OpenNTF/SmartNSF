@@ -19,16 +19,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 
-import javax.faces.FacesException;
-import javax.faces.FactoryFinder;
-import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
-import javax.faces.event.PhaseListener;
-import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +35,6 @@ import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.yaml.YamlProducer;
 
-import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
@@ -58,23 +50,23 @@ public class XRestAPIServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	private ServletConfig config;
 	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
 
-	public XRestAPIServlet(RouterFactory routerFactory) {
+	public XRestAPIServlet(final RouterFactory routerFactory) {
 		this.routerFactory = routerFactory;
 	}
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
+	public void init(final ServletConfig config) throws ServletException {
 		this.config = config;
-		//contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		// contextFactory = (FacesContextFactory)
+		// FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 	}
 
 	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -106,7 +98,8 @@ public class XRestAPIServlet extends HttpServlet {
 		}
 	}
 
-	private void processBuildInCommands(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException, ExecutorException {
+	private void processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request) throws JsonException, IOException,
+			ExecutorException {
 		if ("yaml".equals(request.getQueryString())) {
 			processYamlRequest(resp, request);
 			return;
@@ -118,14 +111,15 @@ public class XRestAPIServlet extends HttpServlet {
 		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
 	}
 
-	private void processSwaggerRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
+	private void processSwaggerRequest(final HttpServletResponse resp, final HttpServletRequest request) throws IOException {
 		String path = request.getRequestURL().toString();
-		URL url =  new URL(path +"?yaml");
-		URL urlSwagger = new URL(url.getProtocol(),url.getHost(),url.getPort(),"/xsp/.ibmxspres/.swaggerui/dist/index.html?url="+url.toExternalForm());
+		URL url = new URL(path + "?yaml");
+		URL urlSwagger = new URL(url.getProtocol(), url.getHost(), url.getPort(), "/xsp/.ibmxspres/.swaggerui/dist/index.html?url=" + url
+				.toExternalForm());
 		resp.sendRedirect(urlSwagger.toExternalForm());
 	}
 
-	private void processYamlRequest(HttpServletResponse resp, HttpServletRequest request) throws JsonException, IOException {
+	private void processYamlRequest(final HttpServletResponse resp, final HttpServletRequest request) throws JsonException, IOException {
 		Router router = routerFactory.getRouter();
 		PrintWriter pw = resp.getWriter();
 		YamlProducer yamlProducer = new YamlProducer(router, request, pw);
@@ -133,7 +127,8 @@ public class XRestAPIServlet extends HttpServlet {
 		pw.close();
 	}
 
-	private void processRouteProcessorBased(HttpServletRequest req, HttpServletResponse resp, String method, String path) throws NotesException, IOException, ExecutorException {
+	private void processRouteProcessorBased(final HttpServletRequest req, final HttpServletResponse resp, final String method,
+			final String path) throws NotesException, IOException, ExecutorException {
 		RouteProcessor rp = routerFactory.getRouter().find(method, path);
 		ContextImpl context = new ContextImpl();
 		if (rp != null) {
@@ -141,7 +136,8 @@ public class XRestAPIServlet extends HttpServlet {
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
 			context.setTrace(routerFactory.getRouter().isTrace());
-			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
+			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith(
+					"application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
@@ -157,7 +153,7 @@ public class XRestAPIServlet extends HttpServlet {
 		}
 	}
 
-	private void publishError(HttpServletRequest req, HttpServletResponse resp, Throwable error) {
+	private void publishError(final HttpServletRequest req, final HttpServletResponse resp, final Throwable error) {
 		error.printStackTrace();
 
 	}
