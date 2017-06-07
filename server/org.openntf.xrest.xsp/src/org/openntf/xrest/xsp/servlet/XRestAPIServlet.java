@@ -160,7 +160,6 @@ public class XRestAPIServlet extends HttpServlet {
 
 	public void refresh() {
 		routerFactory.refresh();
-
 	}
 
 }

@@ -1,24 +1,23 @@
 package org.openntf.xrest.designer.codeassist;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.builder.AstBuilder;
-import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
-import org.eclipse.core.internal.resources.TestingSupport;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.viewers.ISelection;
+import org.openntf.xrest.xsp.model.Router;
 
 public class GroovyContentAssistProcessor implements IContentAssistProcessor {
+	private static final String TROUBLECHARS = ".{(";
 
+	private ProposalFactory proposalFactory = new ProposalFactory();
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer arg0, int arg1) {
 		String code = arg0.getDocument().get();
@@ -27,21 +26,37 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 			int lineStart = arg0.getDocument().getLineOffset(line);
 			int column = arg1 - lineStart;
 			line++;
-			System.out.println("DA sind wir ---> " + arg1);
-			ISelection sel = arg0.getSelectionProvider().getSelection();
-			System.out.println("Line: " + line + " / Column: " + column);
+			String triggerChar = "" + code.charAt(arg1 - 1);
+			code = sanatizeCode(code, triggerChar, arg1 - 1);
 			ASTAnalyser analyzer = new ASTAnalyser(code, line, column);
 			if (analyzer.parse()) {
 				ASTNode node = analyzer.getNode();
 				List<ASTNode> hir = analyzer.getHierarchie();
-				System.out.println(node.getText());
+				System.out.println(node.getText() + "-->"+ node.getClass() );
+				System.out.println(node.getNodeMetaData());
+				System.out.println(hir.size());
+				CodeProposal cp = proposalFactory.getCodeProposa(node, hir);
+				if (cp != null) {
+					return cp.suggestions(arg1).toArray(new ICompletionProposal[0]);
+				} else {
+					System.out.println("NO Proposal for: " +node.getText() +" // "+node.getClass());
+				}
+			} else {
+
 			}
-			System.out.println("computeCompletionProposals");
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String sanatizeCode(String code, String triggerChar, int pos) {
+		if (TROUBLECHARS.contains(triggerChar)) {
+			StringBuilder sanCode = new StringBuilder(code);
+			sanCode.setCharAt(pos, ' ');
+			return sanCode.toString();
+		}
+		return code;
 	}
 
 	@Override

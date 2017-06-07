@@ -43,4 +43,8 @@ public enum Strategy {
 	public StrategyModel<?, ?> constructModel() throws InstantiationException, IllegalAccessException {
 		return strategyClass.newInstance();
 	}
+	
+	public Class<? extends StrategyModel<?,?>> getModelClass() {
+		return strategyClass;
+	}
 }

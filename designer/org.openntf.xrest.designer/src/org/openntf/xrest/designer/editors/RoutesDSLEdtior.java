@@ -9,6 +9,7 @@ public class RoutesDSLEdtior extends CompilationUnitEditor {
 	public RoutesDSLEdtior() {
 		super();
 		colorManager = new ColorManager();
+		System.out.println("INIT SVC");
 		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager, this));
 	}
 

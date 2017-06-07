@@ -1,4 +1,4 @@
-
+def blubber = "blubbi"
 def calcGroups = {
 	def groups = ["c1","c10","c100","c1000"]
 	
@@ -56,7 +56,7 @@ router.PUT('customers/{id}') {
 	mapJson "company", json:'company',type:'STRING'
 	mapJson "fdFirstName", json:'firstname', type:'STRING'
 	events (POST_SAVE_DOCUMENT: {
-		context, document ->
+		context, document -> def resp = context.getHttpResp();
 	}, PRE_SAVE_DOCUMENT: {context, document ->})
 }
 router.POST('comment/{id}') {
@@ -73,4 +73,5 @@ router.DELETE('quote/{id}') {
 	}
 	mapJson "company", json:'company',type:'STRING'
 	mapJson "fdFirstName", json:'firstname', type:'STRING'
+	
 }

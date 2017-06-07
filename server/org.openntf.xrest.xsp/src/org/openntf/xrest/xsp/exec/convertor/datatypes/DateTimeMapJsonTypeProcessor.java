@@ -21,8 +21,11 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		DateTime dtCurrent = item.getDateTimeValue();
-		Date javaDate = dtCurrent.toJavaDate();
-		jo.putJsonProperty(jsonPropertyName, buildISO8601Date(javaDate));
+		if (dtCurrent != null) {
+			Date javaDate = dtCurrent.toJavaDate();
+			jo.putJsonProperty(jsonPropertyName, buildISO8601Date(javaDate));
+			dtCurrent.recycle();
+		}
 	}
 
 	@Override
@@ -73,8 +76,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
-			throws NotesException {
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		DateTime dtCurrent = (DateTime) clmnValue;
 		Date javaDate = dtCurrent.toJavaDate();
 		jo.putJsonProperty(jsonPropertyName, buildISO8601Date(javaDate));
