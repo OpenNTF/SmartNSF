@@ -1,6 +1,5 @@
 package org.openntf.xrest.xsp.model.strategy;
 
-import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
@@ -11,31 +10,11 @@ import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
-import groovy.lang.Closure;
 import lotus.domino.Database;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
-public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
-
-	private String ftQueryValue;
-	private Closure<?> ftQueryValueCl;
-
-	public String getFtQueryValue(final Context context) {
-		if (ftQueryValueCl != null) {
-			return (String) DSLBuilder.callClosure(ftQueryValueCl, context);
-		} else {
-			return ftQueryValue;
-		}
-	}
-
-	public void ftQueryValue(final String keyVariableValue) {
-		this.ftQueryValue = keyVariableValue;
-	}
-
-	public void ftQueryValue(final Closure<?> keyVariableCl) {
-		this.ftQueryValueCl = keyVariableCl;
-	}
+public class GetByFTPaged extends AbstractFTDatabaseStrategy implements StrategyModel<DocumentListPaginationDataContainer, JsonObject> {
 
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
@@ -55,6 +34,9 @@ public class GetByFTPaged extends AbstractDatabaseStrategy implements StrategyMo
 				start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 				count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
 				search = context.getRequest().getParameter("search");
+			}
+			if (null != getFtQueryValue(context)) {
+				search = context.getRouterVariables().get(getFtQueryValue(context));
 			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			int total = dcl.getCount();

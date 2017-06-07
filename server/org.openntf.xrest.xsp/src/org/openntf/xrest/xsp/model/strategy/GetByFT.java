@@ -3,7 +3,6 @@ package org.openntf.xrest.xsp.model.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
@@ -14,32 +13,12 @@ import org.openntf.xrest.xsp.model.RouteProcessor;
 
 import com.ibm.commons.util.io.json.JsonJavaArray;
 
-import groovy.lang.Closure;
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
-public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<DocumentListDataContainer, JsonJavaArray> {
-
-	private String ftQueryValue;
-	private Closure<?> ftQueryValueCl;
-
-	public String getFtQueryValue(final Context context) {
-		if (ftQueryValueCl != null) {
-			return (String) DSLBuilder.callClosure(ftQueryValueCl, context);
-		} else {
-			return ftQueryValue;
-		}
-	}
-
-	public void ftQueryValue(final String keyVariableValue) {
-		this.ftQueryValue = keyVariableValue;
-	}
-
-	public void ftQueryValue(final Closure<?> keyVariableCl) {
-		this.ftQueryValueCl = keyVariableCl;
-	}
+public class GetByFT extends AbstractFTDatabaseStrategy implements StrategyModel<DocumentListDataContainer, JsonJavaArray> {
 
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
@@ -52,6 +31,9 @@ public class GetByFT extends AbstractDatabaseStrategy implements StrategyModel<D
 				search = (String) context.getJsonPayload().getJsonProperty("search");
 			} else if (context.getRequest().getMethod().equals("GET")) {
 				search = context.getRequest().getParameter("search");
+			}
+			if (null != getFtQueryValue(context)) {
+				search = context.getRouterVariables().get(getFtQueryValue(context));
 			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			Document docNext = dcl.getFirstDocument();
