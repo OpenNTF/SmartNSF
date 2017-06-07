@@ -38,6 +38,16 @@ router.GET('topics/{id}/attachment/{attachmentName}') {
 		attachmentNameVariableName "{attachmentName}"
 	}
 }
+router.GET('topics/bycategory/{catName}') {
+	strategy(DOCUMENTS_BY_FORMULA) {
+		selectQuery('SELECT  @Contains(Categories;\"{catName}\")')
+	}
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
+	mapJson "Subject", json:'topic', type:'STRING'
+	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	
+}
 router.POST('topics/{id}') {
 	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("id")
