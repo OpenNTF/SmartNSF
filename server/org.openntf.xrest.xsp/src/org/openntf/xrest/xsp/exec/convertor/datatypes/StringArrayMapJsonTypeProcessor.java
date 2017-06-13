@@ -1,6 +1,7 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -24,6 +25,7 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+		System.out.println(">>>DEBUG processValuesToJsonObject values=" + values);
 		if (values != null && !values.isEmpty()) {
 			List<String> stringValues = makeStringList(values);
 			jo.putJsonProperty(jsonPropertyName, stringValues);
@@ -45,9 +47,9 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 		}
 		List<String> lstValues = new ArrayList<String>();
 		JsonJavaArray array = jso.getAsArray(mfField.getJsonName());
-		System.out.println("The Array: " + array);
+		// System.out.println("The Array: " + array);
 		for (int nCounter = 0; nCounter < array.length(); nCounter++) {
-			System.out.println("Parsing: " + array.getAsString(nCounter));
+			// System.out.println("Parsing: " + array.getAsString(nCounter));
 			lstValues.add(array.getAsString(nCounter));
 		}
 		doc.replaceItemValue(mfField.getNotesFieldName(), new Vector<String>(lstValues));
@@ -61,8 +63,12 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		List<?> values = (List<?>) clmnValue;
-		processValuesToJsonObject(values, jo, jsonPropertyName);
+		if (clmnValue instanceof List) {
+			List<?> values = (List<?>) clmnValue;
+			processValuesToJsonObject(values, jo, jsonPropertyName);
+		} else {
+			processValuesToJsonObject(Arrays.asList(clmnValue), jo, jsonPropertyName);
+		}
 	}
 
 }
