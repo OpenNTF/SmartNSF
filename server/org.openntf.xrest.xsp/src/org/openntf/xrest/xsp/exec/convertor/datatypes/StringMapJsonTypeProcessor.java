@@ -27,8 +27,9 @@ public class StringMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		String value = (String) clmnValue;
-		jo.putJsonProperty(jsonPropertyName, value);
+		if (clmnValue instanceof String && !((String) clmnValue).isEmpty()) {
+			jo.putJsonProperty(jsonPropertyName, "" + clmnValue);
+		}
 	}
 
 }

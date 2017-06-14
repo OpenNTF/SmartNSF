@@ -13,7 +13,6 @@ public class DoubleMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		double value = item.getValueDouble();
 		jo.putJsonProperty(jsonPropertyName, value);
-
 	}
 
 	@Override
@@ -30,8 +29,9 @@ public class DoubleMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		double value = (Double) clmnValue;
-		jo.putJsonProperty(jsonPropertyName, value);
+		if (clmnValue instanceof Double) {
+			jo.putJsonProperty(jsonPropertyName, clmnValue);
+		}
 	}
 
 }

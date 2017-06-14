@@ -30,8 +30,9 @@ public class IntegerMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		int value = (Integer) clmnValue;
-		jo.putJsonProperty(jsonPropertyName, value);
+		if (clmnValue instanceof Integer) {
+			jo.putJsonProperty(jsonPropertyName, clmnValue);
+		}
 	}
 
 }
