@@ -30,7 +30,10 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			jo.putJsonProperty(jsonPropertyName, buildISODateList(values));
+			List<String> val = buildISODateList(values);
+			if (!val.isEmpty()) {
+				jo.putJsonProperty(jsonPropertyName, val);
+			}
 		}
 	}
 

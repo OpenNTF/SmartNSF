@@ -25,7 +25,10 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			jo.putJsonProperty(jsonPropertyName, makeIntegerList(values));
+			List<Integer> val = makeIntegerList(values);
+			if (!val.isEmpty()) {
+				jo.putJsonProperty(jsonPropertyName, val);
+			}
 		}
 	}
 

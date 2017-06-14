@@ -24,7 +24,10 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			jo.putJsonProperty(jsonPropertyName, makeStringList(values));
+			List<String> val = makeStringList(values);
+			if (!val.isEmpty()) {
+				jo.putJsonProperty(jsonPropertyName, val);
+			}
 		}
 	}
 

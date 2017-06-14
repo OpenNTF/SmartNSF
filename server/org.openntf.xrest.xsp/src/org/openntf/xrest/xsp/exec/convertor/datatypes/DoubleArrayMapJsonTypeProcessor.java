@@ -25,7 +25,10 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			jo.putJsonProperty(jsonPropertyName, makeDoubleList(values));
+			List<Double> val = makeDoubleList(values);
+			if (!val.isEmpty()) {
+				jo.putJsonProperty(jsonPropertyName, val);
+			}
 		}
 	}
 
