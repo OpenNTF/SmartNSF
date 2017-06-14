@@ -2,6 +2,7 @@ package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,15 +24,13 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
-		List<?> values = item.getValues();
-		processValuesToJsonObject(values, jo, jsonPropertyName);
+		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName);
 	}
 
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			List<String> stringValues = buildISODateList(values);
-			jo.putJsonProperty(jsonPropertyName, stringValues);
+			jo.putJsonProperty(jsonPropertyName, buildISODateList(values));
 		}
 	}
 
@@ -51,7 +50,7 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 			return;
 		}
 		Session session = doc.getParentDatabase().getParent();
-		List<DateTime> lstValues = new Vector<DateTime>();
+		List<DateTime> lstValues = new ArrayList<DateTime>();
 		try {
 			JsonJavaArray array = jso.getAsArray(mfField.getJsonName());
 			for (int nCounter = 0; nCounter < array.length(); nCounter++) {
@@ -69,7 +68,7 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	}
 
 	@Override
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
 		if (values != null && values.isEmpty()) {
 			Session session = doc.getParentDatabase().getParent();
 			List<DateTime> lstValues = new Vector<DateTime>();
@@ -84,17 +83,18 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 				if (!lstValues.isEmpty()) {
 					NotesObjectRecycler.recycle(lstValues.toArray(new DateTime[lstValues.size()]));
 				}
-
 			}
 		}
-
 	}
 
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		List<?> values = (List<?>) clmnValue;
-		processValuesToJsonObject(values, jo, jsonPropertyName);
+		if (clmnValue instanceof List) {
+			processValuesToJsonObject((List<?>) clmnValue, jo, jsonPropertyName);
+		} else {
+			processValuesToJsonObject(Arrays.asList(clmnValue), jo, jsonPropertyName);
+		}
 	}
 
 }

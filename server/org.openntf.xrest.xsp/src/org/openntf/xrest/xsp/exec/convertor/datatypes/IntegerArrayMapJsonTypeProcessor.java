@@ -19,22 +19,23 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
-		Vector<?> values = item.getValues();
-		processValuesToJsonObject(values, jo, jsonPropertyName);
+		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName);
 	}
 
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		if (values != null && !values.isEmpty()) {
-			List<Integer> stringValues = makeIntegerList(values);
-			jo.putJsonProperty(jsonPropertyName, stringValues);
+			jo.putJsonProperty(jsonPropertyName, makeIntegerList(values));
 		}
 	}
 
 	private List<Integer> makeIntegerList(final List<?> values) {
 		List<Integer> convertedValues = new ArrayList<Integer>();
 		for (Object value : values) {
-			convertedValues.add(TypeEnforcement.getAsInteger(value));
+			Integer val = TypeEnforcement.getAsInteger(value);
+			if (null != val) {
+				convertedValues.add(val);
+			}
 		}
 		return convertedValues;
 	}
@@ -53,15 +54,8 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	}
 
 	@Override
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
-		super.processJsonValueToDocument(new Vector<Integer>(makeIntegerList(values)), doc, fieldName);
-	}
-
-	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
-			throws NotesException {
-		List<?> values = (List<?>) clmnValue;
-		processValuesToJsonObject(values, jo, jsonPropertyName);
+	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
+		super.processJsonValueToDocument(makeIntegerList(values), doc, fieldName);
 	}
 
 }

@@ -1,7 +1,6 @@
 package org.openntf.xrest.xsp.exec.convertor;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.openntf.xrest.xsp.model.MappingField;
 
@@ -22,6 +21,6 @@ public interface MapJsonTypeProcessor {
 
 	public void processJsonValueToDocument(JsonJavaObject jo, Document doc, MappingField mf) throws NotesException;
 
-	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException;
+	public void processJsonValueToDocument(List<?> values, Document doc, String fieldName) throws NotesException;
 
 }
