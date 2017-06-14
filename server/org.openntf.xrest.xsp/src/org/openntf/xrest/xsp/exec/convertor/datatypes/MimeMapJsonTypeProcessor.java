@@ -72,10 +72,10 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 			converter = new DominoUtils.HtmlConverterWrapper();
 			converter.convertItem(doc, fieldName);
 			htmlContent = converter.getConverterText();
-			Vector<String> attachments = converter.getReferneceUrls();
-			for (String att : attachments) {
-				System.out.println("Attachment: " + att);
-			}
+			// Vector<String> attachments = converter.getReferneceUrls();
+			// for (String att : attachments) {
+			// System.out.println("Attachment: " + att);
+			// }
 		} finally {
 			if (converter != null) {
 				converter.recycle();
@@ -86,7 +86,6 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty) throws NotesException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -327,7 +326,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		}
 		String dispositionValue = getContentDispositionHeaderValue(entity);
 		if (!StringUtil.isEmpty(dispositionValue) && dispositionValue.startsWith(ATTACHMENT_HEADER_VALUE)) {
-			System.out.println(dispositionValue);
+			// System.out.println(dispositionValue);
 			if (dispositionValue.contains(attachmentName)) {
 				return entity;
 			}
@@ -359,7 +358,6 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	@Override
 	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
 			throws NotesException {
-		// TODO Auto-generated method stub
 
 	}
 }
