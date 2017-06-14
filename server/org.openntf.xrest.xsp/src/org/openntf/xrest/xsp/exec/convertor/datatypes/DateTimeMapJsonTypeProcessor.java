@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.exec.convertor.datatypes;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.model.MappingField;
@@ -58,7 +59,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		if (values != null && values.isEmpty()) {
 			Object obj = values.get(0);
 			DateTime dateTimeValue;

@@ -2,6 +2,7 @@ package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.model.MappingField;
@@ -21,7 +22,7 @@ public abstract class AbstractMapJsonTypeProcessor implements MapJsonTypeProcess
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		doc.replaceItemValue(fieldName, values);
 
 	}

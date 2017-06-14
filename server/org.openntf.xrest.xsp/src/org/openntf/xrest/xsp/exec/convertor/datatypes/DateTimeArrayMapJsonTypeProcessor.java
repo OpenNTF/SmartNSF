@@ -68,7 +68,7 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		if (values != null && values.isEmpty()) {
 			Session session = doc.getParentDatabase().getParent();
 			List<DateTime> lstValues = new Vector<DateTime>();

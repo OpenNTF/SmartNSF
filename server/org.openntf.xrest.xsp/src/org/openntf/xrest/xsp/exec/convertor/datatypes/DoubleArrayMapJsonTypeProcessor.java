@@ -54,8 +54,8 @@ public class DoubleArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
-		super.processJsonValueToDocument(makeDoubleList(values), doc, fieldName);
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+		super.processJsonValueToDocument(new Vector<Double>(makeDoubleList(values)), doc, fieldName);
 	}
 
 }

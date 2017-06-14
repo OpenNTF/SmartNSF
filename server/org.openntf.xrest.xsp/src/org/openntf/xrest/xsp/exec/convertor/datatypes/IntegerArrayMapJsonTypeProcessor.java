@@ -54,8 +54,8 @@ public class IntegerArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcess
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
-		super.processJsonValueToDocument(makeIntegerList(values), doc, fieldName);
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+		super.processJsonValueToDocument(new Vector<Integer>(makeIntegerList(values)), doc, fieldName);
 	}
 
 }

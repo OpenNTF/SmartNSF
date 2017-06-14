@@ -55,8 +55,8 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(final List<?> values, final Document doc, final String fieldName) throws NotesException {
-		super.processJsonValueToDocument(makeStringList(values), doc, fieldName);
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+		super.processJsonValueToDocument(new Vector<String>(makeStringList(values)), doc, fieldName);
 	}
 
 }
