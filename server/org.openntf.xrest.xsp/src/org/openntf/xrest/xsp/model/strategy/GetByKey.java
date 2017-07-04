@@ -9,7 +9,6 @@ import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
-import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonObject;
 
 import groovy.lang.Closure;
@@ -45,16 +44,7 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
 					.getSession());
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
-
 			String key = context.getRouterVariables().get(getKeyVariableValue(context));
-			if (key.equalsIgnoreCase("@new")) {
-				Document doc = dbAccess.createDocument();
-				String form = getFormValue(context);
-				if (!StringUtil.isEmpty(form)) {
-					doc.replaceItemValue("Form", form);
-				}
-				return new DocumentDataContainer(doc, viewAccess, dbAccess);
-			}
 			Document doc = viewAccess.getDocumentByKey(key, true);
 			if (null == doc) {
 				throw new ExecutorException(404, "Not found", "", "getmodel");
