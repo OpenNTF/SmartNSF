@@ -29,7 +29,7 @@ public class DSLRegistry {
 		registeredMethods.put(mc.getContainerClass().getName() + "#" + mc.getMethodName(), mc);
 	}
 
-	public Object getObjectForClosureInMethod(String method) {
+	public Class<?> getObjectForClosureInMethod(String method) {
 		return getObjectForClosureInMethod(baseClass, method);
 	}
 
@@ -116,8 +116,13 @@ public class DSLRegistry {
 	public Class<?> getBaseClass() {
 		return baseClass;
 	}
+	public String getBaseAlias() {
+		return baseAlias;
+	}
 
 	public Class<?> searchMethodClass(String aliasOrClassName, String methodAsString) {
+		System.out.println("AOCN: "+ aliasOrClassName);
+		System.out.println("MAS: "+methodAsString);
 		String className = aliasOrClassName;
 		if (baseAlias.equals(aliasOrClassName)) {
 			className = baseClass.getName();

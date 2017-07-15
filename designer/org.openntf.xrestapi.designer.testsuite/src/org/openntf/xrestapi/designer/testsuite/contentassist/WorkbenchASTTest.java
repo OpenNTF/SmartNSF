@@ -59,4 +59,5 @@ public class WorkbenchASTTest extends AbstractGroovyParserTest {
 		assertTrue("context".equals(((Parameter)node).getName()));
 	}
 
+
 }

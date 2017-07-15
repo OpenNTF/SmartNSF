@@ -1,6 +1,5 @@
 package org.openntf.xrest.designer.codeassist;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +11,11 @@ import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.openntf.xrest.designer.dsl.MethodContainer;
 
-import groovy.lang.Closure;
-
-public class VEProposal implements CodeProposal {
-	private final ProposalParameter parameter;
+public class VEProposal extends AbstractProposalFactory implements CodeProposal {
+	final ProposalParameter parameter;
 
 	public VEProposal(ProposalParameter pp) {
+		super(pp.getImageRegistry());
 		this.parameter = pp;
 	}
 
@@ -29,13 +27,18 @@ public class VEProposal implements CodeProposal {
 	@Override
 	public List<ICompletionProposal> suggestions(int offset) {
 		VariableExpression expression = (VariableExpression) parameter.getNode();
-		if (parameter.getRegistry().isBaseAlias(expression.getName())) {
-			Class<?> cl = parameter.getRegistry().getBaseClass();
+		String variableName = expression.getName();
+		CodeContext context = this.parameter.getCodeContext();
+		if (context.getDeclaredVariables().containsKey(variableName)) {
+			Class<?> cl = context.getDeclaredVariables().get(variableName);
 			return buildListFromClass(cl, offset);
 		} else {
+			System.out.println("CANT FIND: "+ variableName);
 			MethodCallExpression me = findCurrentMethodContext();
 			if (me != null) {
 				VariableExpression recivier = (VariableExpression) me.getReceiver();
+				System.out.println("RTEXT "+recivier.getText());
+				System.out.println(me.getText());
 				Class<?> cl = parameter.getRegistry().searchMethodClass(recivier.getName(), me.getMethodAsString());
 				if (parameter.getRegistry().isMethodConditioned(cl, expression.getName())) {
 					List<MethodContainer> mc = parameter.getRegistry().getMethodContainers(cl, expression.getName());
@@ -92,69 +95,14 @@ public class VEProposal implements CodeProposal {
 		Collections.reverse(hierRevers);
 		MethodCallExpression me = null;
 		for (ASTNode node : hierRevers) {
+			System.out.println(node.getClass().getSimpleName() +" -> "+node.getText());
 			if (node instanceof MethodCallExpression) {
 				me = (MethodCallExpression) node;
-				break;
+				//break;
+				System.out.println("------> FOUND ME");
 			}
 		}
 		return me;
-	}
-
-	private List<ICompletionProposal> buildListFromClass(Class<?> cl, int offset) {
-		List<ICompletionProposal> props = new ArrayList<ICompletionProposal>();
-		for (Method m : cl.getMethods()) {
-			String value = buildName(m);
-			String info = buildInfo(m);
-			CompletionProposal cp = new CompletionProposal(value, offset, 0, value.length(), parameter.getImageRegistry().get("bullet_green.png"), info, null, null);
-			props.add(cp);
-		}
-		return props;
-	}
-
-	private String buildInfo(Method m) {
-		StringBuilder sb = new StringBuilder(m.getName());
-		sb.append("(");
-		boolean isSec = false;
-		for (java.lang.reflect.Parameter p : m.getParameters()) {
-			if (isSec) {
-				sb.append(", ");
-			} else {
-				isSec = true;
-			}
-			sb.append(p.getType().getSimpleName());
-			sb.append(" ");
-			sb.append(p.getName());
-		}
-		sb.append("): ");
-		sb.append(m.getReturnType().getSimpleName());
-		return sb.toString();
-	}
-
-	private String buildName(Method m) {
-		StringBuilder sb = new StringBuilder(m.getName());
-		sb.append("(");
-		boolean isSec = false;
-		boolean appendClosure = false;
-		for (java.lang.reflect.Parameter p : m.getParameters()) {
-			if (isSec) {
-				sb.append(", ");
-			} else {
-				isSec = true;
-			}
-			if (p.getType().equals(String.class)) {
-				sb.append("'" + p.getName() + "'");
-			} else if (p.getType().equals(Closure.class)) {
-				appendClosure = true;
-			} else {
-				sb.append(p.getName());
-			}
-
-		}
-		sb.append(")");
-		if (appendClosure) {
-			sb.append(" {\n}");
-		}
-		return sb.toString();
 	}
 
 }

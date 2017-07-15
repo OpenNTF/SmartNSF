@@ -1,26 +1,32 @@
 package org.openntf.xrest.designer.codeassist;
 
-import java.util.List;
-
-import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.openntf.xrest.designer.XRestUIActivator;
+import org.openntf.xrest.designer.dsl.DSLRegistry;
 
 public class ProposalFactory {
 
-	public CodeProposal getCodeProposa(ASTNode node, List<ASTNode> callhierarchy) {
-		if (node instanceof VariableExpression) {
-			VariableExpression ve = (VariableExpression) node;
-			return new VEProposal(buildParameter(ve, callhierarchy));
+	public CodeProposal getCodeProposal(ASTAnalyser analyser) {
+		DSLRegistry dslRegistry =XRestUIActivator.getDefault().getDSLRegistry();
+		CodeContextAnalyzer cca = new CodeContextAnalyzer(analyser, dslRegistry);
+		CodeContext codeContext = cca.build();
+
+		if (analyser.getNode() instanceof VariableExpression) {
+			return new VEProposal(buildParameter(analyser, codeContext));
+		}
+		if (analyser.getNode() instanceof ClosureExpression) {
+			return new CEProposal(buildParameter(analyser, codeContext));
 		}
 
 		return null;
 	}
 	
-	private ProposalParameter buildParameter(ASTNode node, List<ASTNode> callhierarchy) {
+	private ProposalParameter buildParameter(ASTAnalyser analyser, CodeContext codeContext) {
 		ProposalParameter pp = new ProposalParameter();
-		pp.add(node);
-		pp.add(callhierarchy);
+		pp.add(analyser.getNode());
+		pp.add(analyser.getHierarchie());
+		pp.add(codeContext);
 		pp.add(XRestUIActivator.getDefault().getDSLRegistry());
 		pp.add(XRestUIActivator.getDefault().getImageRegistry());
 		return pp;

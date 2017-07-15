@@ -35,14 +35,14 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 				System.out.println(node.getText() + "-->"+ node.getClass() );
 				System.out.println(node.getNodeMetaData());
 				System.out.println(hir.size());
-				CodeProposal cp = proposalFactory.getCodeProposa(node, hir);
+				CodeProposal cp = proposalFactory.getCodeProposal(analyzer);
 				if (cp != null) {
 					return cp.suggestions(arg1).toArray(new ICompletionProposal[0]);
 				} else {
 					System.out.println("NO Proposal for: " +node.getText() +" // "+node.getClass());
 				}
 			} else {
-
+				analyzer.getException().printStackTrace();
 			}
 		} catch (BadLocationException e) {
 			e.printStackTrace();
