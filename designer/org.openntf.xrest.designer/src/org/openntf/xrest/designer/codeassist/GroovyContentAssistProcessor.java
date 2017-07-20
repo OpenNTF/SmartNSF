@@ -1,18 +1,12 @@
 package org.openntf.xrest.designer.codeassist;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.openntf.xrest.xsp.model.Router;
 
 public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 	private static final String TROUBLECHARS = ".{(";
@@ -31,10 +25,7 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 			ASTAnalyser analyzer = new ASTAnalyser(code, line, column);
 			if (analyzer.parse()) {
 				ASTNode node = analyzer.getNode();
-				List<ASTNode> hir = analyzer.getHierarchie();
 				System.out.println(node.getText() + "-->"+ node.getClass() );
-				System.out.println(node.getNodeMetaData());
-				System.out.println(hir.size());
 				CodeProposal cp = proposalFactory.getCodeProposal(analyzer);
 				if (cp != null) {
 					return cp.suggestions(arg1).toArray(new ICompletionProposal[0]);

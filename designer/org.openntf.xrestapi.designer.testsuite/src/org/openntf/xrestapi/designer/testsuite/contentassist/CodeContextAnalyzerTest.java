@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Map;
 
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.junit.Test;
 import org.openntf.xrest.designer.codeassist.ASTAnalyser;
@@ -17,6 +18,7 @@ import org.openntf.xrest.designer.dsl.DSLRegistryFactory;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.model.strategy.GetByKey;
 
 public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 
@@ -49,7 +51,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 		assertNotNull(variables);
 		assertTrue(variables.containsKey("router"));
 		assertTrue(variables.containsKey("blubber"));
-		assertEquals(codeContext.currentClassContext(), RouteProcessor.class);
+		assertEquals(RouteProcessor.class, codeContext.currentClassContext());
 
 	}
 
@@ -69,7 +71,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 		assertNotNull(variables);
 		assertTrue(variables.containsKey("router"));
 		assertTrue(variables.containsKey("blubber"));
-		assertEquals(codeContext.currentClassContext(), RouteProcessor.class);
+		assertEquals(RouteProcessor.class, codeContext.currentClassContext());
 		assertTrue(variables.containsKey("context"));
 		assertEquals(variables.get("context"), Context.class);
 	}
@@ -89,8 +91,25 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 		assertNotNull(variables);
 		assertTrue(variables.containsKey("router"));
 		assertTrue(variables.containsKey("blubber"));
-		assertEquals(codeContext.currentClassContext(), RouteProcessor.class);
+		assertEquals(RouteProcessor.class, codeContext.currentClassContext() );
 		assertTrue(variables.containsKey("helper"));
 		assertEquals(variables.get("helper"), NSFHelper.class);
+	}
+	
+	@Test
+	public void testBuildCodeContextForStrategy() throws IOException {
+		String dsl = readFile("router.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 73, 2);
+		assertTrue(analyser.parse());
+		assertTrue(analyser.getNode() instanceof ClosureExpression);
+		DSLRegistry dslRegistry = DSLRegistryFactory.buildRegistry();
+		CodeContextAnalyzer cca = new CodeContextAnalyzer(analyser, dslRegistry);
+		CodeContext codeContext = cca.build();
+		assertNotNull(codeContext);
+		Map<String, Class<?>> variables = codeContext.getDeclaredVariables();
+		assertNotNull(variables);
+		assertTrue(variables.containsKey("router"));
+		assertTrue(variables.containsKey("blubber"));
+		assertEquals(GetByKey.class ,codeContext.currentClassContext());
 	}
 }

@@ -12,6 +12,7 @@ public class ClassContextAnalyzerParameter {
 	public Class<?> currentClass;
 	public Class<?> currentVariableClass;
 	public String currentKey;
+	public String currentFirstArgument;
 	public boolean isMapKeyBased;
 
 	public ClassContextAnalyzerParameter(DSLRegistry dslRegistry, Map<String, Class<?>> declaredVariables) {

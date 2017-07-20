@@ -12,6 +12,7 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.Variable;
 import org.codehaus.groovy.ast.VariableScope;
+import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.DeclarationExpression;
@@ -52,6 +53,7 @@ public class CodeContextAnalyzer {
 	private Class<?> findClassContext( Map<String, Class<?>> declaredVariables) {
 		ClassContextAnalyzerParameter ccap =new ClassContextAnalyzerParameter(dslRegistry, declaredVariables);
 		for (ASTNode node : analyser.getHierarchie()) {
+
 			if (node instanceof MethodCallExpression) {
 				MethodCallExpression me = (MethodCallExpression) node;
 				processMethodCallExpression(ccap, me);
@@ -67,8 +69,22 @@ public class CodeContextAnalyzer {
 				BlockStatement bs = (BlockStatement)node;
 				processBlockStatement(ccap, bs);
 			}
+			if (node instanceof ArgumentListExpression) {
+				ArgumentListExpression ale = (ArgumentListExpression)node;
+				processArgumentListExpression(ccap, ale);
+			}
 		}
 		return ccap.currentClass;
+	}
+
+	private void processArgumentListExpression(ClassContextAnalyzerParameter ccap, ArgumentListExpression ale) {
+		if (!ale.getExpressions().isEmpty()) {
+			Expression firstExp = ale.getExpression(0);
+			if (firstExp instanceof VariableExpression) {
+				VariableExpression ve = (VariableExpression)firstExp;
+				ccap.currentFirstArgument = ve.getName();
+			}
+		}
 	}
 
 	private void processBlockStatement(ClassContextAnalyzerParameter ccap, BlockStatement bs) {
@@ -152,7 +168,7 @@ public class CodeContextAnalyzer {
 				currentClass = classContextAnalyzerParameter.dslRegistry.getObjectForClosureInMethod(classContextAnalyzerParameter.currentMethodName);
 			} else {
 				if (classContextAnalyzerParameter.dslRegistry.isMethodConditioned(classContextAnalyzerParameter.currentVariableClass, classContextAnalyzerParameter.currentMethodName)) {
-					currentClass = classContextAnalyzerParameter.dslRegistry.getObjectForClosureInMethodByCondition(classContextAnalyzerParameter.currentVariableClass, classContextAnalyzerParameter.currentMethodName, "PRE_SAVE_DOCUMENT");
+					currentClass = classContextAnalyzerParameter.dslRegistry.getObjectForClosureInMethodByCondition(classContextAnalyzerParameter.currentVariableClass, classContextAnalyzerParameter.currentMethodName, classContextAnalyzerParameter.currentFirstArgument);
 				} else {
 					currentClass = classContextAnalyzerParameter.dslRegistry.getObjectForClosureInMethod(classContextAnalyzerParameter.currentVariable, classContextAnalyzerParameter.currentMethodName);
 				}
@@ -182,5 +198,4 @@ public class CodeContextAnalyzer {
 		}
 		return returningClass;
 	}
-
 }
