@@ -82,8 +82,10 @@ public class AbstractDatabaseStrategy {
 		while (docNext != null && i < count) {
 			Document docProcess = docNext;
 			docNext = dcl.getNextDocument();
-			docs.add(docProcess);
-			i++;
+			if (docProcess.isValid() && !docProcess.isDeleted()) {
+				docs.add(docProcess);
+				i++;
+			}
 		}
 		dcl.recycle();
 		return docs;

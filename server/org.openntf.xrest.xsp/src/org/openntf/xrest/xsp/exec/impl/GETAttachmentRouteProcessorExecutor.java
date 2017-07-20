@@ -1,6 +1,5 @@
 package org.openntf.xrest.xsp.exec.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +21,7 @@ import lotus.domino.NotesException;
 
 public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
-	public GETAttachmentRouteProcessorExecutor(Context context, RouteProcessor routeProcessor, String path) {
+	public GETAttachmentRouteProcessorExecutor(final Context context, final RouteProcessor routeProcessor, final String path) {
 		super(context, routeProcessor, path);
 	}
 
@@ -39,7 +38,7 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 			out.close();
 			is.close();
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runntime Error: " + e.getMessage(), e, path, "presubmit");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "presubmit");
 		}
 	}
 
@@ -48,10 +47,10 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container) throws ExecutorException {
 	}
 
-	private InputStream getInputStream(AttachmentDataContainer<?> adc) throws NotesException {
+	private InputStream getInputStream(final AttachmentDataContainer<?> adc) throws NotesException {
 		if (adc.isMime()) {
 			return ((MIMEEntity) adc.getData()).getInputStream();
 		} else {

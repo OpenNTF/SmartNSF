@@ -15,8 +15,11 @@ public class DateOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
 		DateTime dtCurrent = item.getDateTimeValue();
-		Date javaDate = dtCurrent.toJavaDate();
-		jo.putJsonProperty(jsonPropertyName, buildISO8601DateOnly(javaDate));
+		if (dtCurrent != null) {
+			Date javaDate = dtCurrent.toJavaDate();
+			jo.putJsonProperty(jsonPropertyName, buildISO8601DateOnly(javaDate));
+			dtCurrent.recycle();
+		}
 	}
 
 	@Override

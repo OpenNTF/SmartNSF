@@ -31,12 +31,11 @@ public class AbstractAllByKeyViewDatabaseStrategy extends AbstractKeyViewDatabas
 	}
 
 	public boolean isExact(final Context context) {
-		boolean exact = false;
 		String mode = getModeValue(context);
 		if (null != mode && mode.equalsIgnoreCase("exact")) {
-			exact = true;
+			return true;
 		}
-		return exact;
+		return false;
 	}
 
 }

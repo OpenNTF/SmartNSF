@@ -1,11 +1,14 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.model.MappingField;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.Document;
 import lotus.domino.NotesException;
@@ -13,15 +16,25 @@ import lotus.domino.NotesException;
 public abstract class AbstractMapJsonTypeProcessor implements MapJsonTypeProcessor {
 
 	@Override
-	public void processJsonValueToDocument(JsonJavaObject jso, Document doc, MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
 		doc.replaceItemValue(mfField.getNotesFieldName(), jso.get(mfField.getJsonName()));
 
 	}
 
 	@Override
-	public void processJsonValueToDocument(Vector<?> values, Document doc, String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
 		doc.replaceItemValue(fieldName, values);
 
+	}
+
+	@Override
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+			throws NotesException {
+		if (clmnValue instanceof List) {
+			processValuesToJsonObject((List<?>) clmnValue, jo, jsonPropertyName);
+		} else {
+			processValuesToJsonObject(Arrays.asList(clmnValue), jo, jsonPropertyName);
+		}
 	}
 
 }

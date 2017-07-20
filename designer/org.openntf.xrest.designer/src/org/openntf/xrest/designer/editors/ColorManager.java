@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-public class ColorManager {
+import com.ibm.commons.util.NotImplementedException;
+
+public class ColorManager implements IColorManager {
 
 	protected Map fColorTable = new HashMap(10);
 
@@ -24,5 +27,9 @@ public class ColorManager {
 			fColorTable.put(rgb, color);
 		}
 		return color;
+	}
+	@Override
+	public Color getColor(String arg0) {
+		return null;
 	}
 }

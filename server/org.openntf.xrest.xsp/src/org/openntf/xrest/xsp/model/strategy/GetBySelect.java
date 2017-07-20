@@ -26,15 +26,15 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	private String selectQueryValue;
 	private Closure<?> selectQueryCl;
 
-	public void selectQuery(String name) {
+	public void selectQuery(final String name) {
 		this.selectQueryValue = name;
 	}
 
-	public void selectQuery(Closure<?> queryCl) {
+	public void selectQuery(final Closure<?> queryCl) {
 		this.selectQueryCl = queryCl;
 	}
 
-	public String getSelectQueryValue(Context context) {
+	public String getSelectQueryValue(final Context context) {
 		if (selectQueryCl != null) {
 			return (String) DSLBuilder.callClosure(selectQueryCl, context);
 		} else {
@@ -43,9 +43,10 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	}
 
 	@Override
-	public DocumentListDataContainer buildDataContainer(Context context) throws ExecutorException {
+	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
+					.getSession());
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
@@ -62,7 +63,7 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 
 	}
 
-	private String buildSelectString(Context context) {
+	private String buildSelectString(final Context context) {
 		String rc = getSelectQueryValue(context);
 		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
@@ -71,7 +72,8 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	}
 
 	@Override
-	public JsonJavaArray buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public JsonJavaArray buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
+			throws NotesException {
 		DocumentListDataContainer docListDC = (DocumentListDataContainer) dc;
 		DocumentList2JsonConverter d2jc = new DocumentList2JsonConverter(docListDC, routeProcessor, context);
 		return d2jc.buildJsonFromDocument();

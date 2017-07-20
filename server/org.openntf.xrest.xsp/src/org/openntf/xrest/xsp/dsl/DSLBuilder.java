@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.dsl;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -55,7 +56,6 @@ public class DSLBuilder {
 		importCustomizer.addStaticStars(AttachmentUpdateType.class.getCanonicalName());
 
 		compilerConfig.addCompilationCustomizers(importCustomizer);
-
 		// Create a new shell per run for safety
 		Binding binding = new Binding();
 		for (Map.Entry<String, Object> entry : bindings.entrySet()) {
@@ -67,6 +67,7 @@ public class DSLBuilder {
 		out.flush();
 		
 		GroovyShell shell = cl != null ?new GroovyShell(cl, binding, compilerConfig) : new GroovyShell(binding, compilerConfig);
+		
 		return shell;
 	}
 

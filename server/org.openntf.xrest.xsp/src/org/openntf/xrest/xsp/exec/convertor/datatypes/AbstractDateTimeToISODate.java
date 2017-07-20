@@ -43,7 +43,7 @@ public class AbstractDateTimeToISODate {
 
 			toParse = s0 + "GMT" + s1;
 		}
-		System.out.println("DEBUG: dateToParse=" + toParse);
+		// System.out.println("DEBUG: dateToParse=" + toParse);
 		return df.parse(toParse);
 
 	}

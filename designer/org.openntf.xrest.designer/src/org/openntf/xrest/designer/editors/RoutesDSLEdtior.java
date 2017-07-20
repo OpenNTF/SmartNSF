@@ -1,16 +1,16 @@
 package org.openntf.xrest.designer.editors;
 
-import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 
-public class RoutesDSLEdtior extends TextEditor {
+public class RoutesDSLEdtior extends CompilationUnitEditor {
 
 	private ColorManager colorManager;
 
 	public RoutesDSLEdtior() {
 		super();
 		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager));
-		// setDocumentProvider(new XMLDocumentProvider());
+		System.out.println("INIT SVC");
+		setSourceViewerConfiguration(new RoutesDSLConfiguration(colorManager, this));
 	}
 
 	@Override

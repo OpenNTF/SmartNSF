@@ -32,7 +32,6 @@ public class AllByKey extends AbstractAllByKeyViewDatabaseStrategy implements St
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, isExact(context));
-
 			Document docNext = dcl.getFirstDocument();
 			while (docNext != null) {
 				Document docProcess = docNext;

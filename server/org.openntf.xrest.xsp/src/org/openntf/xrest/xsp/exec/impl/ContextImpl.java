@@ -33,6 +33,7 @@ public class ContextImpl implements Context {
 	private Map<String, String> routerVariables;
 	private NSFHelper nsfHelper;
 	private Object resultPayload;
+	private boolean trace;
 
 	public ContextImpl() {
 
@@ -187,6 +188,16 @@ public class ContextImpl implements Context {
 	}
 
 	@Override
+	public boolean throwException(int httpStatus, String message) {
+		throw new EventException(httpStatus, message);
+	}
+
+	@Override
+	public boolean throwException(int httpStatus, String message, Throwable e) {
+		throw new EventException(httpStatus, message, e);
+	}
+
+	@Override
 	public NSFHelper getNSFHelper() {
 		return nsfHelper;
 	}
@@ -200,6 +211,14 @@ public class ContextImpl implements Context {
 	@Override
 	public Object getResultPayload() {
 		return resultPayload;
+	}
+
+	public boolean traceEnabled() {
+		return trace;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;
 	}
 
 }

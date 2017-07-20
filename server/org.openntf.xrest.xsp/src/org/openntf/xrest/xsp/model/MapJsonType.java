@@ -25,21 +25,30 @@ import lotus.domino.Item;
 import lotus.domino.NotesException;
 
 public enum MapJsonType {
-	DEFAULT(new DefaultMapJsonTypeProcessor()),
-	STRING(new StringMapJsonTypeProcessor()),
-	INTEGER(new IntegerMapJsonTypeProcessor()),
-	DOUBLE(new DoubleMapJsonTypeProcessor()),
-	MIME(new MimeMapJsonTypeProcessor()),
-	DATETIME(new DateTimeMapJsonTypeProcessor()),
-	DATEONLY(new DateOnlyMapJsonTypeProcessor()),
-	TIMEONLY(new TimeOnlyMapJsonTypeProcessor()),
-	ARRAY_OF_STRING(new StringArrayMapJsonTypeProcessor()),
-	ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor()),
-	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor()),
-	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor());
+	DEFAULT(new DefaultMapJsonTypeProcessor(), "string", ""),
+	STRING(new StringMapJsonTypeProcessor(), "string", ""),
+	INTEGER(new IntegerMapJsonTypeProcessor(), "integer", "int32"),
+	DOUBLE(new DoubleMapJsonTypeProcessor(), "number", "double"),
+	MIME(new MimeMapJsonTypeProcessor(),"string",""),
+	DATETIME(new DateTimeMapJsonTypeProcessor(), "string", "dateTime"),
+	DATEONLY(new DateOnlyMapJsonTypeProcessor(), "string", "date"),
+	TIMEONLY(new TimeOnlyMapJsonTypeProcessor(),"string", ""),
+	ARRAY_OF_STRING(new StringArrayMapJsonTypeProcessor(), "string", ""),
+	ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor(), "integer", "int32"),
+	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor(), "number", "double"),
+	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor(), "string", "dateTime");
 
-	final MapJsonTypeProcessor processor;
+	final transient MapJsonTypeProcessor processor;
+	final transient String yamlType;
+	final transient String yamlFormat;
 
+	private MapJsonType(final MapJsonTypeProcessor processor, String yamlType, String yamlFormat) {
+		this.processor = processor;
+		this.yamlType = yamlType;
+		this.yamlFormat = yamlFormat;
+	}
+
+	
 	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf) throws NotesException {
 		processor.processJsonValueToDocument(jo, doc, mf);
 	}
@@ -61,8 +70,12 @@ public enum MapJsonType {
 		processor.processValuesToJsonObject(values, jo, jsonProperty);
 	}
 
-	private MapJsonType(final MapJsonTypeProcessor processor) {
-		this.processor = processor;
+
+	public String yamlType() {
+		return yamlType;
+	}
+	public String yamlFormat() {
+		return yamlFormat;
 	}
 
 }

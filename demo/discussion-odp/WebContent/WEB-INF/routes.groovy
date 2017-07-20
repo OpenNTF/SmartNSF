@@ -1,15 +1,16 @@
 println ("building routing...")
 
 
-router.GET('topics') {
-	strategy(DOCUMENTS_BY_VIEW) {
-		viewName('($All)')
-	}
-	mapJson 'id', json:'id', type:'STRING', isformula:true, formula:'@DocumentUniqueID'
-	mapJson "date", json:'date',type:'DATETIME',isformula:true, formula:'@Created'
-	mapJson "Subject", json:'topic', type:'STRING'
-	mapJson "author", json:'author', type:'STRING',isformula:true,formula:'@Name([CN]; From)'
-}
+router.GET('topics', {
+     	strategy(VIEWENTRIES_PAGED, {
+         	viewName('(ByDate)')
+     	})
+	mapJson '\$120', json:'topic', type:'STRING'	
+	mapJson '\$124', json:'author', type:'STRING'
+	mapJson 'date', json:'date',type:'DATETIME'
+	mapJson '\$126', json:'id', type:'STRING'
+})
+
 router.GET('topics/{id}') {
 	strategy(DOCUMENT_BY_UNID) {
 			keyVariableName("id")
@@ -24,7 +25,7 @@ router.GET('topics/{id}') {
 		def now = new Date()
 		def timestamp = now.toTimestamp().toString();
 		def payload = context.getResultPayload()
-		payload.put('timestampe',timestamp)
+		payload.put('timestamp',timestamp)
 	}
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
@@ -36,6 +37,16 @@ router.GET('topics/{id}/attachment/{attachmentName}') {
 		selectionType BY_NAME //Could be BY_NAME, FIRST
 		attachmentNameVariableName "{attachmentName}"
 	}
+}
+router.GET('topics/bycategory/{catName}') {
+	strategy(DOCUMENTS_BY_FORMULA) {
+		selectQuery('SELECT  @Contains(Categories;\"{catName}\")')
+	}
+	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
+	mapJson "Subject", json:'topic', type:'STRING'
+	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	
 }
 router.POST('topics/{id}') {
 	strategy(DOCUMENT_BY_UNID) {

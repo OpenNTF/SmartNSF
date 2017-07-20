@@ -3,7 +3,6 @@ package org.openntf.xrest.xsp.exec.convertor.datatypes;
 import java.io.File;
 import java.util.Vector;
 
-import org.codehaus.groovy.ast.expr.NotExpression;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import lotus.domino.Document;
@@ -23,7 +22,8 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		return processor;
 	}
 
-	public void addAttachment(Document doc, String fieldName, String filePath, String fileName) throws NotesException {
+	public void addAttachment(final Document doc, final String fieldName, final String filePath, final String fileName)
+			throws NotesException {
 		Item notesItem = doc.getFirstItem(fieldName);
 
 		if (notesItem != null && notesItem.getType() == Item.RICHTEXT) {
@@ -45,11 +45,12 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		}
 	}
 
-	private void addFileToMime(MIMEEntity entity, Session ses, String filePath, String fileName) throws NotesException {
+	private void addFileToMime(final MIMEEntity entity, final Session ses, final String filePath, final String fileName)
+			throws NotesException {
 		processSingleAttachment2Mime(entity, ses, fileName, filePath);
 	}
 
-	private void addFileToRT(RichTextItem notesItem, String serverFilePath, String fileName) throws NotesException {
+	private void addFileToRT(final RichTextItem notesItem, final String serverFilePath, final String fileName) throws NotesException {
 		File serverFile = new File(serverFilePath);
 		File fileNew = new File(serverFile.getParentFile().getAbsolutePath() + File.separator + fileName);
 		try {
@@ -60,11 +61,11 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		}
 	}
 
-	public void deleteAttachment(Document doc, String fieldName, String fileName) {
+	public void deleteAttachment(final Document doc, final String fieldName, final String fileName) {
 
 	}
 
-	public boolean isMime(Document doc, String fieldName) throws NotesException {
+	public boolean isMime(final Document doc, final String fieldName) throws NotesException {
 		Item notesItem = doc.getFirstItem(fieldName);
 		try {
 			if (notesItem != null && notesItem.getType() == Item.RICHTEXT) {
@@ -78,7 +79,7 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 
 	}
 
-	public MIMEEntity getMimeAttachment(Document doc, String fieldName, String fileName) throws NotesException {
+	public MIMEEntity getMimeAttachment(final Document doc, final String fieldName, final String fileName) throws NotesException {
 		MIMEEntity entity = doc.getMIMEEntity(fieldName);
 		if (entity == null) {
 			return null;
@@ -86,7 +87,8 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		return findAttachment(entity, fileName);
 	}
 
-	public EmbeddedObject getEmbeddedObjectAttachment(Document doc, String fieldName, String fileName) throws NotesException {
+	public EmbeddedObject getEmbeddedObjectAttachment(final Document doc, final String fieldName, final String fileName)
+			throws NotesException {
 		EmbeddedObject embo = null;
 		Item notesItem = doc.getFirstItem(fieldName);
 		try {
@@ -94,7 +96,7 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 			Vector<EmbeddedObject> allEmbeddedObject = ((RichTextItem) notesItem).getEmbeddedObjects();
 			for (EmbeddedObject emb : allEmbeddedObject) {
 				String name = emb.getName();
-				if (name.equals(fileName) ) {
+				if (name.equals(fileName)) {
 					embo = emb;
 				} else {
 					emb.recycle();

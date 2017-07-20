@@ -28,6 +28,7 @@ public class AllByKeyPaged extends AbstractAllByKeyViewDatabaseStrategy implemen
 			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
 
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, isExact(context));
+
 			int total = dcl.getCount();
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
