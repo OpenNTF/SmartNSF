@@ -12,6 +12,7 @@ public class ProposalParameter {
 	private List<ASTNode> hierarchie;
 	private DSLRegistry registry;
 	private ImageRegistry imageRegistry;
+	private CodeContext codeContext;
 
 	public ProposalParameter add(ASTNode node) {
 		this.node = node;
@@ -32,6 +33,11 @@ public class ProposalParameter {
 		this.imageRegistry = registry;
 		return this;
 	}
+	
+	public ProposalParameter add(CodeContext context) {
+		this.codeContext = context;
+		return this;
+	}
 
 	public ASTNode getNode() {
 		return node;
@@ -47,6 +53,10 @@ public class ProposalParameter {
 
 	public ImageRegistry getImageRegistry() {
 		return imageRegistry;
+	}
+	
+	public CodeContext getCodeContext() {
+		return codeContext;
 	}
 
 }

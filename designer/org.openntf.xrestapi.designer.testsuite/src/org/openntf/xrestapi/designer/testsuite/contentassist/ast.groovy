@@ -17,3 +17,14 @@ router.GET('customers/{id}') {
 	mapJson
 	strategy
 }
+router.POST('customer/{id}') {
+	events (POST_SAVE_DOCUMENT: {
+		context, document -> 
+		def resp = context.getHttpResp();
+	}, PRE_SAVE_DOCUMENT: {context, document ->
+		def helper = context.getNSFHelper();
+		helper
+		context
+		calcGroups
+	})
+}

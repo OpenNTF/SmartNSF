@@ -13,10 +13,12 @@ public class ASTAnalyser {
 	private final String dsl;
 	private DSLAndGroovyVisitor visitor;
 	private MultipleCompilationErrorsException exception;
+	private BlockStatement base;
 
 	public ASTAnalyser(String dsl, int line, int column) {
 		this.dsl = dsl;
 		this.visitor = new DSLAndGroovyVisitor(line, column);
+		
 	}
 
 	public boolean parse() {
@@ -32,6 +34,7 @@ public class ASTAnalyser {
 			return false;
 		}
 		BlockStatement bs = (BlockStatement) allNodes.get(0);
+		this.base = bs;
 		bs.visit(this.visitor);
 		return true;
 
@@ -47,6 +50,10 @@ public class ASTAnalyser {
 
 	public MultipleCompilationErrorsException getException() {
 		return exception;
+	}
+
+	public BlockStatement getBase() {
+		return base;
 	}
 
 }

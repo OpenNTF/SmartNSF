@@ -70,6 +70,7 @@ router.DELETE('quote/{id}') {
 	strategy(DOCUMENT_FROM_VIEW_BY_KEY) {
 		keyVariableName("{id}")
 		viewName("customerById")
+		
 	}
 	mapJson "company", json:'company',type:'STRING'
 	mapJson "fdFirstName", json:'firstname', type:'STRING'
