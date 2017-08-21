@@ -31,6 +31,7 @@ import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
+import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.yaml.YamlProducer;
@@ -43,6 +44,7 @@ import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 import lotus.domino.NotesException;
+import lotus.domino.Session;
 
 public class XRestAPIServlet extends HttpServlet {
 	/**
@@ -108,7 +110,28 @@ public class XRestAPIServlet extends HttpServlet {
 			processSwaggerRequest(resp, request);
 			return;
 		}
+		if ("login".equals(request.getQueryString())) {
+			processLoginRequest(resp, request);
+			return;
+		}
 		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
+	}
+
+	private void processLoginRequest(HttpServletResponse resp, HttpServletRequest request) throws ExecutorException {
+		JsonJavaObject loginObject = new JsonJavaObject();
+		try {
+			NotesContext c = NotesContext.getCurrentUnchecked();
+			Session ses = c.getCurrentSession();
+			loginObject.put("username", ses.getEffectiveUserName());
+			loginObject.put("groups", c.getGroupList());
+			loginObject.put("accesslevel", c.getCurrentDatabase().getCurrentAccessLevel());
+			loginObject.put("roles", c.getCurrentDatabase().queryAccessRoles(ses.getEffectiveUserName()));
+			loginObject.put("email",c.getInetMail());
+			JsonPayloadProcessor.INSTANCE.processJsonPayload(loginObject, resp);
+			return;
+		} catch (Exception ex) {
+			throw new ExecutorException(500, "Error during build response object", ex, request.getPathInfo(), "/?login");
+		}
 	}
 
 	private void processSwaggerRequest(final HttpServletResponse resp, final HttpServletRequest request) throws IOException {
@@ -163,3 +186,5 @@ public class XRestAPIServlet extends HttpServlet {
 	}
 
 }
+
+
