@@ -1,5 +1,6 @@
 package org.openntf.xrest.xsp.exec;
 
+import org.openntf.xrest.xsp.exec.impl.CustomRouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.impl.DELETERouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.impl.GETAttachmentRouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.impl.GETRouteProcessorExecutor;
@@ -13,6 +14,9 @@ public class RouteProcessorExecutorFactory {
 	}
 
 	public static RouteProcessorExecutor getExecutor(String method, String path, Context context, RouteProcessor rp) {
+		if(rp.getStrategyValue() == Strategy.CUSTOM) {
+			return new CustomRouteProcessorExecutor(context, rp, path);
+		}
 		if ("GET".equals(method)) {
 			if (rp.getStrategyValue() == Strategy.ATTACHMENT) {
 				return new GETAttachmentRouteProcessorExecutor(context, rp, path);
@@ -28,6 +32,7 @@ public class RouteProcessorExecutorFactory {
 		if ("DELETE".equalsIgnoreCase(method)) {
 			return new DELETERouteProcessorExecutor(context, rp, path);
 		}
+		
 		return null;
 	}
 

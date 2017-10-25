@@ -84,7 +84,7 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 				removeMarkers(resource);
 				CompilationUnit cu = new CompilationUnit();
 				String dsl = StreamUtil.readString(((IFile) resource).getContents());
-				Script sc =DSLBuilder.parseDSLScript(dsl, this.getClass().getClassLoader());
+				Script sc =DSLBuilder.parseDSLScript(dsl, Thread.currentThread().getContextClassLoader());
 				System.out.println(sc.toString());
 				sc.run();
 				System.out.println("run done");

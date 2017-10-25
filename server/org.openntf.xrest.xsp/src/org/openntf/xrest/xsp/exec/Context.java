@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.exec;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,4 +47,6 @@ public interface Context {
 	Object getResultPayload();
 	
 	boolean traceEnabled();
+	
+	FacesContext getFacesContext();
 }

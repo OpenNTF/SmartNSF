@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +35,7 @@ public class ContextImpl implements Context {
 	private NSFHelper nsfHelper;
 	private Object resultPayload;
 	private boolean trace;
+	private FacesContext facesContext;
 
 	public ContextImpl() {
 
@@ -64,6 +66,11 @@ public class ContextImpl implements Context {
 
 	public Context addRouterVariables(Map<String, String> rv) {
 		this.routerVariables = rv;
+		return this;
+	}
+	
+	public Context addFacesContext(FacesContext fc) {
+		this.facesContext = fc;
 		return this;
 	}
 
@@ -219,6 +226,11 @@ public class ContextImpl implements Context {
 
 	public void setTrace(boolean trace) {
 		this.trace = trace;
+	}
+
+	@Override
+	public FacesContext getFacesContext() {
+		return facesContext;
 	}
 
 }

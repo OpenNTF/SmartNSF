@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.openntf.xrest.designer.feature_1.0.0.201707202318.jar" id="org.openntf.xrest.designer.feature" version="1.0.0.201707202318">
+   <feature url="features/org.openntf.xrest.designer.feature_1.0.0.201710232123.jar" id="org.openntf.xrest.designer.feature" version="1.0.0.201710232123">
       <category name="OpenNTF XREST API"/>
    </feature>
    <category-def name="OpenNTF XREST API" label="OpenNTF XREST API"/>

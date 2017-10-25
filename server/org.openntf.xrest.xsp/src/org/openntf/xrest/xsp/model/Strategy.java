@@ -4,6 +4,7 @@ import org.openntf.xrest.xsp.model.strategy.AllByKey;
 import org.openntf.xrest.xsp.model.strategy.AllByKeyPaged;
 import org.openntf.xrest.xsp.model.strategy.AllByView;
 import org.openntf.xrest.xsp.model.strategy.AllByViewPaged;
+import org.openntf.xrest.xsp.model.strategy.Custom;
 import org.openntf.xrest.xsp.model.strategy.GetByFT;
 import org.openntf.xrest.xsp.model.strategy.GetByFTPaged;
 import org.openntf.xrest.xsp.model.strategy.GetByKey;
@@ -32,7 +33,8 @@ public enum Strategy {
 	VIEWENTRIES(ViewEntries.class),
 	VIEWENTRIES_PAGED(ViewEntriesPaged.class),
 	VIEWENTRIES_BY_CATEGORY(ViewEntriesByCategory.class),
-	VIEWENTRIES_BY_CATEGORY_PAGED(ViewEntriesByCategoryPaged.class);
+	VIEWENTRIES_BY_CATEGORY_PAGED(ViewEntriesByCategoryPaged.class),
+	CUSTOM(Custom.class);
 
 	private final Class<? extends StrategyModel<?, ?>> strategyClass;
 
