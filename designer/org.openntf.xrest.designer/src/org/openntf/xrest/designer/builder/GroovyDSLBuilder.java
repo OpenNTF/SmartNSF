@@ -23,8 +23,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 
 import com.ibm.commons.util.io.StreamUtil;
+import com.ibm.commons.vfs.VFSFolder;
+import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
+import com.ibm.designer.domino.ide.resources.project.DesignerExecutionContext;
+import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
+import com.ibm.designer.runtime.server.util.DynamicClassLoaderVFS;
 
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
@@ -81,10 +85,21 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 	private void testFileForGoovy(IResource resource) {
 		if ("WebContent/WEB-INF/routes.groovy".equalsIgnoreCase(resource.getProjectRelativePath().toPortableString())) {
 			try {
+				IDominoDesignerProject ddProject = DominoResourcesPlugin.getDominoDesignerProject(getProject());
+				System.err.println(ddProject.getDatabaseName());
+				DesignerExecutionContext dex = new DesignerExecutionContext("??", ddProject);
+				VFSFolder classesFolder = dex.getVFS().getFolder("WebContent/WEB-INF/classes");
+				ClassLoader cl;
+				if (classesFolder.isDirectory()) {
+					cl = new DynamicClassLoaderVFS(dex.getContextClassLoader(), classesFolder);
+				} else {
+					cl = dex.getContextClassLoader();
+				}
+				System.out.println("CL"+dex.getContextClassLoader());
 				removeMarkers(resource);
 				CompilationUnit cu = new CompilationUnit();
 				String dsl = StreamUtil.readString(((IFile) resource).getContents());
-				Script sc =DSLBuilder.parseDSLScript(dsl, Thread.currentThread().getContextClassLoader());
+				Script sc =DSLBuilder.parseDSLScript(dsl, cl);
 				System.out.println(sc.toString());
 				sc.run();
 				System.out.println("run done");

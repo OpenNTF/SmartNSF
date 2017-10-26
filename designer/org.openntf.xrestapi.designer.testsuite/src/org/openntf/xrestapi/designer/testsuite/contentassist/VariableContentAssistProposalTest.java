@@ -33,7 +33,7 @@ public class VariableContentAssistProposalTest extends AbstractGroovyParserTest 
 	@Test
 	public void testRouterVariable() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -58,7 +58,7 @@ public class VariableContentAssistProposalTest extends AbstractGroovyParserTest 
 	@Test
 	public void testMapJson() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 17, 8);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 17, 8, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -68,7 +68,7 @@ public class VariableContentAssistProposalTest extends AbstractGroovyParserTest 
 	@Test
 	public void testStrategy() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 18, 9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 18, 9, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -93,7 +93,7 @@ public class VariableContentAssistProposalTest extends AbstractGroovyParserTest 
 	@Test
 	public void testContextInEvent() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 27, 9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 27, 9, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -118,7 +118,7 @@ public class VariableContentAssistProposalTest extends AbstractGroovyParserTest 
 	@Test
 	public void testHelperInEvent() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 26, 8);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 26, 8, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();

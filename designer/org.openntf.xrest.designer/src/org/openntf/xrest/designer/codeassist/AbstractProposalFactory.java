@@ -2,6 +2,8 @@ package org.openntf.xrest.designer.codeassist;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageRegistry;
@@ -26,7 +28,18 @@ public class AbstractProposalFactory {
 			CompletionProposal cp = new CompletionProposal(value, offset, 0, value.length(), imageRegistry.get("bullet_green.png"), info, null, null);
 			props.add(cp);
 		}
+		sortProposalList(props);
 		return props;
+	}
+
+	private void sortProposalList(List<ICompletionProposal> props) {
+		Collections.sort(props, new Comparator<ICompletionProposal>() {
+
+			@Override
+			public int compare(ICompletionProposal o1, ICompletionProposal o2) {
+				return o1.getDisplayString().compareTo(o2.getDisplayString());
+			}
+		});
 	}
 
 	private String buildInfo(Method m) {

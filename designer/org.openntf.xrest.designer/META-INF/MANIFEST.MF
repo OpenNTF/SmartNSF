@@ -24,7 +24,12 @@ Require-Bundle: org.eclipse.ui,
  org.openntf.xrest.libraries;visibility:=reexport,
  org.openntf.xrest.xsp;visibility:=reexport,
  org.eclipse.jface.text,
- org.eclipse.jdt.ui
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.launching,
+ com.ibm.designer.runtime,
+ com.ibm.jscript,
+ com.ibm.commons.vfs,
+ org.eclipse.ui.workbench
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.xrest.designer,
