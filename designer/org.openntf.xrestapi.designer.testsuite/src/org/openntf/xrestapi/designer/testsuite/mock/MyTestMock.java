@@ -6,4 +6,8 @@ public class MyTestMock {
 	public String getAllInfos() {
 		return "This are my Infos";
 	}
+	public String getMyWill() {
+		return "myWill";
+	}
+	
 }

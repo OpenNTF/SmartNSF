@@ -7,3 +7,4 @@ Markdown4jProcessor processor = new Markdown4jProcessor();
 MyTestMock mock = new MyTestMock();
 processor.process("testString");
 def blubbi = mock.getAllInfos();
+mock.g

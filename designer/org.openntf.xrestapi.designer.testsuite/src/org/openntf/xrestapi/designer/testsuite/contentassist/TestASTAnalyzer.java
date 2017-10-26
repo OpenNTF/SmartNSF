@@ -3,6 +3,7 @@ package org.openntf.xrestapi.designer.testsuite.contentassist;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -150,4 +151,18 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 		assertTrue("context".equals(((Parameter)node).getName()));
 	}
 
+	@Test
+	public void testFindStartOfMethodInEvent() throws IOException {
+		String dsl = readFile("router.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,50, null);
+		assertTrue(analyser.parse());
+		ASTNode node = analyser.getNode();
+		List<ASTNode> hierarchie = analyser.getHierarchie();
+		assertNotNull(hierarchie);
+		assertNotNull(node);
+		assertTrue(node instanceof ConstantExpression);
+		assertEquals(16, hierarchie.size());
+		assertEquals("getHttpResp",(((ConstantExpression)node).getValue()));
+		
+	}
 }

@@ -25,24 +25,23 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 	private ProposalFactory proposalFactory = new ProposalFactory();
 
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer arg0, int arg1) {
-		String code = arg0.getDocument().get();
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		String code = viewer.getDocument().get();
 		IProject project = findActiveProject();
 		try {
 			ClassLoader cl = DesignerProjectClassLoaderFactory.buildDesignerClassLoader(project);
-			int line = arg0.getDocument().getLineOfOffset(arg1);
-			int lineStart = arg0.getDocument().getLineOffset(line);
-			int column = arg1 - lineStart;
+			int line = viewer.getDocument().getLineOfOffset(offset);
+			int lineStart = viewer.getDocument().getLineOffset(line);
+			int column = offset - lineStart;
 			line++;
-			String triggerChar = "" + code.charAt(arg1 - 1);
-			code = sanatizeCode(code, triggerChar, arg1 - 1);
+			String triggerChar = Character.toString(code.charAt(offset - 1));
+			code = sanatizeCode(code, triggerChar, offset - 1);
 			ASTAnalyser analyzer = new ASTAnalyser(code, line, column, cl);
 			if (analyzer.parse()) {
 				ASTNode node = analyzer.getNode();
-				System.out.println(node.getText() + "-->" + node.getClass());
 				CodeProposal cp = proposalFactory.getCodeProposal(analyzer);
 				if (cp != null) {
-					return cp.suggestions(arg1).toArray(new ICompletionProposal[0]);
+					return cp.suggestions(offset).toArray(new ICompletionProposal[0]);
 				} else {
 					System.out.println("NO Proposal for: " + node.getText() + " // " + node.getClass());
 				}
@@ -70,7 +69,6 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer arg0, int arg1) {
-		System.out.println("computeContextInformation");
 		return null;
 	}
 

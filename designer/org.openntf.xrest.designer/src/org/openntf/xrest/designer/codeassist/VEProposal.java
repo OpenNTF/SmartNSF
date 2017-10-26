@@ -12,9 +12,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.openntf.xrest.designer.dsl.MethodContainer;
 
 public class VEProposal extends AbstractProposalFactory implements CodeProposal {
-	final ProposalParameter parameter;
+	final ProposalParameter<VariableExpression> parameter;
 
-	public VEProposal(ProposalParameter pp) {
+	public VEProposal(ProposalParameter<VariableExpression> pp) {
 		super(pp.getImageRegistry());
 		this.parameter = pp;
 	}
@@ -26,7 +26,7 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 	 */
 	@Override
 	public List<ICompletionProposal> suggestions(int offset) {
-		VariableExpression expression = (VariableExpression) parameter.getNode();
+		VariableExpression expression = parameter.getNode();
 		String variableName = expression.getName();
 		CodeContext context = this.parameter.getCodeContext();
 		if (context.getDeclaredVariables().containsKey(variableName)) {

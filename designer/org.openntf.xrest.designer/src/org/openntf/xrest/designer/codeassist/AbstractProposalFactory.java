@@ -12,7 +12,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 import groovy.lang.Closure;
 
-public class AbstractProposalFactory {
+public abstract class AbstractProposalFactory implements CodeProposal {
 
 	private final ImageRegistry imageRegistry;
 	
@@ -87,5 +87,8 @@ public class AbstractProposalFactory {
 		}
 		return sb.toString();
 	}
+
+	@Override
+	abstract public List<ICompletionProposal> suggestions(int offset);
 
 }
