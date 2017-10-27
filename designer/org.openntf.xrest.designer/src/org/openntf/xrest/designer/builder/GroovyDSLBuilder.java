@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.ErrorCollector;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.messages.Message;
@@ -20,16 +19,12 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.openntf.xrest.designer.utils.DesignerProjectClassLoaderFactory;
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.log.SmartNSFLoggerFactory;
 
 import com.ibm.commons.util.io.StreamUtil;
-import com.ibm.commons.vfs.VFSFolder;
-import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
-import com.ibm.designer.domino.ide.resources.project.DesignerExecutionContext;
-import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
-import com.ibm.designer.runtime.server.util.DynamicClassLoaderVFS;
 
-import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
 public class GroovyDSLBuilder extends IncrementalProjectBuilder {
@@ -85,52 +80,28 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 	private void testFileForGoovy(IResource resource) {
 		if ("WebContent/WEB-INF/routes.groovy".equalsIgnoreCase(resource.getProjectRelativePath().toPortableString())) {
 			try {
-				IDominoDesignerProject ddProject = DominoResourcesPlugin.getDominoDesignerProject(getProject());
-				System.err.println(ddProject.getDatabaseName());
-				DesignerExecutionContext dex = new DesignerExecutionContext("??", ddProject);
-				VFSFolder classesFolder = dex.getVFS().getFolder("WebContent/WEB-INF/classes");
-				ClassLoader cl;
-				if (classesFolder.isDirectory()) {
-					cl = new DynamicClassLoaderVFS(dex.getContextClassLoader(), classesFolder);
-				} else {
-					cl = dex.getContextClassLoader();
-				}
-				System.out.println("CL"+dex.getContextClassLoader());
+				ClassLoader cl = DesignerProjectClassLoaderFactory.buildDesignerClassLoader(getProject());
 				removeMarkers(resource);
-				CompilationUnit cu = new CompilationUnit();
 				String dsl = StreamUtil.readString(((IFile) resource).getContents());
 				Script sc =DSLBuilder.parseDSLScript(dsl, cl);
-				System.out.println(sc.toString());
 				sc.run();
-				System.out.println("run done");
 			} catch (MultipleCompilationErrorsException cfe) {
-				ErrorCollector errorCollector = cfe.getErrorCollector();
-				processErrors(errorCollector, resource);
+				handleMultipleCompilationErrorEx(resource, cfe);
 			} catch (IOException e) {
-				System.out.println("IO EX");
-				e.printStackTrace();
+				SmartNSFLoggerFactory.DDE.errorp(this, "testFileForGroovy", e, "Unexpected IO Problem for (0)", resource.getProjectRelativePath().toPortableString());
 			} catch (CoreException e) {
-				System.out.println("CORE EX");
-				e.printStackTrace();
+				SmartNSFLoggerFactory.DDE.errorp(this, "testFileForGroovy", e, "Unexpected Core Problem for (0)", resource.getProjectRelativePath().toPortableString());
 			}
 			catch (Exception e) {
 				Throwable rc = StackTraceUtils.extractRootCause(e);
 				addMarker(rc.getMessage(), resource);
-				System.out.println("GEN EX");
-				System.out.println("Message:" +rc.getMessage());
-				System.out.println("Class: "+rc.getClass());
-				if (rc instanceof MissingPropertyException) {
-					MissingPropertyException grc = (MissingPropertyException)rc;
-					System.out.println(grc.getNode());
-					System.out.println(grc.getModule());
-					grc.printStackTrace();
-				}
-				
-				//System.out.println(rc.getCause().getMessage());
-				//rc.printStackTrace();
 			}
 		}
+	}
 
+	private void handleMultipleCompilationErrorEx(IResource resource, MultipleCompilationErrorsException cfe) {
+		ErrorCollector errorCollector = cfe.getErrorCollector();
+		processErrors(errorCollector, resource);
 	}
 
 	private void removeMarkers(IResource resource) throws CoreException {
@@ -162,10 +133,8 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 			marker.setAttribute(IMarker.LINE_NUMBER, getLineNumber(message));
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			SmartNSFLoggerFactory.DDE.errorp(this, "addMarker", e, "Unexpected Problem for (0)", resource.getProjectRelativePath().toPortableString());
 		}
-
 	}
 
 	private int getLineNumber(String message) {
@@ -173,8 +142,7 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 		if (startPoint < 0) {
 			return 1;
 		}
-		int endPoint = message.indexOf(",", startPoint);
+		int endPoint = message.indexOf(',', startPoint);
 		return Integer.parseInt(message.substring(startPoint + 7, endPoint).trim());
 	}
-
 }

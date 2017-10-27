@@ -18,6 +18,7 @@ import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.Strategy;
 
+@SuppressWarnings("restriction")
 public class DSLScanner extends RuleBasedScanner {
 	private static final String[] types = { "boolean", "byte", "char", "class", "double", "float", "int", "interface", "long", "short", "void" };
 	private static final String[] keywords = { "abstract", "assert", "break", "case", "catch", "const", "continue", "default", "do", "else", "enum", "extends", "false", "final", "finally", "for",
