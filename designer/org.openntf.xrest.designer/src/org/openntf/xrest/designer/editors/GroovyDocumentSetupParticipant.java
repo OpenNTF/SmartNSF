@@ -15,7 +15,6 @@ public class GroovyDocumentSetupParticipant implements IDocumentSetupParticipant
 	 * jface.text.IDocument)
 	 */
 	public void setup(IDocument document) {
-		System.out.println("DOOOOOCC SETUP");
 		setupJavaDocumentPartitioner(document, IJavaPartitions.JAVA_PARTITIONING);
 	}
 

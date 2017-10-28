@@ -1,6 +1,5 @@
 package org.openntf.xrest.designer.dsl;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MethodContainer {

@@ -21,6 +21,7 @@ public class Router {
 	private String versionValue = "1.0.0";
 	private String descriptionValue = "";
 	private boolean traceValue = false;
+	private boolean useFacesContextValue = false;
 
 	public Router() {
 		allroutes.put("GET", routesGET);
@@ -63,6 +64,9 @@ public class Router {
 
 	public void description(String description) {
 		this.descriptionValue = description;
+	}
+	public void useFacesContext(boolean value) {
+		this.useFacesContextValue = value;
 	}
 
 	public List<RouteProcessor> getRoutesGET() {
@@ -131,5 +135,8 @@ public class Router {
 		return traceValue;
 	}
 	
+	public boolean useFacesContext() {
+		return useFacesContextValue;
+	}
 	
 }

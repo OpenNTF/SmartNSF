@@ -3,6 +3,7 @@ package org.openntf.xrestapi.designer.testsuite.contentassist;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.junit.Test;
-import org.openntf.xrest.designer.codeassist.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
 
 import groovy.ui.SystemOutputInterceptor;
 
@@ -23,7 +24,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindAst() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,7);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,7, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -34,7 +35,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testCheckWordSegment() throws IOException {
 		String dsl = readFile("router-middle.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,5);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8,5, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -47,13 +48,13 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testCheckEndOfEntry() throws IOException {
 		String dsl = readFile("routerEnd.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,8);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,8, null);
 		assertFalse(analyser.parse());		
 	}
 	@Test
 	public void testCheckRouterFail() throws IOException {
 		String dsl = readFile("routerFail.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,7);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 20,7, null);
 		assertFalse(analyser.parse());
 		assertNotNull(analyser.getException());
 	}
@@ -61,7 +62,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testCaclGroupsVariableInside() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 47,28);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 47,28, null);
 		assertTrue(analyser.parse());
 
 		ASTNode node = analyser.getNode();
@@ -74,7 +75,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindClosureAsTop() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 76,1);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 76,1, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -87,7 +88,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindEventNotation() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 58,6);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 58,6, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -100,7 +101,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindEventMethodStart() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 58,9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 58,9, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -113,7 +114,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindEventASTFile() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 16,9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 16,9, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -126,7 +127,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindDefInEvent() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,30);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,30, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -139,7 +140,7 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 	@Test
 	public void testFindContextInEvent() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,9, null);
 		assertTrue(analyser.parse());
 		ASTNode node = analyser.getNode();
 		List<ASTNode> hierarchie = analyser.getHierarchie();
@@ -150,4 +151,18 @@ public class TestASTAnalyzer extends AbstractGroovyParserTest {
 		assertTrue("context".equals(((Parameter)node).getName()));
 	}
 
+	@Test
+	public void testFindStartOfMethodInEvent() throws IOException {
+		String dsl = readFile("router.groovy");
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 59,50, null);
+		assertTrue(analyser.parse());
+		ASTNode node = analyser.getNode();
+		List<ASTNode> hierarchie = analyser.getHierarchie();
+		assertNotNull(hierarchie);
+		assertNotNull(node);
+		assertTrue(node instanceof ConstantExpression);
+		assertEquals(16, hierarchie.size());
+		assertEquals("getHttpResp",(((ConstantExpression)node).getValue()));
+		
+	}
 }
