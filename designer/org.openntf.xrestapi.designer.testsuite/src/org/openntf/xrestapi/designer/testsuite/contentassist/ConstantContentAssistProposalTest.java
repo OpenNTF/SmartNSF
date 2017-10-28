@@ -11,11 +11,11 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.junit.Test;
-import org.openntf.xrest.designer.codeassist.ASTAnalyser;
-import org.openntf.xrest.designer.codeassist.CoEProposal;
 import org.openntf.xrest.designer.codeassist.CodeContext;
-import org.openntf.xrest.designer.codeassist.CodeContextAnalyzer;
 import org.openntf.xrest.designer.codeassist.ProposalParameter;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.CodeContextAnalyzer;
+import org.openntf.xrest.designer.codeassist.proposals.CoEProposal;
 import org.openntf.xrest.designer.dsl.DSLRegistry;
 import org.openntf.xrest.designer.dsl.DSLRegistryFactory;
 

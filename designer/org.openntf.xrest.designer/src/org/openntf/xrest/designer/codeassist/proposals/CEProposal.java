@@ -1,9 +1,12 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.util.List;
 
 import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.CodeContext;
+import org.openntf.xrest.designer.codeassist.CodeProposal;
+import org.openntf.xrest.designer.codeassist.ProposalParameter;
 
 public class CEProposal extends AbstractProposalFactory implements CodeProposal {
 

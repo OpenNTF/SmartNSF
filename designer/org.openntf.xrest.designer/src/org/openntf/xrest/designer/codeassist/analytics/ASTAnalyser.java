@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.analytics;
 
 import java.security.CodeSource;
 import java.util.Collections;
@@ -14,6 +14,7 @@ import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.openntf.xrest.designer.codeassist.DSLAndGroovyVisitor;
 import org.openntf.xrest.designer.utils.ReflectionUtils;
 
 import groovy.lang.GroovyClassLoader;

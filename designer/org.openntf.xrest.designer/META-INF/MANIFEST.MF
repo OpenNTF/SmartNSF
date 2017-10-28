@@ -34,4 +34,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.xrest.designer,
  org.openntf.xrest.designer.builder,
- org.openntf.xrest.designer.editors
+ org.openntf.xrest.designer.codeassist,
+ org.openntf.xrest.designer.codeassist.analytics,
+ org.openntf.xrest.designer.codeassist.proposals,
+ org.openntf.xrest.designer.dsl,
+ org.openntf.xrest.designer.editors,
+ org.openntf.xrest.designer.utils

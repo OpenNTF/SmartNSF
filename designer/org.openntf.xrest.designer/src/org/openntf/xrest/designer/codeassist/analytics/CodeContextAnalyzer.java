@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.analytics;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
+import org.openntf.xrest.designer.codeassist.ClassContextAnalyzerParameter;
+import org.openntf.xrest.designer.codeassist.CodeContext;
 import org.openntf.xrest.designer.dsl.DSLRegistry;
 import org.openntf.xrest.designer.dsl.MapContainer;
 

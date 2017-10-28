@@ -5,6 +5,11 @@ import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.openntf.xrest.designer.XRestUIActivator;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.CodeContextAnalyzer;
+import org.openntf.xrest.designer.codeassist.proposals.CEProposal;
+import org.openntf.xrest.designer.codeassist.proposals.CoEProposal;
+import org.openntf.xrest.designer.codeassist.proposals.VEProposal;
 import org.openntf.xrest.designer.dsl.DSLRegistry;
 
 public class ProposalFactory {

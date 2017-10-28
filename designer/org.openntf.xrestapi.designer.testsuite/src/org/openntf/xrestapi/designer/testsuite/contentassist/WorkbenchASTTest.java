@@ -12,7 +12,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openntf.xrest.designer.codeassist.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
 
 public class WorkbenchASTTest extends AbstractGroovyParserTest {
 

@@ -15,7 +15,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.junit.Test;
-import org.openntf.xrest.designer.codeassist.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
 
 import groovy.ui.SystemOutputInterceptor;
 

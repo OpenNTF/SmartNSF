@@ -57,6 +57,7 @@ public class RoutesDSLConfiguration extends SourceViewerConfiguration {
 		return reconciler;
 	}
 
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new GroovyContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
@@ -64,9 +65,11 @@ public class RoutesDSLConfiguration extends SourceViewerConfiguration {
 		assistant.setAutoActivationDelay(500);
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		// assistant.setContextInformationPopupBackground(JavaEditorEnvironment.getJavaColorProvider().getColor(new
-		// RGB(150,150, 0)));
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 		return assistant;
+	}
+	
+	public ITextEditor getEditor() {
+		return editor;
 	}
 }

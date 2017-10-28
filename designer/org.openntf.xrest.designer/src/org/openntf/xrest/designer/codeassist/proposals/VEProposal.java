@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,9 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.CodeContext;
+import org.openntf.xrest.designer.codeassist.CodeProposal;
+import org.openntf.xrest.designer.codeassist.ProposalParameter;
 import org.openntf.xrest.designer.dsl.MethodContainer;
 
 public class VEProposal extends AbstractProposalFactory implements CodeProposal {

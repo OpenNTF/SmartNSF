@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.CodeProposal;
 
 import groovy.lang.Closure;
 

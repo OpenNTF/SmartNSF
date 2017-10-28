@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.PropertyExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.ProposalParameter;
 
 public class CoEProposal extends AbstractProposalFactory {
 

@@ -14,6 +14,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
 import org.openntf.xrest.designer.utils.DesignerProjectClassLoaderFactory;
 
 import com.ibm.designer.domino.ide.resources.NsfException;

@@ -79,6 +79,7 @@ public class DSLScanner extends RuleBasedScanner {
 		for (int i = 0; i < types.length; i++) {
 			javaTypesMatcher.addWord(types[i], javaTypeToken);
 		}
+		javaTypesMatcher.addWord(returnKeyword, javaToken);
 		combinedWordRule.addWordMatcher(javaTypesMatcher);
 
 		// Groovy Keywords, including additional keywords
