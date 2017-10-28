@@ -28,7 +28,7 @@ public class CoEProposal extends AbstractProposalFactory {
 			PropertyExpression pe = (PropertyExpression)previousNode;
 			if (pe.getObjectExpression() instanceof VariableExpression) {
 				VariableExpression ve = (VariableExpression)pe.getObjectExpression();
-				List<ICompletionProposal> proposals = buildListFromClass(ve.getType().getTypeClass(), offset);
+				List<ICompletionProposal> proposals = buildListFromClass(ve.getType().getTypeClass(), offset - searchValue.length(), searchValue.length());
 				return filteredList(proposals, searchValue);
 			}
 		}
