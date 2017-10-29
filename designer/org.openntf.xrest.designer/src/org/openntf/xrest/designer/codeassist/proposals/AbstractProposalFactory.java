@@ -21,12 +21,12 @@ public abstract class AbstractProposalFactory implements CodeProposal {
 		this.imageRegistry = imageRegistry;
 	}
 
-	protected List<ICompletionProposal> buildListFromClass(Class<?> cl, int offset) {
+	protected List<ICompletionProposal> buildListFromClass(Class<?> cl, int offset, int rpLenght) {
 		List<ICompletionProposal> props = new ArrayList<ICompletionProposal>();
 		for (Method m : cl.getMethods()) {
 			String value = buildName(m);
 			String info = buildInfo(m);
-			CompletionProposal cp = new CompletionProposal(value, offset, 0, value.length(), imageRegistry.get("bullet_green.png"), info, null, null);
+			CompletionProposal cp = new CompletionProposal(value, offset, rpLenght, value.length(), imageRegistry.get("bullet_green.png"), info, null, null);
 			props.add(cp);
 		}
 		sortProposalList(props);

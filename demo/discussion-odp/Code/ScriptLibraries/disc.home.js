@@ -21,9 +21,16 @@ app.config( function($stateProvider, $urlRouterProvider) {
 		templateUrl : 'newtopic.html',
 		controller : 'NewTopicCtrl as ntCtrl'
 	};
+	var aboutState = {
+			name : 'about',
+			url : '/about',
+			templateUrl : 'info.html',
+			controller : 'AboutCtrl as aboutCtrl'
+		};
 	$stateProvider.state(homeState);
 	$stateProvider.state(topicState);
 	$stateProvider.state(newTopicState);
+	$stateProvider.state(aboutState);
 });
 
 app.config(['ngQuillConfigProvider', function (ngQuillConfigProvider) {
@@ -32,14 +39,80 @@ app.config(['ngQuillConfigProvider', function (ngQuillConfigProvider) {
 
 app.controller('OverviewCtrl',['TopicService','$state', function(TopicService, $state) {
 	var vm = this;
-	vm.topics = TopicService.overview();
+	vm.topics = [];
+	vm.start = 0;
+	vm.count = 10;
+	vm.total = 0;
+	vm.pages = [];
+	vm.packages = [];
+	TopicService.overview(vm.start,vm.count,function(err,result){
+		if (err) {
+			alert(err);
+			return;
+		}
+		vm.topics = result.entries;
+		vm.total = result.total;
+		vm.updatePages();
+	});
 	vm.newTopic = function() {
 		$state.go('newtopic');
 	}
 	vm.openTopic = function(id) {
 		$state.go('topic', {'id':id});
 	}
-	
+	vm.updatePages = function () {
+		console.log("Called..");
+		var entrieCount = vm.total;
+		var pageSize = vm.count;
+		var pages = Math.floor(entrieCount/pageSize);
+		var remainder = entrieCount % pageSize;
+		var result = [];
+		for (var i = 0; i < pages; i++) {
+			var p = {};
+			p.title = i +1;
+			p.start = i * pageSize;
+			p.count = pageSize;
+			p.cssclass = vm.calcClass(i,pageSize,vm.start);
+			console.dir(p);
+			result.push(p);
+		}
+		if (remainder > 0) {
+			var p = {};
+			p.title = pages+1;
+			p.start = pages * pageSize;
+			p.count = pageSize;
+			p.cssclass = vm.calcClass(i,pageSize,vm.start);
+			result.push(p)
+		}
+		vm.pages= result;
+		vm.packages = [{start:vm.start, count:10, title:'10', cssclass: vm.count==10?'active':'' },
+		               {start:vm.start, count:25, title:'25', cssclass: vm.count==25?'active':''},
+		               {start:vm.start, count:50, title:'50', cssclass: vm.count==50?'active':''},
+		               {start:vm.start, count:vm.total, title:'All', cssclass: vm.count==vm.total?'active':''}];
+		
+	}
+	vm.calcClass = function(page, size, position) {
+		var start = page *size;
+		var end = start +size;
+		console.log(position + " - "+ start +" "+ end);
+		if ((position >= start) && (position < end)) {
+			return "active";
+		}
+		return "";
+	}
+	vm.gotoPage = function(page) {
+		vm.start = page.start;
+		vm.count = page.count;
+		TopicService.overview(vm.start,vm.count,function(err,result){
+			if (err) {
+				alert(err);
+				return;
+			}
+			vm.topics = result.entries;
+			vm.total = result.total;
+			vm.updatePages();
+		});
+	}
 } ]);
 
 app.controller('NewTopicCtrl',['TopicService','$state', function(TopicService, $state) {
@@ -76,13 +149,20 @@ app.controller('TopicCtrl',['TopicService','$state','$stateParams', function(Top
 	
 } ]);
 
+app.controller('AboutCtrl',['$http', function($http) {
+	var vm = this;
+	$http.get('xsp/.xrest/infos', {cache:false, responseType:'json'}).then(function(resp){vm.infos = resp.data});
+}]);
 
 app.factory('TopicService', [ '$resource', function($resource) {
 	var topicsService = {};
-	topicsService.store = $resource("xsp/.xrest/topics/:id", {id:'@id'}, {	});
+	topicsService.store = $resource("xsp/.xrest/topics/:id", {id:'@id'}, {query:{isarry:false}	});
 	topicsService.commentstore = $resource("xsp/.xrest/topics/:parentid/comments/:id", {id:'@id', parentid:'@parentid'}, {	});
-	topicsService.overview = function() {
-		return topicsService.store.query();
+	topicsService.overview = function(start, count, cb) {
+		var payload= {start:start, count:count};
+		topicsService.store.query(payload, function(result){
+			cb(null,result);
+		});
 	}
 	topicsService.getTopic = function(id) {
 		return topicsService.store.get({'id':id});

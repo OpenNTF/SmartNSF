@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="filter" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="1e52" sequence="1" unid="EEF728E70D10934CC12580B80076D999">
+<?xml version="1.0" encoding="UTF-8"?><note class="filter" maintenanceversion="1.8" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="1e52" sequence="60" unid="EEF728E70D10934CC12580B80076D999">
 <created><datetime>20170130T223809,53+01</datetime></created>
-<modified><datetime>20170130T223809,54+01</datetime></modified>
-<revised><datetime>20170130T223809,53+01</datetime></revised>
-<lastaccessed><datetime>20170130T223809,54+01</datetime></lastaccessed>
+<modified><datetime dst="true">20171028T161552,03+02</datetime></modified>
+<revised><datetime dst="true">20171028T161552,02+02</datetime></revised>
+<lastaccessed><datetime dst="true">20171028T161552,03+02</datetime></lastaccessed>
 <addedtofile><datetime>20170130T223809,54+01</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
 <wassignedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></wassignedby>
 <item name="$TITLE" sign="true"><text>disc.home.js</text></item>
 <item name="$Flags"><text>h534Q</text></item>
 <item name="$PublicAccess" sign="true"><text>1</text></item>
-<item name="$DesignerVersion"><text>8.5.3</text></item></note>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+</note>

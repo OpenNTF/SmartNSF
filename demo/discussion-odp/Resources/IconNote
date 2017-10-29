@@ -1,23 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
- maintenanceversion='1.5' replicaid='C12580AF0036B297'>
-<noteinfo noteid='11a' unid='85255A0A0010AC8E85254BD4001E8D43' sequence='13'>
+ maintenanceversion='1.8' replicaid='C12580AF0036B297'>
+<noteinfo noteid='11a' unid='85255A0A0010AC8E85254BD4001E8D43' sequence='34'>
 <created><datetime>19800105T003342,43-05</datetime></created>
-<modified><datetime>20170123T125940,40+01</datetime></modified>
-<revised><datetime>20170123T125940,39+01</datetime></revised>
-<lastaccessed><datetime>20170123T125940,40+01</datetime></lastaccessed>
+<modified><datetime dst='true'>20171028T115650,41+02</datetime></modified>
+<revised><datetime dst='true'>20171028T115650,40+02</datetime></revised>
+<lastaccessed><datetime dst='true'>20171028T115650,41+02</datetime></lastaccessed>
 <addedtofile><datetime>20170121T105726,71+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Lotus Notes Template Development/O=Lotus Notes</name><name
->CN=Christian Guedemann/O=WGC/C=CH</name><name>CN=CGU_SRV9/O=WGCDEV/C=CH</name><name
->CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
-<revisions><datetime dst='true'>20120918T121601,34-04</datetime><datetime
- dst='true'>20120918T121601,38-04</datetime><datetime dst='true'>20120918T121601,40-04</datetime><datetime
- dst='true'>20121027T103900,89-04</datetime><datetime dst='true'>20121027T103900,93-04</datetime><datetime
- dst='true'>20121027T103900,95-04</datetime><datetime dst='true'>20121027T104034,68-04</datetime><datetime
->20121031T115851,26+00</datetime><datetime>20121031T120046,06+00</datetime><datetime
- dst='true'>20130423T200326,39-04</datetime><datetime dst='true'>20130423T200326,43-04</datetime><datetime
- dst='true'>20130423T200326,45-04</datetime></revisions>
-<wassignedby><name>CN=Dave Cohen/OU=Westford/O=IBM</name></wassignedby>
+<updatedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
 <item name='$DefaultWebNavigator'><text>All Documents</text></item>
 <item name='$LaunchWebViewName'><text>($All)</text></item>
 <item name='IconBitmap' summary='true'>
@@ -43,17 +33,19 @@ AAAA////////8AAAAAAAAAAAAA==
 <item name='$FileExpires'><text>365</text></item>
 <item name='$DefaultClientXPage'><text>main.xsp</text></item>
 <item name='$DefaultWebPage'><text>Color Page</text></item>
-<item name='$DefaultFrameset'><text>MainFrameset</text></item>
-<item name='$DefaultXPage'><text>main.xsp</text></item>
 <item name='$DBTheme'><text>oneuiv2_1_blue.theme</text></item>
-<item name='$LaunchXPageRunOnServer'><text>0</text></item>
-<item name='$FlagsNoRefresh'><text>rQU</text></item>
 <item name='$PIRCRefreshModTime'><datetime>20170123T014653,52+01</datetime></item>
 <item name='$TemplateModTime'><datetime dst='true'>20130919T143546,01-04</datetime></item>
 <item name='$TemplateServerName'><text>CN=CGU_SRV9/O=WGCDEV/C=CH</text></item>
 <item name='$TemplateFileName'><text>D:\IBM\Domino\data\discussion9.ntf</text></item>
 <item name='$Daos'><text>0</text></item>
-<item name='$Flags'><text>fJ7ZF!QU</text></item>
+<item name='$DefaultFrameset'><text>MainFrameset</text></item>
+<item name='$DefaultXPage'><text>main.xsp</text></item>
 <item name='$TITLE'><text>Discussion
-Discussion</text></item></note>
+Discussion</text></item>
+<item name='$Flags'><text>fJ7ZFQUE</text></item>
+<item name='$LaunchXPageRunOnServer'><text>0</text></item>
+<item name='$FlagsNoRefresh'><text>rQU</text></item>
+<item name='$LargeSummary'><text>0</text></item>
+<item name='$DefaultWebLaunchPage'><text>startup.html</text></item></note>
 

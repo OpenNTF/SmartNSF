@@ -21,6 +21,6 @@ public class CEProposal extends AbstractProposalFactory implements CodeProposal 
 	public List<ICompletionProposal> suggestions(int offset) {
 		CodeContext context = this.parameter.getCodeContext();
 		Class<?> currentClassContext = context.currentClassContext();
-		return buildListFromClass(currentClassContext, offset);
+		return buildListFromClass(currentClassContext, offset,0);
 	}
 }

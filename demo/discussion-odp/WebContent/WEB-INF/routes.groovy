@@ -5,7 +5,7 @@ router.trace(true);
 
 router.GET('infos', {
 	strategy(CUSTOM,{
-		javaClass 'org.openntf.smartnsf.MyRestHandler'
+		javaClass 'org.openntf.smartnsf.Info'
 	})
 })
 router.GET('topics', {

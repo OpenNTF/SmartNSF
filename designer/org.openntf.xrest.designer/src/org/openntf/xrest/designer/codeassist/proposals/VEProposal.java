@@ -34,18 +34,18 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 		CodeContext context = this.parameter.getCodeContext();
 		if (context.getDeclaredVariables().containsKey(variableName)) {
 			Class<?> cl = context.getDeclaredVariables().get(variableName);
-			return buildListFromClass(cl, offset);
+			return buildListFromClass(cl, offset,0);
 		} else {
-			System.out.println("CANT FIND: "+ variableName);
 			MethodCallExpression me = findCurrentMethodContext();
 			if (me != null) {
 				VariableExpression recivier = (VariableExpression) me.getReceiver();
-				System.out.println("RTEXT "+recivier.getText());
-				System.out.println(me.getText());
 				Class<?> cl = parameter.getRegistry().searchMethodClass(recivier.getName(), me.getMethodAsString());
 				if (parameter.getRegistry().isMethodConditioned(cl, expression.getName())) {
 					List<MethodContainer> mc = parameter.getRegistry().getMethodContainers(cl, expression.getName());
 					return buildConditionedMethodContainerProposals(mc, offset);
+				} else {
+					System.out.println("RTEXT "+recivier.getText());
+					System.out.println(me.getText());
 				}
 			}
 		}
