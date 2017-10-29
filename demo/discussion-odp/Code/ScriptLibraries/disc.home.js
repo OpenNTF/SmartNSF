@@ -21,9 +21,16 @@ app.config( function($stateProvider, $urlRouterProvider) {
 		templateUrl : 'newtopic.html',
 		controller : 'NewTopicCtrl as ntCtrl'
 	};
+	var aboutState = {
+			name : 'about',
+			url : '/about',
+			templateUrl : 'info.html',
+			controller : 'AboutCtrl as aboutCtrl'
+		};
 	$stateProvider.state(homeState);
 	$stateProvider.state(topicState);
 	$stateProvider.state(newTopicState);
+	$stateProvider.state(aboutState);
 });
 
 app.config(['ngQuillConfigProvider', function (ngQuillConfigProvider) {
@@ -142,6 +149,10 @@ app.controller('TopicCtrl',['TopicService','$state','$stateParams', function(Top
 	
 } ]);
 
+app.controller('AboutCtrl',['$http', function($http) {
+	var vm = this;
+	$http.get('xsp/.xrest/infos', {cache:false, responseType:'json'}).then(function(resp){vm.infos = resp.data});
+}]);
 
 app.factory('TopicService', [ '$resource', function($resource) {
 	var topicsService = {};
