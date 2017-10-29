@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.8" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="210a" sequence="3" unid="F6D0C595E3307E89C12581C70047FBB0">
+<created><datetime dst="true">20171028T150614,88+02</datetime></created>
+<modified><datetime dst="true">20171028T150615,03+02</datetime></modified>
+<revised><datetime dst="true">20171028T150615,02+02</datetime></revised>
+<lastaccessed><datetime dst="true">20171028T150615,03+02</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20171028T150614,89+02</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
+<wassignedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></wassignedby>
+<item name="$TITLE"><text>smartnsf.startup.css</text></item>
+<item name="$MimeType"><text>text/css</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+<item name="$Flags"><text>34C=Q</text></item>
+
+
+<item name="$FileNames" sign="true"><text>smartnsf.startup.css</text></item>
+<item name="$MimeCharSet"><text>UTF-8</text></item></note>

@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.5" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="1e56" sequence="3" unid="69EA2F6E14CF88D5C12580B80077D8FC">
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.8" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="1e56" sequence="29" unid="69EA2F6E14CF88D5C12580B80077D8FC">
 <created><datetime>20170130T224903,32+01</datetime></created>
-<modified><datetime>20170130T224903,44+01</datetime></modified>
-<revised><datetime>20170130T224903,43+01</datetime></revised>
-<lastaccessed><datetime>20170130T224903,44+01</datetime></lastaccessed>
+<modified><datetime dst="true">20171028T164746,90+02</datetime></modified>
+<revised><datetime dst="true">20171028T164746,89+02</datetime></revised>
+<lastaccessed><datetime dst="true">20171028T164746,90+02</datetime></lastaccessed>
 <addedtofile><datetime>20170130T224903,33+01</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
 <wassignedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></wassignedby>
 <item name="$TITLE"><text>overview.html</text></item>
 <item name="$MimeType"><text>text/html</text></item>
-<item name="$DesignerVersion"><text>8.5.3</text></item>
 <item name="$Flags"><text>345Cg&gt;Q</text></item>
+<item name="$MimeCharSet"><text>UTF-8</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
 
 
-<item name="$FileNames" sign="true"><text>overview.html</text></item>
-<item name="$MimeCharSet"><text>UTF-8</text></item></note>
+<item name="$FileNames" sign="true"><text>overview.html</text></item></note>

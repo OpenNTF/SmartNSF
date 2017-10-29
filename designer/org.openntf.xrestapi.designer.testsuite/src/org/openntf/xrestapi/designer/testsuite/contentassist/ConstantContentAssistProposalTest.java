@@ -42,7 +42,7 @@ public class ConstantContentAssistProposalTest extends AbstractContentAssistProp
 		System.out.println(codeContext.getDeclaredVariables());
 		System.out.println(codeContext.currentClassContext());
 		CoEProposal coe = new CoEProposal(pp);
-		List<ICompletionProposal> proposals = coe.suggestions(0);
+		List<ICompletionProposal> proposals = coe.suggestions(100);
 		assertEquals(3, proposals.size());
 	}
 	
