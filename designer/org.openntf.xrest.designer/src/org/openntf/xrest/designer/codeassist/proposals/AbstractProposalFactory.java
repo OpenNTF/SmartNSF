@@ -1,16 +1,19 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.CodeProposal;
 
 import groovy.lang.Closure;
 
-public class AbstractProposalFactory {
+public abstract class AbstractProposalFactory implements CodeProposal {
 
 	private final ImageRegistry imageRegistry;
 	
@@ -18,15 +21,26 @@ public class AbstractProposalFactory {
 		this.imageRegistry = imageRegistry;
 	}
 
-	protected List<ICompletionProposal> buildListFromClass(Class<?> cl, int offset) {
+	protected List<ICompletionProposal> buildListFromClass(Class<?> cl, int offset, int rpLenght) {
 		List<ICompletionProposal> props = new ArrayList<ICompletionProposal>();
 		for (Method m : cl.getMethods()) {
 			String value = buildName(m);
 			String info = buildInfo(m);
-			CompletionProposal cp = new CompletionProposal(value, offset, 0, value.length(), imageRegistry.get("bullet_green.png"), info, null, null);
+			CompletionProposal cp = new CompletionProposal(value, offset, rpLenght, value.length(), imageRegistry.get("bullet_green.png"), info, null, null);
 			props.add(cp);
 		}
+		sortProposalList(props);
 		return props;
+	}
+
+	private void sortProposalList(List<ICompletionProposal> props) {
+		Collections.sort(props, new Comparator<ICompletionProposal>() {
+
+			@Override
+			public int compare(ICompletionProposal o1, ICompletionProposal o2) {
+				return o1.getDisplayString().compareTo(o2.getDisplayString());
+			}
+		});
 	}
 
 	private String buildInfo(Method m) {
@@ -74,5 +88,8 @@ public class AbstractProposalFactory {
 		}
 		return sb.toString();
 	}
+
+	@Override
+	abstract public List<ICompletionProposal> suggestions(int offset);
 
 }

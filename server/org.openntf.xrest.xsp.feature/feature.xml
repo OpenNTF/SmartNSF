@@ -213,9 +213,14 @@ END OF TERMS AND CONDITIONS
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="com.ibm.xsp.core"/>
       <import plugin="com.ibm.commons"/>
+      <import plugin="com.ibm.xsp.extsn"/>
+      <import plugin="com.ibm.domino.xsp.adapter"/>
+      <import plugin="com.ibm.notes.java.api"/>
+      <import plugin="com.ibm.xsp.extlib"/>
+      <import plugin="com.ibm.xsp.domino"/>
+      <import plugin="com.ibm.designer.lib.javamail"/>
    </requires>
 
    <plugin

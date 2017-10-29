@@ -10,9 +10,9 @@ import java.util.Map;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.junit.Test;
-import org.openntf.xrest.designer.codeassist.ASTAnalyser;
 import org.openntf.xrest.designer.codeassist.CodeContext;
-import org.openntf.xrest.designer.codeassist.CodeContextAnalyzer;
+import org.openntf.xrest.designer.codeassist.analytics.ASTAnalyser;
+import org.openntf.xrest.designer.codeassist.analytics.CodeContextAnalyzer;
 import org.openntf.xrest.designer.dsl.DSLRegistry;
 import org.openntf.xrest.designer.dsl.DSLRegistryFactory;
 import org.openntf.xrest.xsp.exec.Context;
@@ -25,7 +25,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	@Test
 	public void testBuildCodeContextForRouter() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7, null);
 		assertTrue(analyser.parse());
 		DSLRegistry dslRegistry = DSLRegistryFactory.buildRegistry();
 		CodeContextAnalyzer cca = new CodeContextAnalyzer(analyser, dslRegistry);
@@ -40,7 +40,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	@Test
 	public void testBuildCodeContextForMapContext() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 17, 8);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 17, 8, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		DSLRegistry dslRegistry = DSLRegistryFactory.buildRegistry();
@@ -58,7 +58,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	@Test
 	public void testBuildCodeContextForContextInEvent() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 27, 9);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 27, 9, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -78,7 +78,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	@Test
 	public void testBuildCodeContextForHelperInEvent() throws IOException {
 		String dsl = readFile("ast.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 26, 8);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 26, 8, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof VariableExpression);
 		VariableExpression ve = (VariableExpression) analyser.getNode();
@@ -99,7 +99,7 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	@Test
 	public void testBuildCodeContextForStrategy() throws IOException {
 		String dsl = readFile("router.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 73, 2);
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 73, 2, null);
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof ClosureExpression);
 		DSLRegistry dslRegistry = DSLRegistryFactory.buildRegistry();

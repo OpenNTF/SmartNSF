@@ -18,6 +18,7 @@ import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.Strategy;
 
+@SuppressWarnings("restriction")
 public class DSLScanner extends RuleBasedScanner {
 	private static final String[] types = { "boolean", "byte", "char", "class", "double", "float", "int", "interface", "long", "short", "void" };
 	private static final String[] keywords = { "abstract", "assert", "break", "case", "catch", "const", "continue", "default", "do", "else", "enum", "extends", "false", "final", "finally", "for",
@@ -78,6 +79,7 @@ public class DSLScanner extends RuleBasedScanner {
 		for (int i = 0; i < types.length; i++) {
 			javaTypesMatcher.addWord(types[i], javaTypeToken);
 		}
+		javaTypesMatcher.addWord(returnKeyword, javaToken);
 		combinedWordRule.addWordMatcher(javaTypesMatcher);
 
 		// Groovy Keywords, including additional keywords

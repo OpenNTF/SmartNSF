@@ -1,6 +1,13 @@
 println ("building routing...")
 
+router.useFacesContext(true);
+router.trace(true);
 
+router.GET('infos', {
+	strategy(CUSTOM,{
+		javaClass 'org.openntf.smartnsf.Info'
+	})
+})
 router.GET('topics', {
      	strategy(VIEWENTRIES_PAGED, {
          	viewName('(ByDate)')
@@ -24,7 +31,8 @@ router.GET('topics/{id}') {
 		context, document ->
 		def now = new Date()
 		def timestamp = now.toTimestamp().toString();
-		def payload = context.getResultPayload()
+		def payload = context.getResultPayload();
+		def fc = context.getFacesContext();
 		payload.put('timestamp',timestamp)
 	}
 }

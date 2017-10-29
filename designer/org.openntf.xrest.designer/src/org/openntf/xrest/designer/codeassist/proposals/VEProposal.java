@@ -1,4 +1,4 @@
-package org.openntf.xrest.designer.codeassist;
+package org.openntf.xrest.designer.codeassist.proposals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,12 +9,15 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.openntf.xrest.designer.codeassist.CodeContext;
+import org.openntf.xrest.designer.codeassist.CodeProposal;
+import org.openntf.xrest.designer.codeassist.ProposalParameter;
 import org.openntf.xrest.designer.dsl.MethodContainer;
 
 public class VEProposal extends AbstractProposalFactory implements CodeProposal {
-	final ProposalParameter parameter;
+	final ProposalParameter<VariableExpression> parameter;
 
-	public VEProposal(ProposalParameter pp) {
+	public VEProposal(ProposalParameter<VariableExpression> pp) {
 		super(pp.getImageRegistry());
 		this.parameter = pp;
 	}
@@ -26,23 +29,23 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 	 */
 	@Override
 	public List<ICompletionProposal> suggestions(int offset) {
-		VariableExpression expression = (VariableExpression) parameter.getNode();
+		VariableExpression expression = parameter.getNode();
 		String variableName = expression.getName();
 		CodeContext context = this.parameter.getCodeContext();
 		if (context.getDeclaredVariables().containsKey(variableName)) {
 			Class<?> cl = context.getDeclaredVariables().get(variableName);
-			return buildListFromClass(cl, offset);
+			return buildListFromClass(cl, offset,0);
 		} else {
-			System.out.println("CANT FIND: "+ variableName);
 			MethodCallExpression me = findCurrentMethodContext();
 			if (me != null) {
 				VariableExpression recivier = (VariableExpression) me.getReceiver();
-				System.out.println("RTEXT "+recivier.getText());
-				System.out.println(me.getText());
 				Class<?> cl = parameter.getRegistry().searchMethodClass(recivier.getName(), me.getMethodAsString());
 				if (parameter.getRegistry().isMethodConditioned(cl, expression.getName())) {
 					List<MethodContainer> mc = parameter.getRegistry().getMethodContainers(cl, expression.getName());
 					return buildConditionedMethodContainerProposals(mc, offset);
+				} else {
+					System.out.println("RTEXT "+recivier.getText());
+					System.out.println(me.getText());
 				}
 			}
 		}
