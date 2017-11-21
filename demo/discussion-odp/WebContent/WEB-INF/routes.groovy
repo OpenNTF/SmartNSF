@@ -153,6 +153,17 @@ router.GET('topicsbydate/{from}/{to}'){
 		CategoryStatistics catAnalyser = new CategoryStatistics(payload);
 		javaArrayObject.put("stats", catAnalyser.count());
 		context.setResultPayload(javaArrayObject);
-		//payload.add(javaArrayObject);
 	}
+}
+router.GET('mytopics' ) {
+	strategy(VIEWENTRIES_BY_CATEGORY_PAGED) {
+		viewName('byAuthorCanonical')
+		calculateKey { context ->
+		   context.getUserName(); 
+		}
+	}
+	mapJson '\$34', json:'topic', type:'STRING'	
+	mapJson '\$124', json:'author', type:'STRING'
+	mapJson 'date', json:'date',type:'DATETIME'
+	mapJson '\$126', json:'id', type:'STRING'
 }

@@ -1,11 +1,14 @@
 package org.openntf.xrest.designer.dsl;
 
+import java.util.Arrays;
+
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.MapJsonType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.model.Strategy;
+import org.openntf.xrest.xsp.model.strategy.ViewEntriesByCategory;
 
 public class DSLRegistryFactory {
 
@@ -15,6 +18,7 @@ public class DSLRegistryFactory {
 		dslRegistry.addClosureObjecForMethod("PUT", RouteProcessor.class);
 		dslRegistry.addClosureObjecForMethod("POST", RouteProcessor.class);
 		dslRegistry.addClosureObjecForMethod("DELETE", RouteProcessor.class);
+		dslRegistry.addClosureObjecForMethod(MethodContainer.buildContainerWithConditionAndParams(ViewEntriesByCategory.class, "calculateKey", "", Object.class, Arrays.asList(new Class<?>[]{Context.class,})));
 		for (Strategy strat : Strategy.values()) {
 			MethodContainer mc = MethodContainer.buildContainerWithCondition(RouteProcessor.class, "strategy", strat.name(), strat.getModelClass());
 			dslRegistry.addClosureObjecForMethodWithCondition(mc);
