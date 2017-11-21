@@ -9,6 +9,7 @@ public class AbstractKeyViewDatabaseStrategy extends AbstractViewDatabaseStrateg
 
 	private String keyVariableValue;
 	private Closure<?> keyVariableCl;
+	private Closure<?> calcKeyCL;
 
 	public AbstractKeyViewDatabaseStrategy() {
 		super();
@@ -29,5 +30,27 @@ public class AbstractKeyViewDatabaseStrategy extends AbstractViewDatabaseStrateg
 			return keyVariableValue;
 		}
 	}
-
+	
+	public void calculateKey(Closure<?> calcCL) {
+		this.calcKeyCL = calcCL;
+	}
+	
+	public boolean hasCalculateKey() {
+		return calcKeyCL != null;
+	}
+	
+	public String evaluateKey(Context context) {
+		if (calcKeyCL == null) {
+			throw new IllegalArgumentException("No calculateKeyClosure specified!");
+		}
+		return (String)DSLBuilder.callClosure(calcKeyCL, context);
+	}
+	
+	public String getKeyValue(Context context) {
+		if (hasCalculateKey()) {
+			return evaluateKey(context);
+		} else {
+			return context.getRouterVariables().get(getKeyVariableValue(context));
+		}
+	}
 }

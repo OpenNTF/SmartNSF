@@ -1,5 +1,6 @@
 println ("building routing...")
-
+import java.util.Map;
+import org.openntf.smartnsf.CategoryStatistics
 router.useFacesContext(true);
 router.trace(true);
 
@@ -33,8 +34,10 @@ router.GET('topics/{id}') {
 		def timestamp = now.toTimestamp().toString();
 		def payload = context.getResultPayload();
 		def fc = context.getFacesContext();
+		def helper = context.getNSFHelper();
 		payload.put('timestamp',timestamp)
 	}
+	
 }
 router.GET('topics/{id}/attachment/{attachmentName}') {
 	strategy(ATTACHMENT) {
@@ -131,5 +134,25 @@ router.POST('topics/{parent_id}/comments/{id}') {
 router.DELETE('document/{id}') {
 	strategy(DOCUMENT_BY_UNID) {
 		keyVariableName("{id}")
+	}
+}
+router.GET('topicsbydate/{from}/{to}'){
+	strategy(DOCUMENTS_BY_FORMULA) {
+		selectQuery('SELECT Form=\"MainTopic\" & @Created > [{from}] & @Created =< [{to}]')
+	}
+ 	mapJson "date", json:'date',type:'STRING',isformula:true, formula:'@Text(@Created)'
+	mapJson "Subject", json:'topic', type:'STRING'
+	mapJson "author", json:'author', type:'STRING',isformula:true, formula:'@Name([CN]; From)'
+	mapJson "categories", json:'categories', type:'ARRAY_OF_STRING'
+	events PRE_SUBMIT: {
+		context, document ->
+		def payload = context.getResultPayload();
+		def javaArrayObject = context.getNSFHelper().createJsonObject();
+		javaArrayObject.put('docclass',document.getClass().getName());
+		javaArrayObject.put('data', payload);
+		CategoryStatistics catAnalyser = new CategoryStatistics(payload);
+		javaArrayObject.put("stats", catAnalyser.count());
+		context.setResultPayload(javaArrayObject);
+		//payload.add(javaArrayObject);
 	}
 }

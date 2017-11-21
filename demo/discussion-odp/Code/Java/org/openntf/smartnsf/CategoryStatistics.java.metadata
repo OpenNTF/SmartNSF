@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.8" replicaid="C12580AF0036B297" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="2122" sequence="3" unid="750FBF73B7892AD3C12581D80030A6A0">
+<created><datetime>20171114T095123,84+01</datetime></created>
+<modified><datetime>20171114T095123,90+01</datetime></modified>
+<revised><datetime>20171114T095123,89+01</datetime></revised>
+<lastaccessed><datetime>20171114T095123,90+01</datetime></lastaccessed>
+<addedtofile><datetime>20171114T095123,85+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></updatedby>
+<wassignedby><name>CN=Christian Guedemann/O=WGC/C=CH</name></wassignedby>
+<item name="$Flags"><text>34567Cg~[</text></item>
+<item name="$TITLE"><text>org/openntf/smartnsf/CategoryStatistics.java</text></item>
+<item name="$DesignerVersion"><text>8.5.3</text></item>
+
+
+<item name="$FileNames" sign="true"><text>org/openntf/smartnsf/CategoryStatistics.java</text></item></note>

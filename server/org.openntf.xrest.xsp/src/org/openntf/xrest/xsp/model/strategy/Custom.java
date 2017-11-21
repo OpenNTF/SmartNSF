@@ -35,12 +35,23 @@ public class Custom implements StrategyModel<DataContainer<Object>, JsonObject> 
 		}
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		Class<?> cl = classLoader.loadClass(javaClassValue);
-		for (Class<?> checkInterface : cl.getInterfaces()) {
-			if (checkInterface.equals(CustomRestHandler.class)) {
-				Object executor = cl.newInstance();
-				return (CustomRestHandler) executor;
-			}
+		if (checkClassHasCustomerRestHanlderInterface(cl)) {
+			Object executor = cl.newInstance();
+			return (CustomRestHandler) executor;
 		}
 		throw new ClassCastException(javaClassValue + " has to implement " + CustomRestHandler.class.getName());
+	}
+
+	private boolean checkClassHasCustomerRestHanlderInterface(Class<?> cl) {
+		for (Class<?> checkInterface : cl.getInterfaces()) {
+			if (checkInterface.equals(CustomRestHandler.class)) {
+				return true;
+			}
+		}
+		Class<?> superClass = cl.getSuperclass();
+		if (superClass != null) {
+			return checkClassHasCustomerRestHanlderInterface(superClass);
+		}
+		return false;
 	}
 }
