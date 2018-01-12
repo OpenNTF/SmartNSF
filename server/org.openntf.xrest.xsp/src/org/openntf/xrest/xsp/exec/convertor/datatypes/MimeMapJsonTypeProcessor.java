@@ -300,7 +300,9 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 				childNext = childNext.getNextSibling();
 				MIMEEntity matcher = findContent(childCurrent, mimeType);
 				if (matcher != null) {
-					childNext.recycle();
+					if (childNext != null) {
+						childNext.recycle();
+					}
 					return matcher;
 				}
 				childCurrent.recycle();
