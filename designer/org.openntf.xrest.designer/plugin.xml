@@ -54,7 +54,7 @@
    </extension>
    <extension point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-           base-type="org.eclipse.jdt.core.javaSource"
+           base-type="org.eclipse.core.runtime.text"
            file-extensions="groovy"
            id="org.eclipse.jdt.groovy.core.groovySource"
            name="Groovy Source File"
