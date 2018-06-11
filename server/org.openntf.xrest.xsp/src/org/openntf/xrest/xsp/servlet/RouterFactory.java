@@ -29,7 +29,7 @@ public class RouterFactory {
 			InputStream is = module.getResourceAsStream("/WEB-INF/routes.groovy");
 			if (is != null) {
 				String dsl = StreamUtil.readString(is);
-				return DSLBuilder.buildRouterFromDSL(dsl, getClass().getClassLoader());
+				return DSLBuilder.buildRouterFromDSL(dsl, Thread.currentThread().getContextClassLoader());
 			}
 		} catch (Exception e) {
 			error = e;

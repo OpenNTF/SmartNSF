@@ -18,10 +18,10 @@ package org.openntf.xrest.xsp.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.List;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.event.PhaseListener;
@@ -49,14 +49,10 @@ import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
-import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.application.ApplicationEx;
-import com.ibm.xsp.application.ApplicationFactoryImpl;
-import com.ibm.xsp.application.ViewHandlerEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.controller.FacesController;
 import com.ibm.xsp.controller.FacesControllerFactoryImpl;
-import com.ibm.xsp.controller.FacesControllerListener;
 
 import lotus.domino.NotesException;
 import lotus.domino.Session;
@@ -125,6 +121,9 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 			String method = req.getMethod();
 			String path = req.getPathInfo();
+			if (router.isEnableCORS()) {
+				processCORSHeaders(req, resp, router, method);
+			}
 			if (StringUtil.isEmpty(path)) {
 				processBuildInCommands(resp, req);
 			} else {
@@ -149,6 +148,29 @@ public class XRestAPIServlet extends HttpServlet {
 				releaseContext(fc);
 			}
 		}
+	}
+
+	private void processCORSHeaders(HttpServletRequest req, HttpServletResponse resp, Router router, String method) {
+		if ("OPTIONS".equals(method)) {
+			resp.addHeader("Access-Control-Allow-Headers", "orgin, content-type, accept, " + router.getCORSTokenHeader());
+		}
+		if (router.isCORSAllowCredentials()) {
+			resp.addHeader("Access-Control-Allow-Credentials", "true");
+		}
+		resp.addHeader("Access-Control-Allow-Origin", toColonValue(router.getCORSOrginValue()));
+		resp.addHeader("Access-Control-Allow-Methods", toColonValue(router.getCORSAllowMethodValue()));
+	}
+
+	private String toColonValue(List<String> corsOrginValue) {
+		StringBuilder sb = new StringBuilder();
+		if (corsOrginValue.isEmpty()) {
+			return "";
+		}
+		for (String value:corsOrginValue) {
+			sb.append(value);
+			sb.append(",");
+		}
+		return sb.substring(0, sb.length()-1);
 	}
 
 	private void processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request) throws JsonException, IOException,
@@ -243,8 +265,7 @@ public class XRestAPIServlet extends HttpServlet {
         return context;
     }
     
-    @SuppressWarnings("deprecation")
-	public void releaseContext(FacesContext context) throws ServletException, IOException {
+    public void releaseContext(FacesContext context) throws ServletException, IOException {
     			context.release();
     }
     

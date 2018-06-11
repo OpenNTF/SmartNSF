@@ -20,6 +20,10 @@ public interface Context {
 
 	Session getSession();
 
+	Session getSessionAsSigner();
+
+	Session getSessionAsSignerFullAdmin();
+
 	Database getDatabase();
 
 	String getUserName();

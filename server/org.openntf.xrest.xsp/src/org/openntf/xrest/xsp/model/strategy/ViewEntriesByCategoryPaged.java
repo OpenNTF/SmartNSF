@@ -35,7 +35,7 @@ public class ViewEntriesByCategoryPaged extends AbstractAllByKeyViewDatabaseStra
 
 			int start = getParamIntValue(context.getRequest().getParameter("start"), DEFAULT_START);
 			int count = getParamIntValue(context.getRequest().getParameter("count"), DEFAULT_COUNT);
-			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
+			String varValue = getKeyValue(context);
 			List<List<Object>> entries = new ArrayList<List<Object>>();
 
 			ViewNavigator vnav = viewAccess.createViewNavFromCategory(varValue);

@@ -90,7 +90,7 @@ public class GroovyContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public String getErrorMessage() {
-		return "nix proposal";
+		return "No proposal found.";
 	}
 
 	private IProject findActiveProject() {

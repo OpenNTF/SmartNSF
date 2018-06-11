@@ -1,6 +1,7 @@
 package org.openntf.xrest.xsp.yaml;
 
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
+import org.openntf.xrest.xsp.utils.HttpHelper;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -67,10 +69,8 @@ public class YamlProducer {
 		}
 	}
 
-	private String extractProtocol(HttpServletRequest request) {
-		String protocol = request.getProtocol();
-		int nSlash = protocol.indexOf("/");
-		return protocol.substring(0, nSlash).toLowerCase();
+	private String extractProtocol(HttpServletRequest request) throws MalformedURLException {
+		return HttpHelper.INSTANCE.extractProtocolFromRequest(request);
 	}
 
 	private void buildOperations(Router router) {

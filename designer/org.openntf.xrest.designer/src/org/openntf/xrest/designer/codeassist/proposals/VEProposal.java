@@ -12,6 +12,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.openntf.xrest.designer.codeassist.CodeContext;
 import org.openntf.xrest.designer.codeassist.CodeProposal;
 import org.openntf.xrest.designer.codeassist.ProposalParameter;
+import org.openntf.xrest.designer.dsl.MapContainer;
 import org.openntf.xrest.designer.dsl.MethodContainer;
 
 public class VEProposal extends AbstractProposalFactory implements CodeProposal {
@@ -44,12 +45,53 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 					List<MethodContainer> mc = parameter.getRegistry().getMethodContainers(cl, expression.getName());
 					return buildConditionedMethodContainerProposals(mc, offset);
 				} else {
-					System.out.println("RTEXT "+recivier.getText());
-					System.out.println(me.getText());
+					List<MapContainer> mapContainer = parameter.getRegistry().getMapContainers(cl, expression.getName());
+					return buildConditionedMapContainerProposal(mapContainer,offset);
 				}
 			}
 		}
 		return Collections.emptyList();
+	}
+
+	private List<ICompletionProposal> buildConditionedMapContainerProposal(List<MapContainer> mapContainer, int offset) {
+		List<ICompletionProposal> cps = new ArrayList<ICompletionProposal>();
+		for (MapContainer container : mapContainer) {
+			String value = buildNameFromMapContainer(container);
+			String info = buildInfoFromMapContainer(container);
+			CompletionProposal cp = new CompletionProposal(value, offset, 0, value.length(), parameter.getImageRegistry().get("bullet_green.png"), info, null, null);
+			cps.add(cp);
+		}
+		return cps;
+	}
+
+	private String buildInfoFromMapContainer(MapContainer container) {
+		StringBuilder sb = new StringBuilder(" "+container.getKey());
+		sb.append(" (");
+		sb.append(container.getValueClass().getSimpleName());
+		sb.append(")");
+		return sb.toString();
+	}
+
+	private String buildNameFromMapContainer(MapContainer container) {
+		StringBuilder sb = new StringBuilder(container.getKey());
+		sb.append(" {");
+		boolean hasParam = false;
+		if (container.getClosureParameters() != null) {
+			for (Class<?> cl : container.getClosureParameters()) {
+				if (!hasParam) {
+					hasParam = true;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(cl.getSimpleName().toLowerCase());
+			}
+			if (hasParam) {
+				sb.append(" -> ");
+			}
+		}
+		sb.append("\n}");
+
+		return sb.toString();
 	}
 
 	private List<ICompletionProposal> buildConditionedMethodContainerProposals(List<MethodContainer> mc, int offset) {
@@ -82,7 +124,7 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 				} else {
 					sb.append(", ");
 				}
-				sb.append(cl.getSimpleName());
+				sb.append(cl.getSimpleName().toLowerCase());
 			}
 			if (hasParam) {
 				sb.append(" -> ");
@@ -98,11 +140,8 @@ public class VEProposal extends AbstractProposalFactory implements CodeProposal 
 		Collections.reverse(hierRevers);
 		MethodCallExpression me = null;
 		for (ASTNode node : hierRevers) {
-			System.out.println(node.getClass().getSimpleName() +" -> "+node.getText());
 			if (node instanceof MethodCallExpression) {
 				me = (MethodCallExpression) node;
-				//break;
-				System.out.println("------> FOUND ME");
 			}
 		}
 		return me;

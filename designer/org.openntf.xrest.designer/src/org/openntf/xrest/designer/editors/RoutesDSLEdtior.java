@@ -1,9 +1,8 @@
 package org.openntf.xrest.designer.editors;
 
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.ui.editors.text.TextEditor;
 
-@SuppressWarnings("restriction")
-public class RoutesDSLEdtior extends CompilationUnitEditor {
+public class RoutesDSLEdtior extends TextEditor {
 
 	private ColorManager colorManager;
 

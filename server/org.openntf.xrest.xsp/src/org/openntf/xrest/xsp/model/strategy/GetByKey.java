@@ -45,8 +45,8 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
 					.getSession());
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
+			String key = getKeyValue(context);
 
-			String key = context.getRouterVariables().get(getKeyVariableValue(context));
 			if (key.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
 				String form = getFormValue(context);

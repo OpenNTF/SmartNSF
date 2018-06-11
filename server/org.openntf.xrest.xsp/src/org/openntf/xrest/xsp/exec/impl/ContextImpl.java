@@ -26,6 +26,8 @@ public class ContextImpl implements Context {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 	private Session session;
+	private Session sessionAsSigner;
+	private Session sessionAsSignerAdmin;
 	private Database database;
 	private String userName;
 	private List<String> groups;
@@ -53,6 +55,8 @@ public class ContextImpl implements Context {
 
 	public ContextImpl addNotesContext(NotesContext notesContext) throws NotesException {
 		this.session = notesContext.getCurrentSession();
+		this.sessionAsSigner = notesContext.getSessionAsSigner();
+		this.sessionAsSignerAdmin = notesContext.getSessionAsSignerFullAdmin();
 		this.database = notesContext.getCurrentDatabase();
 		calcSessionBasedValues();
 		this.nsfHelper = new NSFHelperImpl(this.database);
@@ -233,4 +237,15 @@ public class ContextImpl implements Context {
 		return facesContext;
 	}
 
+	@Override
+	public Session getSessionAsSigner() {
+		return sessionAsSigner;
+	}
+
+	@Override
+	public Session getSessionAsSignerFullAdmin() {
+		return sessionAsSignerAdmin;
+	}
+
+	
 }

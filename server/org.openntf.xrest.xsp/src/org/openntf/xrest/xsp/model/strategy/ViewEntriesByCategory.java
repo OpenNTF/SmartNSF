@@ -33,7 +33,7 @@ public class ViewEntriesByCategory extends AbstractAllByKeyViewDatabaseStrategy 
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<List<Object>> entries = new ArrayList<List<Object>>();
-			String varValue = context.getRouterVariables().get(getKeyVariableValue(context));
+			String varValue = getKeyValue(context);
 			ViewNavigator vnav = viewAccess.createViewNavFromCategory(varValue);
 			ViewEntry entCurrent = vnav.getFirst();
 			while (entCurrent != null && entCurrent.isValid() && !entCurrent.isCategory() && !entCurrent.isConflict()) {
