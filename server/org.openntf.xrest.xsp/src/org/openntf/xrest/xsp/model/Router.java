@@ -22,6 +22,11 @@ public class Router {
 	private String descriptionValue = "";
 	private boolean traceValue = false;
 	private boolean useFacesContextValue = false;
+	private boolean enableCORS = false;
+	private List<String> corsOrginValue = new ArrayList<String>();
+	private List<String> corsAllowMethodValue = new ArrayList<String>();
+	private String corsTokenHeader = "X-AuthToken";
+	private boolean corsAllowCredentials = false;
 
 	public Router() {
 		allroutes.put("GET", routesGET);
@@ -61,7 +66,7 @@ public class Router {
 	public void trace(boolean trace) {
 		this.traceValue = trace;
 	}
-
+	
 	public void description(String description) {
 		this.descriptionValue = description;
 	}
@@ -83,6 +88,25 @@ public class Router {
 
 	public List<RouteProcessor> getRoutesDELETE() {
 		return routesDELETE;
+	}
+
+	public void enableCORS() {
+		this.enableCORS = true;
+	}
+	
+	public void corsTokenHeader(String header) {
+		this.corsTokenHeader = header;
+	}
+	
+	public void corsAllowCredentials() {
+		this.corsAllowCredentials = true;
+	}
+
+	public void corsAllowMethodValue(List<String> values) {
+		this.corsAllowMethodValue = values;
+	}
+	public void corsOrigin(List<String> values) {
+		this.corsOrginValue = values;
 	}
 
 	public RouteProcessor find(String method, String path) {
@@ -138,5 +162,27 @@ public class Router {
 	public boolean useFacesContext() {
 		return useFacesContextValue;
 	}
+
+	public boolean isEnableCORS() {
+		return enableCORS;
+	}
+
+	public List<String> getCORSOrginValue() {
+		return corsOrginValue;
+	}
+
+	public List<String> getCORSAllowMethodValue() {
+		return corsAllowMethodValue;
+	}
+
+	public String getCORSTokenHeader() {
+		return corsTokenHeader;
+	}
+
+	public boolean isCORSAllowCredentials() {
+		return corsAllowCredentials;
+	}
+	
+	
 	
 }
