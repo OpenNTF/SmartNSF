@@ -239,12 +239,12 @@ public class ContextImpl implements Context {
 
 	@Override
 	public Session getSessionAsSigner() {
-		return sessionAsSigner;
+		return this.sessionAsSigner;
 	}
 
 	@Override
 	public Session getSessionAsSignerFullAdmin() {
-		return sessionAsSignerAdmin;
+		return this.sessionAsSignerAdmin;
 	}
 
 	

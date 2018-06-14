@@ -17,7 +17,9 @@ package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.FacesException;
@@ -152,7 +154,7 @@ public class XRestAPIServlet extends HttpServlet {
 
 	private void processCORSHeaders(HttpServletRequest req, HttpServletResponse resp, Router router, String method) {
 		if ("OPTIONS".equals(method)) {
-			resp.addHeader("Access-Control-Allow-Headers", "orgin, content-type, accept, " + router.getCORSTokenHeader());
+			resp.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, " + router.getCORSTokenHeader());
 		}
 		if (router.isCORSAllowCredentials()) {
 			resp.addHeader("Access-Control-Allow-Credentials", "true");
@@ -228,7 +230,7 @@ public class XRestAPIServlet extends HttpServlet {
 		RouteProcessor rp = routerFactory.getRouter().find(method, path);
 		ContextImpl context = new ContextImpl();
 		if (rp != null) {
-			NotesContext c = NotesContext.getCurrentUnchecked();
+			NotesContext c = modifiyNotesContext();
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
 			context.setTrace(routerFactory.getRouter().isTrace());
@@ -272,6 +274,30 @@ public class XRestAPIServlet extends HttpServlet {
     @Override
     public ServletConfig getServletConfig() {
     	return config;
+    }
+    
+    private NotesContext modifiyNotesContext() {
+    	NotesContext c = NotesContext.getCurrentUnchecked();
+    	try {
+			Field checkedSigners = NotesContext.class.getDeclaredField("checkedSigners");
+			checkedSigners.setAccessible(true);
+			HashSet<?> signers = (HashSet)checkedSigners.get(c);
+			signers.clear();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	c.setSignerSessionRights("WEB-INF/routes.groovy");
+    	return c;
     }
 }
 
