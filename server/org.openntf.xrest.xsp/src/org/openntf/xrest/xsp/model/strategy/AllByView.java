@@ -25,7 +25,7 @@ public class AllByView extends AbstractViewDatabaseStrategy implements StrategyM
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<Document> docs = new ArrayList<Document>();

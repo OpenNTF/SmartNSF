@@ -45,8 +45,7 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);

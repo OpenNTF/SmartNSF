@@ -22,6 +22,7 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
+	private Closure<?> allowedAccessCL;
 	private StrategyModel<?, ?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
@@ -64,6 +65,10 @@ public class RouteProcessor {
 				throw new IllegalArgumentException("Type for event " + event.getKey() + " must be Closure");
 			}
 		}
+	}
+	
+	public void allowedAccess(Closure<?> cl) {
+		allowedAccessCL = cl;
 	}
 
 	public void accessPermission(String[] acc) {
@@ -150,6 +155,9 @@ public class RouteProcessor {
 			return eventMap.get(eventType);
 		}
 		return null;
+	}
+	public Closure<?> getAllowedAccessClosure() {
+		return allowedAccessCL;
 	}
 
 	public DataContainer<?> getDataContainer(Context context) throws ExecutorException {

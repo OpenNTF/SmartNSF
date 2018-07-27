@@ -42,8 +42,7 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	@Override
 	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			String key = getKeyValue(context);
 

@@ -23,7 +23,7 @@
 		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-SNAPSHOT</kit.buildVersion>
 		<p2.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</p2.buildVersion>
 		<kit.result>snapshots</kit.result>
-		<kit.sourceCodeUrl>https://stash.openntf.org/plugins/servlet/archive/projects/XRAPI/repos/org.openntf.xrestapi/?at=refs%2Fheads%2F</kit.sourceCodeUrl>
+		<kit.sourceCodeUrl>https://stash.openntf.org/rest/api/latest/projects/XRAPI/repos/org.openntf.xrestapi/archive?format=zip&amp;at=refs%2Fheads%2F</kit.sourceCodeUrl>
 		<kit.sourceBranch>develop</kit.sourceBranch>
 		
 	</properties>

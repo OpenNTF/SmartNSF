@@ -59,8 +59,7 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	@Override
 	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			String unid = context.getRouterVariables().get(keyVariableValue);
 			if (unid.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
