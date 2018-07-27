@@ -28,7 +28,7 @@ public class DSLScanner extends RuleBasedScanner {
 			"static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "void", "volatile", "while", };
 	private static final String[] groovyKeywords = { "as", "in", "def", "trait","println", };
 	private static final String[] dslRouterKeywords = { "router","GET", "PUT", "POST", "DELETE", };
-	private static final String[] dslKeywords = { "strategy", "mapJson", "events", "accessPermission", };
+	private static final String[] dslKeywords = { "strategy", "mapJson", "events", "accessPermission","allowedAccess" };
 	private static final String returnKeyword = "return";
 	private final ColorManager manager;
 

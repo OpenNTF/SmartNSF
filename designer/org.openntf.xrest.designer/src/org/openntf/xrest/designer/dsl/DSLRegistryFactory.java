@@ -18,6 +18,8 @@ public class DSLRegistryFactory {
 		dslRegistry.addClosureObjecForMethod("PUT", RouteProcessor.class);
 		dslRegistry.addClosureObjecForMethod("POST", RouteProcessor.class);
 		dslRegistry.addClosureObjecForMethod("DELETE", RouteProcessor.class);
+		dslRegistry.addClosureObjecForMethod(MethodContainer.buildContainerWithConditionAndParams(RouteProcessor.class, "allowedAccess", "", Object.class, Arrays.asList(new Class<?>[]{Context.class,})));
+
 		dslRegistry.addClosureObjecForMethod(MethodContainer.buildContainerWithConditionAndParams(ViewEntriesByCategory.class, "calculateKey", "", Object.class, Arrays.asList(new Class<?>[]{Context.class,})));
 		for (Strategy strat : Strategy.values()) {
 			MethodContainer mc = MethodContainer.buildContainerWithCondition(RouteProcessor.class, "strategy", strat.name(), strat.getModelClass());
