@@ -21,8 +21,7 @@ public class AllByKeyPaged extends AbstractAllByKeyViewDatabaseStrategy implemen
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(),getSessionFromContext(context));
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			String varValue = getKeyValue(context);

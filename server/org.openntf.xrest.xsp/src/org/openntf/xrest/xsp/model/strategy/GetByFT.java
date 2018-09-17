@@ -23,8 +23,7 @@ public class GetByFT extends AbstractFTDatabaseStrategy implements StrategyModel
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			List<Document> docs = new ArrayList<Document>();
 			String search = "";
 			if (context.getRequest().getMethod().equals("POST")) {

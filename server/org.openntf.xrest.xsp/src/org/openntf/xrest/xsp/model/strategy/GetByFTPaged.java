@@ -19,8 +19,7 @@ public class GetByFTPaged extends AbstractFTDatabaseStrategy implements Strategy
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			int start = DEFAULT_START;
 			int count = DEFAULT_COUNT;
 			String search = "";

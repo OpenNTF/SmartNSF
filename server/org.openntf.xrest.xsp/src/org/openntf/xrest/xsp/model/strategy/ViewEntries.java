@@ -28,7 +28,7 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 	@Override
 	public ViewEntryListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<List<Object>> entries = new ArrayList<List<Object>>();

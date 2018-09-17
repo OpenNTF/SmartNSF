@@ -42,8 +42,7 @@ public class GetBySelectPaged extends AbstractDatabaseStrategy implements Strate
 	@Override
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
 			int total = dcl.getCount();

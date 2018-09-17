@@ -71,7 +71,19 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 	}
 
 	private void checkAccess() throws ExecutorException {
-		// TODO: Looser! You missing the context
+		Closure<?> clAllowedAccess = routeProcessor.getAllowedAccessClosure();
+		if (clAllowedAccess != null) {
+			try {
+				boolean result = (Boolean)DSLBuilder.callClosure(clAllowedAccess, context);
+				if (!result) {
+					throw new ExecutorException(403, "Access denied for user " + context.getUserName(), path, "checkAccess");
+				}
+			} catch (EventException e) {
+				throw new ExecutorException(e, path, "checkAccess");
+			} catch (Exception e) {
+				throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "checkAccess");
+			}
+		}
 		List<String> allowedUsersAndGroups = routeProcessor.getAccessGroups();
 		if (allowedUsersAndGroups == null || allowedUsersAndGroups.isEmpty()) {
 			return;

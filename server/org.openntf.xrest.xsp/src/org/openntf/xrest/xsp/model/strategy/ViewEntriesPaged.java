@@ -29,7 +29,7 @@ public class ViewEntriesPaged extends AbstractViewDatabaseStrategy implements
 	@Override
 	public ViewEntryListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			int total = -1;
