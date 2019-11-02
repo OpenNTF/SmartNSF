@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.names.TypeAHeadResolver;
+import org.openntf.xrest.xsp.names.UserInformationResolver;
+import org.openntf.xrest.xsp.names.impl.DefaultUserInformationAndTypeAHeadImplementation;
 
 import groovy.lang.Closure;
 
@@ -27,12 +30,17 @@ public class Router {
 	private List<String> corsAllowMethodValue = new ArrayList<String>();
 	private String corsTokenHeader = "X-AuthToken";
 	private boolean corsAllowCredentials = false;
+	private TypeAHeadResolver typeAHeadResolverValue;
+	private UserInformationResolver userInformationResolverValue;
 
 	public Router() {
+		DefaultUserInformationAndTypeAHeadImplementation defaultUIAT = new DefaultUserInformationAndTypeAHeadImplementation();
 		allroutes.put("GET", routesGET);
 		allroutes.put("PUT", routesPUT);
 		allroutes.put("POST", routesPOST);
 		allroutes.put("DELETE", routesDELETE);
+		typeAHeadResolverValue = defaultUIAT;
+		userInformationResolverValue = defaultUIAT;
 	}
 
 	public void GET(String route, Closure<Void> cl) {
@@ -107,6 +115,14 @@ public class Router {
 	}
 	public void corsOrigin(List<String> values) {
 		this.corsOrginValue = values;
+	}
+	
+	public void typeAHeadResolver(TypeAHeadResolver typeAHeadResolver) {
+		this.typeAHeadResolverValue = typeAHeadResolver;
+	}
+
+	public void userInformationResolver(UserInformationResolver userInfromationResolver) {
+		this.userInformationResolverValue = userInfromationResolver;
 	}
 
 	public RouteProcessor find(String method, String path) {
@@ -183,6 +199,12 @@ public class Router {
 		return corsAllowCredentials;
 	}
 	
+	public UserInformationResolver getUserInformationResolverValue() {
+		return userInformationResolverValue;
+	}
 	
+	public TypeAHeadResolver getTypeAHeadResolverValue() {
+		return typeAHeadResolverValue;
+	}
 	
 }
