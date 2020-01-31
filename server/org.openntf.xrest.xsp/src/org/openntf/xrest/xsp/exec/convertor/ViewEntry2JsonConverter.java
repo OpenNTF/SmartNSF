@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.ColumnInfo;
 import org.openntf.xrest.xsp.model.MapJsonType;
 import org.openntf.xrest.xsp.model.MappingField;
@@ -20,12 +21,14 @@ public class ViewEntry2JsonConverter {
 	private final RouteProcessor routeProcessor;
 	private final List<Object> columnValues;
 	private final Map<String, ColumnInfo> columnInfoMap;
+	private final Context context;
 
 	public ViewEntry2JsonConverter(final List<Object> viewEntry, final RouteProcessor routeProcessor,
-			final Map<String, ColumnInfo> columnInfoMap) throws NotesException {
+			final Map<String, ColumnInfo> columnInfoMap, Context context) throws NotesException {
 		this.routeProcessor = routeProcessor;
 		this.columnValues = viewEntry;
 		this.columnInfoMap = columnInfoMap;
+		this.context = context;
 	}
 
 	public JsonObject buildJsonFromEntry() throws NotesException {
@@ -48,9 +51,7 @@ public class ViewEntry2JsonConverter {
 
 	private void processColumn(final JsonObject jo, final Object clmnValue, final MappingField mappingField) throws NotesException {
 		MapJsonType mjType = mappingField.getType();
-		// System.out.println("DEBUG: processColumn=" + clmnValue);
-		// System.out.println("DEBUG: mappingField=" + mappingField);
-		mjType.processColumnValueToJsonObject(clmnValue, jo, mappingField.getJsonName());
+		mjType.processColumnValueToJsonObject(clmnValue, jo, mappingField.getJsonName(),this.context);
 	}
 
 }

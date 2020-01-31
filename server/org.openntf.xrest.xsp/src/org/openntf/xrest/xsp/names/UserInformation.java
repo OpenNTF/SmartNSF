@@ -1,6 +1,7 @@
 package org.openntf.xrest.xsp.names;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,8 +18,8 @@ public class UserInformation {
 	private String userName;
 	private String commonName;
 	private String email;
-	private Set<String> roles;
-	private Set<String> groups;
+	private Set<String> roles = new HashSet<String>();
+	private Set<String> groups = new HashSet<String>();
 
 	public String getUserName() {
 		return userName;

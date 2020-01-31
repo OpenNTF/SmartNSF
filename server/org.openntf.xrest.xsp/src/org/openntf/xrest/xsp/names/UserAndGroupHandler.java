@@ -38,7 +38,7 @@ public class UserAndGroupHandler {
 		try {
 			Map<String, String> parameters = extractParams(queryString);
 			if (!parameters.containsKey("action")) {
-				throw new ExecutorException(500, "Please provide a action for user buildin command.", "", "Built-in command: users");
+				throw new ExecutorException(500, "Please provide a action for user built-in command.", "", "Built-in command: users");
 			}
 			String action = parameters.get("action");
 			if ("ta".equals(action)) {

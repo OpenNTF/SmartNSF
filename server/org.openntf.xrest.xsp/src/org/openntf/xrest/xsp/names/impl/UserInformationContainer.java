@@ -166,7 +166,7 @@ public class UserInformationContainer {
 			processedGroups.add(groupName);
 			List<String> members = docGroup.getItemValue("Members");
 			for (String memberName : members) {
-				processName(memberName, groupName, users, processedGroups, groupViews, groupViews, members);
+				processName(memberName, groupName, users, processedGroups, userViews, groupViews, roles);
 			}
 		}
 	}

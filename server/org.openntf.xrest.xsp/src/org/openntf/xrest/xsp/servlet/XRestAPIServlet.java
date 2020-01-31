@@ -219,7 +219,7 @@ public class XRestAPIServlet extends HttpServlet {
 			return timer;
 		}
 		if (queryString.startsWith("users")) {
-			timer = histogram.labels("users").startTimer();
+			timer = histogram.labels("users",request.getMethod()).startTimer();
 			ContextImpl context = new ContextImpl();
 			NotesContext c = modifiyNotesContext();
 			context.addNotesContext(c).addRequest(request).addResponse(resp);
@@ -286,6 +286,7 @@ public class XRestAPIServlet extends HttpServlet {
 			context.addRouterVariables(rp.extractValuesFromPath(path));
 			context.setTrace(routerFactory.getRouter().isTrace());
 			context.addFacesContext(fc);
+			context.addIdentityMapProvider(routerFactory.getRouter().getIdentityMapProviderValue());
 			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;

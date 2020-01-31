@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.model;
 import java.util.List;
 import java.util.Vector;
 
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DateOnlyMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DateTimeArrayMapJsonTypeProcessor;
@@ -10,6 +11,7 @@ import org.openntf.xrest.xsp.exec.convertor.datatypes.DateTimeMapJsonTypeProcess
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DefaultMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DoubleArrayMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DoubleMapJsonTypeProcessor;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.IdentityMapJsonProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.IntegerArrayMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.IntegerMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.MimeMapJsonTypeProcessor;
@@ -36,7 +38,8 @@ public enum MapJsonType {
 	ARRAY_OF_STRING(new StringArrayMapJsonTypeProcessor(), "string", ""),
 	ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor(), "integer", "int32"),
 	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor(), "number", "double"),
-	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor(), "string", "dateTime");
+	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor(), "string", "dateTime"),
+	IDENTITY(new IdentityMapJsonProcessor(),"string","");
 
 	final transient MapJsonTypeProcessor processor;
 	final transient String yamlType;
@@ -49,25 +52,25 @@ public enum MapJsonType {
 	}
 
 	
-	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf) throws NotesException {
-		processor.processJsonValueToDocument(jo, doc, mf);
+	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf, Context context) throws NotesException {
+		processor.processJsonValueToDocument(jo, doc, mf, context);
 	}
 
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
-		processor.processJsonValueToDocument(values, doc, fieldName);
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName, Context context) throws NotesException {
+		processor.processJsonValueToDocument(values, doc, fieldName, context);
 	}
 
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonProperty) throws NotesException {
-		processor.processItemToJsonObject(item, jo, jsonProperty);
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonProperty, Context context) throws NotesException {
+		processor.processItemToJsonObject(item, jo, jsonProperty, context);
 	}
 
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonProperty)
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonProperty, Context context)
 			throws NotesException {
-		processor.processColumnValueToJsonObject(clmnValue, jo, jsonProperty);
+		processor.processColumnValueToJsonObject(clmnValue, jo, jsonProperty, context);
 	}
 
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty) throws NotesException {
-		processor.processValuesToJsonObject(values, jo, jsonProperty);
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty, Context context) throws NotesException {
+		processor.processValuesToJsonObject(values, jo, jsonProperty, context);
 	}
 
 

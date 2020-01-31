@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
+import org.openntf.xrest.xsp.names.IdentityMapProvider;
 import org.openntf.xrest.xsp.names.TypeAHeadResolver;
 import org.openntf.xrest.xsp.names.UserInformationResolver;
 import org.openntf.xrest.xsp.names.impl.DefaultUserInformationAndTypeAHeadImplementation;
@@ -32,6 +33,7 @@ public class Router {
 	private boolean corsAllowCredentials = false;
 	private TypeAHeadResolver typeAHeadResolverValue;
 	private UserInformationResolver userInformationResolverValue;
+	private IdentityMapProvider identityMapProvider;
 
 	public Router() {
 		DefaultUserInformationAndTypeAHeadImplementation defaultUIAT = new DefaultUserInformationAndTypeAHeadImplementation();
@@ -125,6 +127,10 @@ public class Router {
 		this.userInformationResolverValue = userInfromationResolver;
 	}
 
+	public void identityMapProvider(IdentityMapProvider provider) {
+		this.identityMapProvider = provider;
+	}
+
 	public RouteProcessor find(String method, String path) {
 		String[] pathParts = path.split("/");
 		List<RouteProcessor> routeProcessors = allroutes.get(method.toUpperCase());
@@ -207,4 +213,7 @@ public class Router {
 		return typeAHeadResolverValue;
 	}
 	
+	public IdentityMapProvider getIdentityMapProviderValue() {
+		return identityMapProvider;
+	}
 }
