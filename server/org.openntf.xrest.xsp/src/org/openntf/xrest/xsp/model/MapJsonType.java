@@ -11,6 +11,7 @@ import org.openntf.xrest.xsp.exec.convertor.datatypes.DateTimeMapJsonTypeProcess
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DefaultMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DoubleArrayMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.DoubleMapJsonTypeProcessor;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.IdentityMapArrayJsonProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.IdentityMapJsonProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.IntegerArrayMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.convertor.datatypes.IntegerMapJsonTypeProcessor;
@@ -39,8 +40,9 @@ public enum MapJsonType {
 	ARRAY_OF_INTEGER(new IntegerArrayMapJsonTypeProcessor(), "integer", "int32"),
 	ARRAY_OF_DOUBLE(new DoubleArrayMapJsonTypeProcessor(), "number", "double"),
 	ARRAY_OF_DATETIME(new DateTimeArrayMapJsonTypeProcessor(), "string", "dateTime"),
-	IDENTITY(new IdentityMapJsonProcessor(),"string","");
-
+	IDENTITY(new IdentityMapJsonProcessor(),"string",""),
+	ARRAY_OF_IDENTITY(new IdentityMapArrayJsonProcessor(), "string", "");
+	
 	final transient MapJsonTypeProcessor processor;
 	final transient String yamlType;
 	final transient String yamlFormat;
