@@ -30,7 +30,7 @@ public class ViewEntryListPaged2JsonConverter extends ViewEntryList2JsonConverte
 		jso.putJsonProperty("total", container.getMax());
 		JsonJavaArray jsa = new JsonJavaArray();
 		for (List<Object> entry : container.getData()) {
-			ViewEntry2JsonConverter d2jc = new ViewEntry2JsonConverter(entry, routeProcessor, getColumnInfoMap());
+			ViewEntry2JsonConverter d2jc = new ViewEntry2JsonConverter(entry, routeProcessor, getColumnInfoMap(), this.context);
 			JsonObject jsobj = d2jc.buildJsonFromEntry();
 			jsa.add(jsobj);
 		}

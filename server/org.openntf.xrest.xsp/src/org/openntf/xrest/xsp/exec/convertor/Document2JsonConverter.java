@@ -59,7 +59,7 @@ public class Document2JsonConverter {
 
 	private void processFormulaToJson(final JsonObject jo, final MappingField field, final Document doc) throws NotesException {
 		Vector<?> result = context.getSession().evaluate(field.getFormula(), doc);
-		field.getType().processValuesToJsonObject(result, jo, field.getJsonName());
+		field.getType().processValuesToJsonObject(result, jo, field.getJsonName(), this.context);
 		NotesObjectRecycler.recycleObjects(result.toArray());
 	}
 
@@ -73,10 +73,10 @@ public class Document2JsonConverter {
 			break;
 		case Item.MIME_PART:
 		case Item.RICHTEXT:
-			mjType.processItemToJsonObject(item, jo, mappingField.getJsonName());
+			mjType.processItemToJsonObject(item, jo, mappingField.getJsonName(), this.context);
 			break;
 		default:
-			mjType.processItemToJsonObject(item, jo, mappingField.getJsonName());
+			mjType.processItemToJsonObject(item, jo, mappingField.getJsonName(), this.context);
 		}
 	}
 

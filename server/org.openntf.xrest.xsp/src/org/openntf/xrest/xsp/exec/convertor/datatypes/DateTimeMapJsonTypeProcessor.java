@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.model.MappingField;
 
@@ -19,7 +20,7 @@ import lotus.domino.NotesException;
 public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate implements MapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		DateTime dtCurrent = item.getDateTimeValue();
 		if (dtCurrent != null) {
 			Date javaDate = dtCurrent.toJavaDate();
@@ -29,7 +30,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			Object value = values.get(0);
 			if (value instanceof DateTime) {
@@ -40,7 +41,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jo, final Document doc, final MappingField mf, Context context) throws NotesException {
 		if (jo.containsKey(mf.getJsonName())) {
 			DateTime dtValue = null;
 			try {
@@ -59,7 +60,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName, Context context) throws NotesException {
 		if (values != null && values.isEmpty()) {
 			Object obj = values.get(0);
 			DateTime dateTimeValue;
@@ -76,7 +77,7 @@ public class DateTimeMapJsonTypeProcessor extends AbstractDateTimeToISODate impl
 	}
 
 	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName, Context context)
 			throws NotesException {
 		if (clmnValue instanceof DateTime) {
 			DateTime dtCurrent = (DateTime) clmnValue;

@@ -32,7 +32,7 @@ public class YamlProducer {
 	}
 
 	public void processYamlToPrintWriter() {
-		writeProperty(0, "swagger", "\"2.0\"");
+		writeProperty(0, "swagger", "2.0");
 		buildInfo(request);
 		buildSecurity();
 		buildOperations(router);
@@ -61,7 +61,7 @@ public class YamlProducer {
 			NotesContext c = NotesContext.getCurrentUnchecked();
 			Database db = c.getCurrentDatabase();
 			writeProperty(1, "title", db.getTitle());
-			writeProperty(1, "version", "\"" + this.router.getVersionValue() + "\"");
+			writeProperty(1, "version", this.router.getVersionValue());
 			writePropertyNotNull(1, "description", this.router.getDescriptionValue());
 
 		} catch (Exception e) {
@@ -80,7 +80,7 @@ public class YamlProducer {
 			writeKey(1, "/" + route);
 			List<RouteProcessor> routes = mapping.get(route);
 			for (RouteProcessor rp : routes) {
-				writeProperty(2, rp.getMethod().toLowerCase(), "");
+				writeKey(2,rp.getMethod().toLowerCase());
 				buildOperation(rp);
 				processParameters(rp);
 			}
@@ -121,7 +121,7 @@ public class YamlProducer {
 			buildArraySchema(schemaKey, rp);
 			break;
 		default:
-			writeProperty(6, "$ref", "'#/definitions/" + schemaKey + "'");
+			writeProperty(6, "$ref", "#/definitions/" + schemaKey);
 			responseReference.put(schemaKey, rp);
 		}
 	}
@@ -129,7 +129,7 @@ public class YamlProducer {
 	private void buildArraySchema(String schemaKey, RouteProcessor rp) {
 		writeProperty(6, "type", "array");
 		writeKey(6, "items");
-		writeProperty(7, "$ref", "'#/definitions/" + schemaKey + "'");
+		writeProperty(7, "$ref", "#/definitions/" + schemaKey);
 		responseReference.put(schemaKey, rp);
 
 	}
@@ -152,7 +152,7 @@ public class YamlProducer {
 		writeKey(7, "entries");
 		writeProperty(8, "type", "array");
 		writeKey(8, "items");
-		writeProperty(9, "$ref", "'#/definitions/" + schemaKey + "'");
+		writeProperty(9, "$ref", "#/definitions/" + schemaKey);
 		responseReference.put(schemaKey, rp);
 
 	}
@@ -181,8 +181,8 @@ public class YamlProducer {
 				writeProperty(5, "required", "true");
 			}
 			if (rp.getStrategyValue().name().endsWith("PAGED")) {
-				writeProperty(4, "- $ref", "'#/parameters/startParam'");
-				writeProperty(4, "- $ref", "'#/parameters/countParam'");
+				writeProperty(4, "- $ref", "#/parameters/startParam");
+				writeProperty(4, "- $ref", "#/parameters/countParam");
 			}
 		}
 	}
@@ -212,7 +212,7 @@ public class YamlProducer {
 	private void writeRegularResponseObject(RouteProcessor rp) {
 		for (MappingField mf : rp.getMappingFields().values()) {
 			if (!mf.isWriteOnly()) {
-				writeProperty(3, mf.getJsonName(), "");
+				writeKey(3, mf.getJsonName());
 				if (mf.getType().name().startsWith("ARRAY")) {
 					writeProperty(4, "type", "array");
 					writeKey(4, "items");
@@ -256,10 +256,19 @@ public class YamlProducer {
 
 	private void writeProperty(int indent, String key, String value) {
 		StringBuilder sb = getSBwithCorrectIntend(indent);
+		String valueEscaped = escapeValue(value);
 		sb.append(key);
 		sb.append(": ");
-		sb.append(value);
+		sb.append(valueEscaped);
 		printWriter.println(sb.toString());
+	}
+
+	private String escapeValue(String value) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\"");
+		sb.append(value.replace("\\","\\\\").replace("\"", "\\\""));
+		sb.append("\"");
+		return sb.toString();
 	}
 
 	private StringBuilder getSBwithCorrectIntend(int indent) {

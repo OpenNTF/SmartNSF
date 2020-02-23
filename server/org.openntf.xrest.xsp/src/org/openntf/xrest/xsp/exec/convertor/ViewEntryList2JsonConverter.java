@@ -25,7 +25,7 @@ public class ViewEntryList2JsonConverter extends ViewEntryList2JsonConverterBase
 	public JsonJavaArray buildJsonFromDocument() throws NotesException {
 		JsonJavaArray jsa = new JsonJavaArray();
 		for (List<Object> entry : container.getData()) {
-			ViewEntry2JsonConverter d2jc = new ViewEntry2JsonConverter(entry, routeProcessor, getColumnInfoMap());
+			ViewEntry2JsonConverter d2jc = new ViewEntry2JsonConverter(entry, routeProcessor, getColumnInfoMap(), this.context);
 			JsonObject jso = d2jc.buildJsonFromEntry();
 			jsa.add(jso);
 		}

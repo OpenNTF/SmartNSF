@@ -43,6 +43,7 @@ import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
+import org.openntf.xrest.xsp.names.UserAndGroupHandler;
 import org.openntf.xrest.xsp.yaml.YamlProducer;
 
 import com.ibm.commons.util.NotImplementedException;
@@ -141,7 +142,7 @@ public class XRestAPIServlet extends HttpServlet {
 				processCORSHeaders(req, resp, router, method);
 			}
 			if (StringUtil.isEmpty(path)) {
-				timer = processBuildInCommands(resp, req);
+				timer = processBuildInCommands(resp, req, router);
 			} else {
 				timer = processRouteProcessorBased(req, resp, method, path, fc);
 			}
@@ -192,8 +193,12 @@ public class XRestAPIServlet extends HttpServlet {
 		return sb.substring(0, sb.length() - 1);
 	}
 
-	private Timer processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request) throws JsonException, IOException, ExecutorException {
+	private Timer processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request, Router router) throws JsonException, IOException, ExecutorException, NotesException {
 		Timer timer = null;
+		String queryString = request.getQueryString();
+		if (StringUtil.isEmpty(queryString)) {
+			throw new ExecutorException(500, "Path not found and no built-in command found.", request.getPathInfo(), "SERVLET");
+		}
 		if ("yaml".equals(request.getQueryString())) {
 			timer = histogram.labels("yaml", request.getMethod()).startTimer();
 			processYamlRequest(resp, request);
@@ -213,7 +218,17 @@ public class XRestAPIServlet extends HttpServlet {
 			processMetricsRequest(resp, request);
 			return timer;
 		}
-		throw new ExecutorException(500, "Path not found", request.getPathInfo(), "SERVLET");
+		if (queryString.startsWith("users")) {
+			timer = histogram.labels("users",request.getMethod()).startTimer();
+			ContextImpl context = new ContextImpl();
+			NotesContext c = modifiyNotesContext();
+			context.addNotesContext(c).addRequest(request).addResponse(resp);
+			UserAndGroupHandler handler = new UserAndGroupHandler( resp, router.getTypeAHeadResolverValue(), router.getUserInformationResolverValue(),context);
+			handler.execute(queryString);
+			return timer;
+		}
+		
+		throw new ExecutorException(500, queryString +" is not a built-in command.", request.getPathInfo(), "SERVLET");
 	}
 
 	private void processMetricsRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
@@ -263,14 +278,15 @@ public class XRestAPIServlet extends HttpServlet {
 	private Timer processRouteProcessorBased(final HttpServletRequest req, final HttpServletResponse resp, final String method, final String path, FacesContext fc)
 			throws NotesException, IOException, ExecutorException {
 		RouteProcessor rp = routerFactory.getRouter().find(method, path);
-		ContextImpl context = new ContextImpl();
 		if (rp != null) {
 			Timer timer = histogram.labels(rp.getRoute(), rp.getMethod()).startTimer();
+			ContextImpl context = new ContextImpl();
 			NotesContext c = modifiyNotesContext();
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
 			context.setTrace(routerFactory.getRouter().isTrace());
 			context.addFacesContext(fc);
+			context.addIdentityMapProvider(routerFactory.getRouter().getIdentityMapProviderValue());
 			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;

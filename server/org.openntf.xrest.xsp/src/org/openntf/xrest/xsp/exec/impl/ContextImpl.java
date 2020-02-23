@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.EventException;
+import org.openntf.xrest.xsp.names.IdentityMapProvider;
 
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -38,6 +39,7 @@ public class ContextImpl implements Context {
 	private Object resultPayload;
 	private boolean trace;
 	private FacesContext facesContext;
+	private IdentityMapProvider identityMapProvider;
 
 	public ContextImpl() {
 
@@ -72,9 +74,14 @@ public class ContextImpl implements Context {
 		this.routerVariables = rv;
 		return this;
 	}
-	
+
 	public Context addFacesContext(FacesContext fc) {
 		this.facesContext = fc;
+		return this;
+	}
+
+	public Context addIdentityMapProvider(IdentityMapProvider idmp) {
+		this.identityMapProvider = idmp;
 		return this;
 	}
 
@@ -247,5 +254,9 @@ public class ContextImpl implements Context {
 		return this.sessionAsSignerAdmin;
 	}
 
-	
+	@Override
+	public IdentityMapProvider getIdentityMapProvider() {
+		return identityMapProvider;
+	}
+
 }

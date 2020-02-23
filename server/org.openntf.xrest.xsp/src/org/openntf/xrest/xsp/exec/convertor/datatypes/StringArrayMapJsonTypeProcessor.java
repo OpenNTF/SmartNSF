@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.MappingField;
 
 import com.ibm.commons.util.io.json.JsonJavaArray;
@@ -17,12 +18,12 @@ import lotus.domino.NotesException;
 public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
-		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName);
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
+		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName, context);
 	}
 
 	@Override
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			List<String> val = makeStringList(values);
 			if (!val.isEmpty()) {
@@ -45,7 +46,7 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField, Context context) throws NotesException {
 		if (!jso.containsKey(mfField.getJsonName())) {
 			return;
 		}
@@ -58,8 +59,8 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 	}
 
 	@Override
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
-		super.processJsonValueToDocument(new Vector<String>(makeStringList(values)), doc, fieldName);
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName, Context context) throws NotesException {
+		super.processJsonValueToDocument(new Vector<String>(makeStringList(values)), doc, fieldName,context);
 	}
 
 }
