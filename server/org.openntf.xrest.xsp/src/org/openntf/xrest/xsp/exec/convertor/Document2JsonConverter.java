@@ -58,7 +58,7 @@ public class Document2JsonConverter {
 	}
 
 	private void processFormulaToJson(final JsonObject jo, final MappingField field, final Document doc) throws NotesException {
-		Vector<?> result = context.getSession().evaluate(field.getFormula(), doc);
+		Vector<?> result = doc.getParentDatabase().getParent().evaluate(field.getFormula(), doc);
 		field.getType().processValuesToJsonObject(result, jo, field.getJsonName(), this.context);
 		NotesObjectRecycler.recycleObjects(result.toArray());
 	}
