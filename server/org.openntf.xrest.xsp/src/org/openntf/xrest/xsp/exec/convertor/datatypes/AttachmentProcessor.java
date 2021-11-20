@@ -87,16 +87,15 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		return findAttachment(entity, fileName);
 	}
 
-	public EmbeddedObject getEmbeddedObjectAttachment(final Document doc, final String fieldName, final String fileName)
+	public EmbeddedObject getEmbeddedObjectAttachment(final Document doc, final Item notesItem, final String fileName)
 			throws NotesException {
 		EmbeddedObject embo = null;
-		Item notesItem = doc.getFirstItem(fieldName);
 		try {
 			@SuppressWarnings("unchecked")
 			Vector<EmbeddedObject> allEmbeddedObject = ((RichTextItem) notesItem).getEmbeddedObjects();
 			for (EmbeddedObject emb : allEmbeddedObject) {
 				String name = emb.getName();
-				if (name.equals(fileName)) {
+				if (name.equals(fileName)|| emb.getSource().equals(fileName)) {
 					embo = emb;
 				} else {
 					emb.recycle();

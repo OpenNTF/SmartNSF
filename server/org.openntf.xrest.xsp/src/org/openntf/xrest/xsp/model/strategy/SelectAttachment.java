@@ -14,6 +14,7 @@ import org.openntf.xrest.xsp.model.Strategy;
 
 import groovy.lang.Closure;
 import lotus.domino.EmbeddedObject;
+import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
 
@@ -96,10 +97,11 @@ public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?
 			String calcFileName = context.getRouterVariables().get(getAttachmentNameVariableName(context));
 			if (AttachmentProcessor.getInstance().isMime(dd.getData(), calcFieldName)) {
 				MIMEEntity mimeEntity = AttachmentProcessor.getInstance().getMimeAttachment(dd.getData(), calcFieldName, calcFileName);
-				return new AttachmentDataContainer<MIMEEntity>(dd, mimeEntity, calcFieldName, calcFileName);
+				return new AttachmentDataContainer<MIMEEntity>(dd, mimeEntity, calcFieldName, calcFileName, null);
 			} else {
-				EmbeddedObject embo = AttachmentProcessor.getInstance().getEmbeddedObjectAttachment(dd.getData(), calcFieldName, calcFileName);
-				return new AttachmentDataContainer<EmbeddedObject>(dd, embo, calcFieldName, calcFileName);
+				Item item = dd.getData().getFirstItem(calcFieldName);
+				EmbeddedObject embo = AttachmentProcessor.getInstance().getEmbeddedObjectAttachment(dd.getData(), item, calcFileName);
+				return new AttachmentDataContainer<EmbeddedObject>(dd, embo, calcFieldName, calcFileName, item);
 
 			}
 		} catch (Exception ex) {
