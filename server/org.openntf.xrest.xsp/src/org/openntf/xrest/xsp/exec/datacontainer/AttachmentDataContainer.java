@@ -9,6 +9,7 @@ import lotus.domino.MIMEEntity;
 
 public class AttachmentDataContainer<T extends Base> implements DataContainer<T> {
 	private final DocumentDataContainer documentDataContainer;
+
 	private final T attachmentMime;
 	private final String fieldName;
 	private final String fileName;
@@ -54,4 +55,8 @@ public class AttachmentDataContainer<T extends Base> implements DataContainer<T>
 	public String getFieldName() {
 		return fieldName;
 	}
+	public DocumentDataContainer getDocumentDataContainer() {
+		return documentDataContainer;
+	}
+
 }

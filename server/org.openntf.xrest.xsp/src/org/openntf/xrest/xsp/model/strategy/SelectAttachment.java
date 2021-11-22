@@ -108,5 +108,8 @@ public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
 	}
+	public StrategyModel<?, ?> getDocumentStrategyModel() {
+		return strategyModel;
+	}
 
 }

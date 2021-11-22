@@ -1,9 +1,14 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
+
+import com.ibm.commons.util.io.StreamUtil;
 
 import lotus.domino.Document;
 import lotus.domino.EmbeddedObject;
@@ -105,5 +110,19 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 			NotesObjectRecycler.recycle(notesItem);
 		}
 		return embo;
+	}
+	public String storeFileUploadStream(InputStream stream, String fileName) {
+		File tempDir = buildTempDir();
+		File tempFile = new File(tempDir,fileName);
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(tempFile);
+			StreamUtil.copyStream(stream, fos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			StreamUtil.close(fos);
+		}
+		return tempFile.getAbsolutePath();
 	}
 }
