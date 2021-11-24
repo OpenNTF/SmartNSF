@@ -1,9 +1,14 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
+
+import com.ibm.commons.util.io.StreamUtil;
 
 import lotus.domino.Document;
 import lotus.domino.EmbeddedObject;
@@ -87,16 +92,15 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		return findAttachment(entity, fileName);
 	}
 
-	public EmbeddedObject getEmbeddedObjectAttachment(final Document doc, final String fieldName, final String fileName)
+	public EmbeddedObject getEmbeddedObjectAttachment(final Document doc, final Item notesItem, final String fileName)
 			throws NotesException {
 		EmbeddedObject embo = null;
-		Item notesItem = doc.getFirstItem(fieldName);
 		try {
 			@SuppressWarnings("unchecked")
 			Vector<EmbeddedObject> allEmbeddedObject = ((RichTextItem) notesItem).getEmbeddedObjects();
 			for (EmbeddedObject emb : allEmbeddedObject) {
 				String name = emb.getName();
-				if (name.equals(fileName)) {
+				if (name.equals(fileName)|| emb.getSource().equals(fileName)) {
 					embo = emb;
 				} else {
 					emb.recycle();
@@ -106,5 +110,19 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 			NotesObjectRecycler.recycle(notesItem);
 		}
 		return embo;
+	}
+	public String storeFileUploadStream(InputStream stream, String fileName) {
+		File tempDir = buildTempDir();
+		File tempFile = new File(tempDir,fileName);
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(tempFile);
+			StreamUtil.copyStream(stream, fos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			StreamUtil.close(fos);
+		}
+		return tempFile.getAbsolutePath();
 	}
 }

@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.exec.impl;
 import java.util.List;
 
 import org.openntf.xrest.xsp.exec.NSFHelper;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonJavaArray;
 import com.ibm.commons.util.io.json.JsonJavaObject;
@@ -25,6 +26,7 @@ public class NSFHelperImpl implements NSFHelper {
 	public void makeDocumentAsChild(String parentId, Document doc) throws NotesException {
 		Document parentDoc = database.getDocumentByUNID(parentId);
 		doc.makeResponse(parentDoc);
+		NotesObjectRecycler.recycle(parentDoc);
 	}
 
 	@Override
@@ -35,6 +37,7 @@ public class NSFHelperImpl implements NSFHelper {
 		} else {
 			agt.runOnServer();
 		}
+		NotesObjectRecycler.recycle(agt);
 	}
 
 	@Override

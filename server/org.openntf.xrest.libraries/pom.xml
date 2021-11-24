@@ -79,6 +79,17 @@
 									<artifactId>simpleclient_common</artifactId>
 									<version>0.4.0</version>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.olingo</groupId>
+									<artifactId>odata-commons-api</artifactId>
+									<version>${olingo-version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.olingo</groupId>
+									<artifactId>odata-commons-core</artifactId>
+									<version>${olingo-version}</version>
+								</artifactItem>
+
 							</artifactItems>
 							<includeScope>compile</includeScope>
 							<includeTypes>jar</includeTypes>
@@ -109,6 +120,16 @@
 			<groupId>io.prometheus</groupId>
 			<artifactId>simpleclient_common</artifactId>
 			<version>0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>odata-commons-api</artifactId>
+			<version>${olingo-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>odata-commons-core</artifactId>
+			<version>${olingo-version}</version>
 		</dependency>
 	</dependencies>
 	<properties>

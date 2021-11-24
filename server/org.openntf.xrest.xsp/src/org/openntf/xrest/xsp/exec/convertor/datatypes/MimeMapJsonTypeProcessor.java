@@ -210,7 +210,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		stream.recycle();
 	}
 
-	private File buildTempDir() {
+	protected File buildTempDir() {
 		String uuid = UUID.randomUUID().toString();
 		String tempFolder = System.getProperty("java.io.tmpdir");
 		File dir = new File(tempFolder + "/xrest/" + uuid);

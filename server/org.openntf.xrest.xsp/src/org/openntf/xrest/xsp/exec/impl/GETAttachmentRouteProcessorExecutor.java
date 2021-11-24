@@ -3,6 +3,7 @@ package org.openntf.xrest.xsp.exec.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLConnection;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +13,7 @@ import org.openntf.xrest.xsp.exec.datacontainer.AttachmentDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.commons.util.io.json.JsonException;
 
@@ -30,8 +32,9 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 		HttpServletResponse response = context.getResponse();
 		AttachmentDataContainer<?> adc = (AttachmentDataContainer<?>) dataContainer;
 		try {
+			String mimeType = URLConnection.guessContentTypeFromName( adc.getFileName());
 			InputStream is = getInputStream(adc);
-			response.setContentType("application/octet-stream");
+			response.setContentType(StringUtil.isEmpty(mimeType) ?"application/octet-stream": mimeType);
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + adc.getFileName() + "\"");
 			OutputStream out = response.getOutputStream();
 			StreamUtil.copyStream(is, out);
