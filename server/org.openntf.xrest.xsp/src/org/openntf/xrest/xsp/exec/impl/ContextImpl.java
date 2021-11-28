@@ -30,6 +30,7 @@ public class ContextImpl implements Context {
 	private Session sessionAsSigner;
 	private Session sessionAsSignerAdmin;
 	private Database database;
+	private Database databaseFromStrategy;
 	private String userName;
 	private List<String> groups;
 	private List<String> roles;
@@ -82,6 +83,11 @@ public class ContextImpl implements Context {
 
 	public Context addIdentityMapProvider(IdentityMapProvider idmp) {
 		this.identityMapProvider = idmp;
+		return this;
+	}
+	
+	public Context addDatabaseFromStrategy(Database db) {
+		this.databaseFromStrategy = db;
 		return this;
 	}
 
@@ -257,6 +263,11 @@ public class ContextImpl implements Context {
 	@Override
 	public IdentityMapProvider getIdentityMapProvider() {
 		return identityMapProvider;
+	}
+
+	@Override
+	public Database getDatabaseFromStrategy() {
+		return this.databaseFromStrategy;
 	}
 
 }

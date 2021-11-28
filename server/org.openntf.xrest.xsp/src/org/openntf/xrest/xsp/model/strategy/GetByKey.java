@@ -6,6 +6,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.Document2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -43,6 +44,7 @@ public class GetByKey extends AbstractKeyViewDatabaseStrategy implements Strateg
 	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			String key = getKeyValue(context);
 

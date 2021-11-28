@@ -5,6 +5,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.DocumentListPaged2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListPaginationDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -20,6 +21,7 @@ public class GetByFTPaged extends AbstractFTDatabaseStrategy implements Strategy
 	public DocumentListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
 			int start = DEFAULT_START;
 			int count = DEFAULT_COUNT;
 			String search = "";

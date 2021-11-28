@@ -14,6 +14,8 @@ public interface NSFHelper {
 
 	public void executeAgent(String agentName, Document doc) throws NotesException;
 
+	public void executeAgentInCurrentDatabase(String agentName) throws NotesException;
+
 	public void executeAgent(String agentName) throws NotesException;
 
 	public void computeWithForm(Document doc) throws NotesException;
