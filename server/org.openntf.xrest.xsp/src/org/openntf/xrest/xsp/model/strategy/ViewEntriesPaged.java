@@ -8,6 +8,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.ViewEntryListPaged2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.ViewEntryListPaginationDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -30,6 +31,7 @@ public class ViewEntriesPaged extends AbstractViewDatabaseStrategy implements
 	public ViewEntryListPaginationDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
 			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			int total = -1;

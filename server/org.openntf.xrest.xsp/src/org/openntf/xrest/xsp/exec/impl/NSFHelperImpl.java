@@ -16,12 +16,16 @@ import lotus.domino.Session;
 
 public class NSFHelperImpl implements NSFHelper {
 	private final Database database;
+	private Database databaseFromStrategy;
 
 	public NSFHelperImpl(Database database) {
 		super();
 		this.database = database;
 	}
 
+	public void setDatabaseFromStrategy(Database dbFromStrategy) {
+		this.databaseFromStrategy = dbFromStrategy;
+	}
 	@Override
 	public void makeDocumentAsChild(String parentId, Document doc) throws NotesException {
 		Document parentDoc = database.getDocumentByUNID(parentId);
@@ -30,8 +34,15 @@ public class NSFHelperImpl implements NSFHelper {
 	}
 
 	@Override
-	public void executeAgent(String agentName, Document doc) throws NotesException {
+	public void executeAgentInCurrentDatabase(String agentName) throws NotesException {
 		Agent agt = database.getAgent(agentName);
+		agt.runOnServer();
+		NotesObjectRecycler.recycle(agt);
+	}
+
+	@Override
+	public void executeAgent(String agentName, Document doc) throws NotesException {
+		Agent agt =getAgent(agentName);
 		if (doc != null) {
 			agt.runOnServer(doc.getNoteID());
 		} else {
@@ -76,6 +87,10 @@ public class NSFHelperImpl implements NSFHelper {
 	@Override
 	public JsonJavaArray createJsonArray() {
 		return new JsonJavaArray();
+	}
+	
+	private Agent getAgent(String agentName) throws NotesException {
+		return database.equals(databaseFromStrategy) || this.databaseFromStrategy == null ? database.getAgent(agentName) : databaseFromStrategy.getAgent(agentName);
 	}
 
 }

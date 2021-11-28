@@ -27,6 +27,8 @@ public interface Context {
 	Session getSessionAsSignerFullAdmin();
 
 	Database getDatabase();
+	
+	Database getDatabaseFromStrategy();
 
 	String getUserName();
 

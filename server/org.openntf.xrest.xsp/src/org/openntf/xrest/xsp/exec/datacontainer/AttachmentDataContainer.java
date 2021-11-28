@@ -4,6 +4,7 @@ import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import lotus.domino.Base;
+import lotus.domino.Database;
 import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
 
@@ -59,4 +60,8 @@ public class AttachmentDataContainer<T extends Base> implements DataContainer<T>
 		return documentDataContainer;
 	}
 
+	@Override
+	public Database getDatabase() {
+		return documentDataContainer.getDatabase();
+	}
 }
