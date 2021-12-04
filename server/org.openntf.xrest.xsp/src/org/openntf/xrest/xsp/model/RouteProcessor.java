@@ -14,6 +14,8 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
+import com.ibm.commons.util.StringUtil;
+
 import groovy.lang.Closure;
 
 public class RouteProcessor {
@@ -124,10 +126,15 @@ public class RouteProcessor {
 	}
 	public Map<String,String> extractValuesFromQueryString(String queryString) {
 		Map<String, String> extract = new HashMap<String, String>();
+		if (StringUtil.isEmpty(queryString)) {
+			return extract;
+		}
 		String[] pairs = queryString.split("&");
 	    for (String pair : pairs) {
 	        int idx = pair.indexOf("=");
-	        extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
+	        if(idx > 0) {
+	        	extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
+	        }
 	    }
 	    return extract;
 	}
