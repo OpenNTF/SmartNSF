@@ -70,7 +70,7 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 		try {
 			Document doc = container.getData();
 			JsonJavaObject jso = (JsonJavaObject) context.getJsonPayload();
-			Json2DocumentConverter converter = new Json2DocumentConverter(doc, getRouteProcessor(), jso);
+			Json2DocumentConverter converter = new Json2DocumentConverter(doc, getRouteProcessor(), jso, context);
 			converter.buildDocumentFromJson();
 		} catch (NotesException e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "applyPayLoad");

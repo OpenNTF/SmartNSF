@@ -6,6 +6,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.Document2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -59,9 +60,9 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	@Override
 	public DocumentDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
-			String unid = context.getRouterVariables().get(keyVariableValue);
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
+			String unid = getUNID(context);
 			if (unid.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
 				String form = getFormValue(context);
@@ -81,6 +82,15 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
+		}
+	}
+
+	private String getUNID(final Context context) {
+		String keyVariableValue = this.getKeyVariableValue(context);
+		if (context.getRouterVariables().containsKey(keyVariableValue)) {
+			return context.getRouterVariables().get(keyVariableValue);
+		} else {
+			return context.getQueryStringVariables().get(keyVariableValue);
 		}
 	}
 

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.EventException;
+import org.openntf.xrest.xsp.names.IdentityMapProvider;
 
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -29,15 +30,18 @@ public class ContextImpl implements Context {
 	private Session sessionAsSigner;
 	private Session sessionAsSignerAdmin;
 	private Database database;
+	private Database databaseFromStrategy;
 	private String userName;
 	private List<String> groups;
 	private List<String> roles;
 	private JsonObject jsonPayload;
 	private Map<String, String> routerVariables;
+	private Map<String, String> queryStringVariables;
 	private NSFHelper nsfHelper;
 	private Object resultPayload;
 	private boolean trace;
 	private FacesContext facesContext;
+	private IdentityMapProvider identityMapProvider;
 
 	public ContextImpl() {
 
@@ -72,9 +76,23 @@ public class ContextImpl implements Context {
 		this.routerVariables = rv;
 		return this;
 	}
-	
+	public Context addQueryStringVariables(Map<String, String> qv) {
+		this.queryStringVariables = qv;
+		return this;
+	}
+
 	public Context addFacesContext(FacesContext fc) {
 		this.facesContext = fc;
+		return this;
+	}
+
+	public Context addIdentityMapProvider(IdentityMapProvider idmp) {
+		this.identityMapProvider = idmp;
+		return this;
+	}
+	
+	public Context addDatabaseFromStrategy(Database db) {
+		this.databaseFromStrategy = db;
 		return this;
 	}
 
@@ -247,5 +265,19 @@ public class ContextImpl implements Context {
 		return this.sessionAsSignerAdmin;
 	}
 
-	
+	@Override
+	public IdentityMapProvider getIdentityMapProvider() {
+		return identityMapProvider;
+	}
+
+	@Override
+	public Database getDatabaseFromStrategy() {
+		return this.databaseFromStrategy;
+	}
+
+	@Override
+	public Map<String, String> getQueryStringVariables() {
+		return this.queryStringVariables;
+	}
+
 }

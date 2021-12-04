@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.convertor.MapJsonTypeProcessor;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
@@ -23,12 +24,12 @@ import lotus.domino.Session;
 public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate implements MapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
-		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName);
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
+		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName, context);
 	}
 
 	@Override
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			List<String> val = buildISODateList(values);
 			if (!val.isEmpty()) {
@@ -48,7 +49,7 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	}
 
 	@Override
-	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField, Context context) throws NotesException {
 		if (!jso.containsKey(mfField.getJsonName())) {
 			return;
 		}
@@ -71,7 +72,7 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	}
 
 	@Override
-	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName) throws NotesException {
+	public void processJsonValueToDocument(final Vector<?> values, final Document doc, final String fieldName, Context context) throws NotesException {
 		if (values != null && values.isEmpty()) {
 			Session session = doc.getParentDatabase().getParent();
 			List<DateTime> lstValues = new Vector<DateTime>();
@@ -91,12 +92,12 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 	}
 
 	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName, Context context)
 			throws NotesException {
 		if (clmnValue instanceof List) {
-			processValuesToJsonObject((List<?>) clmnValue, jo, jsonPropertyName);
+			processValuesToJsonObject((List<?>) clmnValue, jo, jsonPropertyName, context);
 		} else {
-			processValuesToJsonObject(Arrays.asList(clmnValue), jo, jsonPropertyName);
+			processValuesToJsonObject(Arrays.asList(clmnValue), jo, jsonPropertyName, context);
 		}
 	}
 

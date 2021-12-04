@@ -14,6 +14,7 @@ import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
@@ -46,7 +47,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	private static final String CHARSET_UTF_8 = "charset=UTF-8";
 
 	@Override
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		Document doc = item.getParent();
 		Session session = doc.getParentDatabase().getParent();
 		String fieldName = item.getName();
@@ -85,7 +86,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonProperty, Context context) throws NotesException {
 
 	}
 
@@ -114,7 +115,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField) throws NotesException {
+	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField, Context context) throws NotesException {
 		String fieldName = mfField.getNotesFieldName();
 		String value = jso.getAsString(mfField.getJsonName());
 		Stream stream = doc.getParentDatabase().getParent().createStream();
@@ -209,7 +210,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		stream.recycle();
 	}
 
-	private File buildTempDir() {
+	protected File buildTempDir() {
 		String uuid = UUID.randomUUID().toString();
 		String tempFolder = System.getProperty("java.io.tmpdir");
 		File dir = new File(tempFolder + "/xrest/" + uuid);
@@ -358,7 +359,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName)
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName, Context context)
 			throws NotesException {
 
 	}

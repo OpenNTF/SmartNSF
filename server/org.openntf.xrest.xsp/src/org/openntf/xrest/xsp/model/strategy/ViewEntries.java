@@ -8,6 +8,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.ViewEntryList2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.ViewEntryListDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -28,7 +29,8 @@ public class ViewEntries extends AbstractViewDatabaseStrategy implements Strateg
 	@Override
 	public ViewEntryListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context.getSession());
+			dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
 			viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			List<List<Object>> entries = new ArrayList<List<Object>>();

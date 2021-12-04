@@ -9,6 +9,7 @@ import org.openntf.xrest.xsp.exec.Context;
 import groovy.lang.Closure;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
+import lotus.domino.Session;
 
 public class AbstractDatabaseStrategy {
 
@@ -16,11 +17,16 @@ public class AbstractDatabaseStrategy {
 	protected static final int DEFAULT_COUNT = 10;
 	private String databaseNameValue;
 	private Closure<?> databaseNameCl;
+	private boolean runAsSignerValue = false;
 
 	public AbstractDatabaseStrategy() {
 		super();
 	}
 
+	public void runAsSigner(final boolean asSigner) {
+		runAsSignerValue = asSigner;
+	}
+	
 	public void databaseName(final String dbName) {
 		databaseNameValue = dbName;
 	}
@@ -35,6 +41,14 @@ public class AbstractDatabaseStrategy {
 		} else {
 			return databaseNameValue;
 		}
+	}
+	
+	public boolean getRunAsSignerValue() {
+		return runAsSignerValue;
+	}
+	
+	protected Session getSessionFromContext(Context context) {
+		return runAsSignerValue ? context.getSessionAsSigner() : context.getSession();
 	}
 
 	/**

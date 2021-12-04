@@ -1,5 +1,6 @@
 package org.openntf.xrest.xsp.model;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.model.strategy.StrategyModel;
 
+import com.ibm.commons.util.StringUtil;
+
 import groovy.lang.Closure;
 
 public class RouteProcessor {
@@ -22,6 +25,7 @@ public class RouteProcessor {
 	private final Map<Integer, String> variablePositionMap = new TreeMap<Integer, String>();
 	private List<String> accessGroups = new ArrayList<String>();
 	private Closure<?> accessGroupsCL;
+	private Closure<?> allowedAccessCL;
 	private StrategyModel<?, ?> strategyModel;
 	private Strategy strategyValue;
 	private Map<EventType, Closure<?>> eventMap = new HashMap<EventType, Closure<?>>();
@@ -64,6 +68,10 @@ public class RouteProcessor {
 				throw new IllegalArgumentException("Type for event " + event.getKey() + " must be Closure");
 			}
 		}
+	}
+	
+	public void allowedAccess(Closure<?> cl) {
+		allowedAccessCL = cl;
 	}
 
 	public void accessPermission(String[] acc) {
@@ -112,9 +120,32 @@ public class RouteProcessor {
 		for (Entry<Integer, String> entry : variablePositionMap.entrySet()) {
 			String value = entry.getValue();
 			Integer position = entry.getKey();
-			extract.put(value, parts[position]);
+			extract.put(value, decodeURLPart(parts[position]));
 		}
 		return extract;
+	}
+	public Map<String,String> extractValuesFromQueryString(String queryString) {
+		Map<String, String> extract = new HashMap<String, String>();
+		if (StringUtil.isEmpty(queryString)) {
+			return extract;
+		}
+		String[] pairs = queryString.split("&");
+	    for (String pair : pairs) {
+	        int idx = pair.indexOf("=");
+	        if(idx > 0) {
+	        	extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
+	        }
+	    }
+	    return extract;
+	}
+
+	private String decodeURLPart(String toDecode) {
+		try {
+			return URLDecoder.decode(toDecode,"UTF-8");
+		} catch(Exception e) {
+			e.printStackTrace();
+			return toDecode;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -150,6 +181,9 @@ public class RouteProcessor {
 			return eventMap.get(eventType);
 		}
 		return null;
+	}
+	public Closure<?> getAllowedAccessClosure() {
+		return allowedAccessCL;
 	}
 
 	public DataContainer<?> getDataContainer(Context context) throws ExecutorException {

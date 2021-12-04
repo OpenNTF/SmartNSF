@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.openntf.xrest.xsp.exec.Context;
+
 import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.DateTime;
@@ -13,7 +15,7 @@ import lotus.domino.NotesException;
 public class TimeOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
-	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		DateTime dtCurrent = item.getDateTimeValue();
 		if (dtCurrent != null) {
 			Date javaDate = dtCurrent.toJavaDate();
@@ -23,7 +25,7 @@ public class TimeOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		if (values != null && !values.isEmpty()) {
 			Object value = values.get(0);
 			if (value instanceof DateTime) {
@@ -63,7 +65,7 @@ public class TimeOnlyMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	}
 
 	@Override
-	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName) throws NotesException {
+	public void processColumnValueToJsonObject(final Object clmnValue, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
 		// TODO Auto-generated method stub
 
 	}

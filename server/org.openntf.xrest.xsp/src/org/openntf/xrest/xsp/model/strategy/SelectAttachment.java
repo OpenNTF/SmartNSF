@@ -14,6 +14,7 @@ import org.openntf.xrest.xsp.model.Strategy;
 
 import groovy.lang.Closure;
 import lotus.domino.EmbeddedObject;
+import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
 
@@ -29,7 +30,8 @@ public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?
 	private Closure<?> attachmentNameVariableNameValueCl;
 	private AttachmentUpdateType updateTypeValue;
 
-	public void documentStrategy(Strategy strat, Closure<Void> cl) throws InstantiationException, IllegalAccessException {
+	public void documentStrategy(Strategy strat, Closure<Void> cl)
+			throws InstantiationException, IllegalAccessException {
 		strategyValue = strat;
 		strategyModel = strat.constructModel();
 		DSLBuilder.applyClosureToObject(cl, strategyModel);
@@ -60,7 +62,8 @@ public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?
 	}
 
 	@Override
-	public MIMEEntity buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc) throws NotesException {
+	public MIMEEntity buildResponse(Context context, RouteProcessor routeProcessor, DataContainer<?> dc)
+			throws NotesException {
 		return null;
 	}
 
@@ -93,18 +96,34 @@ public class SelectAttachment implements StrategyModel<AttachmentDataContainer<?
 		try {
 			DocumentDataContainer dd = (DocumentDataContainer) strategyModel.buildDataContainer(context);
 			String calcFieldName = getFieldName(context);
-			String calcFileName = context.getRouterVariables().get(getAttachmentNameVariableName(context));
+			String calcFileName = calcCurrentFileName(context);
 			if (AttachmentProcessor.getInstance().isMime(dd.getData(), calcFieldName)) {
-				MIMEEntity mimeEntity = AttachmentProcessor.getInstance().getMimeAttachment(dd.getData(), calcFieldName, calcFileName);
-				return new AttachmentDataContainer<MIMEEntity>(dd, mimeEntity, calcFieldName, calcFileName);
+				MIMEEntity mimeEntity = AttachmentProcessor.getInstance().getMimeAttachment(dd.getData(), calcFieldName,
+						calcFileName);
+				return new AttachmentDataContainer<MIMEEntity>(dd, mimeEntity, calcFieldName, calcFileName, null);
 			} else {
-				EmbeddedObject embo = AttachmentProcessor.getInstance().getEmbeddedObjectAttachment(dd.getData(), calcFieldName, calcFileName);
-				return new AttachmentDataContainer<EmbeddedObject>(dd, embo, calcFieldName, calcFileName);
+				Item item = dd.getData().getFirstItem(calcFieldName);
+				EmbeddedObject embo = AttachmentProcessor.getInstance().getEmbeddedObjectAttachment(dd.getData(), item,
+						calcFileName);
+				return new AttachmentDataContainer<EmbeddedObject>(dd, embo, calcFieldName, calcFileName, item);
 
 			}
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
 		}
+	}
+
+	private String calcCurrentFileName(Context context) {
+		String attachmentName = getAttachmentNameVariableName(context);
+		if(context.getRouterVariables().containsKey(attachmentName)) {
+			return context.getRouterVariables().get(attachmentName);
+		} else {
+			return context.getQueryStringVariables().get(attachmentName);
+		}
+	}
+
+	public StrategyModel<?, ?> getDocumentStrategyModel() {
+		return strategyModel;
 	}
 
 }

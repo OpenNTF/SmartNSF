@@ -10,6 +10,7 @@ import org.openntf.xrest.xsp.exec.DatabaseProvider;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.DocumentList2JsonConverter;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentListDataContainer;
+import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
@@ -45,8 +46,8 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 	@Override
 	public DocumentListDataContainer buildDataContainer(final Context context) throws ExecutorException {
 		try {
-			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), context
-					.getSession());
+			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
+			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
 			List<Document> docs = new ArrayList<Document>();
 			String search = buildSelectString(context);
 			DocumentCollection dcl = dbAccess.search(search);
@@ -62,10 +63,13 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 		}
 
 	}
-
+	
 	private String buildSelectString(final Context context) {
 		String rc = getSelectQueryValue(context);
 		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
+			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
+		}
+		for (Entry<String, String> routeEntry : context.getQueryStringVariables().entrySet()) {
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
 		}
 		return rc;

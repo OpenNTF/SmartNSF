@@ -7,6 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openntf.xrest.xsp.names.IdentityMapProvider;
+
 import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.Database;
@@ -25,6 +27,8 @@ public interface Context {
 	Session getSessionAsSignerFullAdmin();
 
 	Database getDatabase();
+	
+	Database getDatabaseFromStrategy();
 
 	String getUserName();
 
@@ -35,6 +39,8 @@ public interface Context {
 	JsonObject getJsonPayload();
 
 	Map<String, String> getRouterVariables();
+
+	Map<String, String> getQueryStringVariables();
 
 	boolean throwException(String message);
 
@@ -53,4 +59,6 @@ public interface Context {
 	boolean traceEnabled();
 	
 	FacesContext getFacesContext();
+	
+	IdentityMapProvider getIdentityMapProvider();
 }
