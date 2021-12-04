@@ -20,7 +20,8 @@ List of third party software used in the enhanced discussion database:
 
 List of third party software used in this project:
 
-	- Apache Groovy, Verison 2.4.8 (http://www.groovy-lang.org/) under Apache V2.0 (http://www.apache.org/licenses/)
+    - Apache Groovy, Verison 2.4.8 (http://www.groovy-lang.org/) under Apache V2.0 (http://www.apache.org/licenses/)
+    - Apache Olingo, Version 4.6.0 (https://olingo.apache.org) under Apache V2.0 (http://www.apache.org/licenses/)
     - Prometheus.IO, Simpleclient & Simpleclient_common, Version 0.4.0 (https://prometheus.io/) under Apache V2.0 (http://www.apache.org/licenses/)
     - SwaggerUI, Version 3.17.4 (https://github.com/swagger-api/swagger-ui) under Apache V2.0 (http://www.apache.org/licenses/)
 	
