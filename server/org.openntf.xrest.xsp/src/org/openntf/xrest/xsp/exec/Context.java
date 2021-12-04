@@ -40,6 +40,8 @@ public interface Context {
 
 	Map<String, String> getRouterVariables();
 
+	Map<String, String> getQueryStringVariables();
+
 	boolean throwException(String message);
 
 	boolean throwException(String message, Throwable e);

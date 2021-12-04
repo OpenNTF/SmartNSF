@@ -62,6 +62,9 @@ public class GetBySelectPaged extends AbstractDatabaseStrategy implements Strate
 		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
 		}
+		for (Entry<String, String> routeEntry : context.getQueryStringVariables().entrySet()) {
+			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
+		}
 		return rc;
 	}
 

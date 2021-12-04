@@ -36,6 +36,7 @@ public class ContextImpl implements Context {
 	private List<String> roles;
 	private JsonObject jsonPayload;
 	private Map<String, String> routerVariables;
+	private Map<String, String> queryStringVariables;
 	private NSFHelper nsfHelper;
 	private Object resultPayload;
 	private boolean trace;
@@ -73,6 +74,10 @@ public class ContextImpl implements Context {
 
 	public Context addRouterVariables(Map<String, String> rv) {
 		this.routerVariables = rv;
+		return this;
+	}
+	public Context addQueryStringVariables(Map<String, String> qv) {
+		this.queryStringVariables = qv;
 		return this;
 	}
 
@@ -268,6 +273,11 @@ public class ContextImpl implements Context {
 	@Override
 	public Database getDatabaseFromStrategy() {
 		return this.databaseFromStrategy;
+	}
+
+	@Override
+	public Map<String, String> getQueryStringVariables() {
+		return this.queryStringVariables;
 	}
 
 }
