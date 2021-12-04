@@ -62,4 +62,9 @@ public class AbstractDateTimeToISODate {
 		throw new NotesException(9999, value + " is not DateTime / Date / or String");
 	}
 
+	public String buildISO8601DateOnly(final Date javaDate) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		return df.format(javaDate);
+	}
+
 }
