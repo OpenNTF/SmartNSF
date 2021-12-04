@@ -28,20 +28,17 @@ public class DSLBuilder {
 		return router;
 	}
 
-	public static void evaluateScript(String dsl, Map<String, Object> bindings, ClassLoader cl) {
-
-		// Establish the compiler configuration - namely, the base class to use
-		// for the context
+	private static void evaluateScript(String dsl, Map<String, Object> bindings, ClassLoader cl) {
 		GroovyShell shell = prepareDSLShell(bindings, cl);
 		shell.evaluate(dsl);
 	}
 	
-	public static Script parseDSLScript(String dsl, ClassLoader cl) {
+	public static Script parseDSLScript(String dsl, ClassLoader cl, String fileName) {
 		Router router = new Router();
 		Map<String, Object> bindings = new HashMap<String, Object>();
 		bindings.put("router", router);
 		GroovyShell shell = prepareDSLShell(bindings, cl);
-		return shell.parse(dsl);
+		return shell.parse(dsl,fileName);
 	}
 	
 	private static GroovyShell prepareDSLShell(Map<String, Object> bindings, ClassLoader cl) {
