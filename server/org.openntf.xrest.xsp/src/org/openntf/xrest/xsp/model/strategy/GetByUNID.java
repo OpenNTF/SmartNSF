@@ -62,7 +62,7 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 		try {
 			Database dbAccess = DatabaseProvider.INSTANCE.getDatabase(getDatabaseNameValue(context), context.getDatabase(), getSessionFromContext(context));
 			((ContextImpl)context).addDatabaseFromStrategy(dbAccess);
-			String unid = context.getRouterVariables().get(keyVariableValue);
+			String unid = getUNID(context);
 			if (unid.equalsIgnoreCase("@new")) {
 				Document doc = dbAccess.createDocument();
 				String form = getFormValue(context);
@@ -82,6 +82,15 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 			throw exe;
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");
+		}
+	}
+
+	private String getUNID(final Context context) {
+		String keyVariableValue = this.getKeyVariableValue(context);
+		if (context.getRouterVariables().containsKey(keyVariableValue)) {
+			return context.getRouterVariables().get(keyVariableValue);
+		} else {
+			return context.getQueryStringVariables().get(keyVariableValue);
 		}
 	}
 

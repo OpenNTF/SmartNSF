@@ -63,10 +63,13 @@ public class GetBySelect extends AbstractDatabaseStrategy implements StrategyMod
 		}
 
 	}
-
+	
 	private String buildSelectString(final Context context) {
 		String rc = getSelectQueryValue(context);
 		for (Entry<String, String> routeEntry : context.getRouterVariables().entrySet()) {
+			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
+		}
+		for (Entry<String, String> routeEntry : context.getQueryStringVariables().entrySet()) {
 			rc = rc.replace("{" + routeEntry.getKey() + "}", routeEntry.getValue());
 		}
 		return rc;

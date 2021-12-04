@@ -50,7 +50,12 @@ public class AbstractKeyViewDatabaseStrategy extends AbstractViewDatabaseStrateg
 		if (hasCalculateKey()) {
 			return evaluateKey(context);
 		} else {
-			return context.getRouterVariables().get(getKeyVariableValue(context));
+			String keyVariable = getKeyVariableValue(context);
+			if (context.getRouterVariables().containsKey(keyVariable)) {
+				return context.getRouterVariables().get(keyVariable);
+			} else {
+				return context.getQueryStringVariables().get(keyVariable);
+			}
 		}
 	}
 }

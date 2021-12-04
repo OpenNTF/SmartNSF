@@ -284,6 +284,7 @@ public class XRestAPIServlet extends HttpServlet {
 			NotesContext c = modifiyNotesContext();
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
+			context.addQueryStringVariables(rp.extractValuesFromQueryString(req.getQueryString()));
 			context.setTrace(routerFactory.getRouter().isTrace());
 			context.addFacesContext(fc);
 			context.addIdentityMapProvider(routerFactory.getRouter().getIdentityMapProviderValue());

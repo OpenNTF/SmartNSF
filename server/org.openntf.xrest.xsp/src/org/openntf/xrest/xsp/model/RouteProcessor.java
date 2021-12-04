@@ -1,5 +1,6 @@
 package org.openntf.xrest.xsp.model;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -117,9 +118,27 @@ public class RouteProcessor {
 		for (Entry<Integer, String> entry : variablePositionMap.entrySet()) {
 			String value = entry.getValue();
 			Integer position = entry.getKey();
-			extract.put(value, parts[position]);
+			extract.put(value, decodeURLPart(parts[position]));
 		}
 		return extract;
+	}
+	public Map<String,String> extractValuesFromQueryString(String queryString) {
+		Map<String, String> extract = new HashMap<String, String>();
+		String[] pairs = queryString.split("&");
+	    for (String pair : pairs) {
+	        int idx = pair.indexOf("=");
+	        extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
+	    }
+	    return extract;
+	}
+
+	private String decodeURLPart(String toDecode) {
+		try {
+			return URLDecoder.decode(toDecode,"UTF-8");
+		} catch(Exception e) {
+			e.printStackTrace();
+			return toDecode;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

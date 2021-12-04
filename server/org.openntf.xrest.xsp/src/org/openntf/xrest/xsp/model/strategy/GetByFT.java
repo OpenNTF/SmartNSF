@@ -12,6 +12,7 @@ import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonJavaArray;
 
 import lotus.domino.Database;
@@ -33,8 +34,13 @@ public class GetByFT extends AbstractFTDatabaseStrategy implements StrategyModel
 			} else if (context.getRequest().getMethod().equals("GET")) {
 				search = context.getRequest().getParameter("search");
 			}
-			if (null != getFtQueryValue(context)) {
-				search = context.getRouterVariables().get(getFtQueryValue(context));
+			String searchKeyValue = getFtQueryValue(context);
+			if (!StringUtil.isEmpty(searchKeyValue)) {
+				if (context.getRouterVariables().containsKey(searchKeyValue)) {
+					search = context.getRouterVariables().get(searchKeyValue);
+				} else {
+					search = context.getQueryStringVariables().get(searchKeyValue);					
+				}
 			}
 			DocumentCollection dcl = dbAccess.FTSearch(search);
 			Document docNext = dcl.getFirstDocument();

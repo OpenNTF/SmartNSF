@@ -25,6 +25,7 @@ import org.openntf.xrest.xsp.log.SmartNSFLoggerFactory;
 
 import com.ibm.commons.util.io.StreamUtil;
 
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 
 public class GroovyDSLBuilder extends IncrementalProjectBuilder {
@@ -83,7 +84,7 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 				ClassLoader cl = DesignerProjectClassLoaderFactory.buildDesignerClassLoader(getProject());
 				removeMarkers(resource);
 				String dsl = StreamUtil.readString(((IFile) resource).getContents());
-				Script sc =DSLBuilder.parseDSLScript(dsl, cl);
+				Script sc =DSLBuilder.parseDSLScript(dsl, cl,"routes.groovy");
 				sc.run();
 			} catch (MultipleCompilationErrorsException cfe) {
 				handleMultipleCompilationErrorEx(resource, cfe);
@@ -94,7 +95,7 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 			}
 			catch (Exception e) {
 				Throwable rc = StackTraceUtils.extractRootCause(e);
-				addMarker(rc.getMessage(), resource);
+				addExceptionToMarker(rc, resource);
 			}
 		}
 	}
@@ -116,25 +117,50 @@ public class GroovyDSLBuilder extends IncrementalProjectBuilder {
 
 	private void processErrors(ErrorCollector errorCollector, IResource resource) {
 		for (Object err : errorCollector.getErrors()) {
+			System.out.println(err.getClass());
 			Message msg = (Message) err;
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			msg.write(pw);
-			addMarker(sw.toString(), resource);
+			addMarker(sw.toString() + err.getClass().getCanonicalName(), resource);
 		}
 
 	}
+	
+	private void addExceptionToMarker(Throwable e, IResource resource) {
+		if (e instanceof GroovyRuntimeException ) {
+			GroovyRuntimeException gre = (GroovyRuntimeException)e;
+			if (gre.getNode() != null) {
+				int lineNumber = gre.getNode().getLineNumber();
+				addMarkerWithLineNumber(gre.getMessage(), lineNumber, resource);
+				return;
+			} 
+			if(gre.getModule() != null) {
+				int lineNumber = gre.getModule().getLineNumber();
+				addMarkerWithLineNumber(gre.getMessage(), lineNumber, resource);
+				return;
+			}				
+			addMarker(gre.getMessage(), resource);							
+		} else {
+			addMarker(e.getMessage()+" e: "+e.getClass().getCanonicalName(), resource);			
+		}
+	}
 
-	private void addMarker(String message, IResource resource) {
+	private void addMarkerWithLineNumber(String message, int lineNumber, IResource resource) {
 		try {
 			IMarker marker = resource.createMarker("org.openntf.xrest.dsl.routes");
 
 			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.LINE_NUMBER, getLineNumber(message));
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		} catch (CoreException e) {
 			SmartNSFLoggerFactory.DDE.errorp(this, "addMarker", e, "Unexpected Problem for (0)", resource.getProjectRelativePath().toPortableString());
 		}
+		
+	}
+	private void addMarker(String message, IResource resource) {
+		int lineNumber = getLineNumber(message);
+		addMarkerWithLineNumber(message, lineNumber, resource);
 	}
 
 	private int getLineNumber(String message) {
