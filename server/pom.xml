@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<properties>
 		<tycho-version>0.23.0</tycho-version>
-		<compiler>1.6</compiler>
+		<compiler>1.8</compiler>
 		<license.failIfMissing>false</license.failIfMissing>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

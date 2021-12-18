@@ -35,6 +35,7 @@ public class RouteProcessor {
 	private String descriptionValue;
 	private String summaryValue;
 
+
 	public RouteProcessor(String path, String method) {
 		route = path;
 		this.method = method;
@@ -105,6 +106,7 @@ public class RouteProcessor {
 	public void summary(String summary) {
 		this.summaryValue = summary;
 	}
+	
 
 	public String getRoute() {
 		return route;
@@ -217,4 +219,5 @@ public class RouteProcessor {
 	public String getSummaryValue() {
 		return this.summaryValue;
 	}
+	
 }
