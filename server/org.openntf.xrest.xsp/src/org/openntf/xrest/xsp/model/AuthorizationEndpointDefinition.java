@@ -13,7 +13,7 @@ public class AuthorizationEndpointDefinition {
 	private String ssoDomainValue;
 	private String headerValue;
 	
-	public void additionlDirectory(String[] directories) {
+	public void additionalDirectories(String[] directories) {
 		this.additionalDirectoryValue = Arrays.asList(directories);
 	}
 	public void publicKey(String pk) {
