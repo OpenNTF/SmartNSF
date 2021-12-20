@@ -12,7 +12,11 @@ public class AuthorizationEndpointDefinition {
 	private Closure<?> onUserNotFoundClosure;
 	private String ssoDomainValue;
 	private String headerValue;
+	private String issuerValue;
 	
+	public String getIssuerValue() {
+		return issuerValue;
+	}
 	public void additionalDirectories(String[] directories) {
 		this.additionalDirectoryValue = Arrays.asList(directories);
 	}
@@ -29,6 +33,9 @@ public class AuthorizationEndpointDefinition {
 	}
 	public void header(String header) {
 		this.headerValue = header;
+	}
+	public void issuer(String issuer) {
+		this.issuerValue = issuer;
 	}
 	
 	public List<String> getAdditionalDirectoryValue() {

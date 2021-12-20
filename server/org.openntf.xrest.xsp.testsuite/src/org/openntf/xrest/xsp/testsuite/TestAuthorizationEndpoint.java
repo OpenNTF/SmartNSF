@@ -10,13 +10,16 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
 import org.junit.Test;
+import org.openntf.xrest.xsp.authendpoint.JWTExtractor;
+import org.openntf.xrest.xsp.authendpoint.JwtUserInfo;
 import org.openntf.xrest.xsp.exec.ExecutorException;
-import org.openntf.xrest.xsp.jwt.JWTExtractor;
 import org.openntf.xrest.xsp.model.AuthorizationEndpointDefinition;
 import org.openntf.xrest.xsp.model.Router;
 
@@ -90,12 +93,17 @@ public class TestAuthorizationEndpoint extends AbstractRouterBasics {
 		String headerValue = buildHeaderValue();
 		System.out.println(headerValue);
 		JWTExtractor jwtExtractor = new JWTExtractor(headerValue, router.getAuthorizationEndpoint());
-		jwtExtractor.validateAndExtract();
+		JwtUserInfo jwtUserInfo = jwtExtractor.validateAndExtract();
+		assertNotNull(jwtUserInfo);
+		assertEquals("John.Doe@smart.nsf",jwtUserInfo.getEMail());
 
 	}
 
 	private String buildHeaderValue() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		PrivateKey key = buildPrivateKey();
+		Map<String,Object> claims = new HashMap<String, Object>();
+		claims.put("email", "John.Doe@smart.nsf");
+		claims.put("foreignid", "007-008-009");
 		String jws = Jwts.builder()
 
 				.setIssuer("iss.smartnsf.proxy").setSubject("Johne Doy").setAudience("you")
@@ -103,6 +111,23 @@ public class TestAuthorizationEndpoint extends AbstractRouterBasics {
 				// .setNotBefore(notBefore) //a java.util.Date
 				.setIssuedAt(new Date()) // for example, now
 				.setId(UUID.randomUUID().toString()) // just an example id
+				.addClaims(claims)
+				.signWith(key).compact();
+		return jws;
+	}
+
+	private String buildHeaderValueNoEmail() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		PrivateKey key = buildPrivateKey();
+		Map<String,Object> claims = new HashMap<String, Object>();
+		claims.put("foreignid", "007-008-009");
+		String jws = Jwts.builder()
+
+				.setIssuer("iss.smartnsf.proxy").setSubject("Johne Doy").setAudience("you")
+				// .setExpiration(expiration) //a java.util.Date
+				// .setNotBefore(notBefore) //a java.util.Date
+				.setIssuedAt(new Date()) // for example, now
+				.setId(UUID.randomUUID().toString()) // just an example id
+				.addClaims(claims)
 				.signWith(key).compact();
 		return jws;
 	}
