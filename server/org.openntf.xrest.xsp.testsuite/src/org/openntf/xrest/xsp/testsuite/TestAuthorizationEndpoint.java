@@ -1,6 +1,7 @@
 package org.openntf.xrest.xsp.testsuite;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.security.KeyFactory;
@@ -77,6 +78,7 @@ public class TestAuthorizationEndpoint extends AbstractRouterBasics {
 	@Test
 	public void testLoadEndpointDefinition() throws ExecutorException {
 		Router router = getRouter();
+		router.getAuthorizationEndpoint().startup();
 		assertNotNull(router);
 		assertNotNull(router.getAuthorizationEndpoint());
 		AuthorizationEndpointDefinition aep = router.getAuthorizationEndpoint();
@@ -84,18 +86,35 @@ public class TestAuthorizationEndpoint extends AbstractRouterBasics {
 		assertEquals(2, aep.getAdditionalDirectoryValue().size());
 		assertNotNull(aep.getOnUserNotFoundClosure());
 		assertEquals("smartnsf-auth", aep.getHeaderValue());
-		assertEquals(TEST_PUBLICKEY, aep.getPublicKeyValue());
+		assertEquals("RSA", aep.getPublicKeyValue().getAlgorithm());
 	}
 
 	@Test
-	public void testDecodeHeaderValueWithPublicKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
+	public void testDecodeHeaderValueWithPublicKey() throws InvalidKeySpecException, NoSuchAlgorithmException, ExecutorException {
 		Router router = getRouter();
+		router.getAuthorizationEndpoint().startup();
 		String headerValue = buildHeaderValue();
 		System.out.println(headerValue);
 		JWTExtractor jwtExtractor = new JWTExtractor(headerValue, router.getAuthorizationEndpoint());
 		JwtUserInfo jwtUserInfo = jwtExtractor.validateAndExtract();
 		assertNotNull(jwtUserInfo);
 		assertEquals("John.Doe@smart.nsf",jwtUserInfo.getEMail());
+
+	}
+
+	@Test
+	public void testDecodeHeaderValueWithPublicKeyNoEMailException() throws InvalidKeySpecException, NoSuchAlgorithmException, ExecutorException {
+		Router router = getRouter();
+		router.getAuthorizationEndpoint().startup();
+		String headerValue = buildHeaderValueNoEmail();
+		System.out.println(headerValue);
+		JWTExtractor jwtExtractor = new JWTExtractor(headerValue, router.getAuthorizationEndpoint());
+		try {
+			JwtUserInfo jwtUserInfo = jwtExtractor.validateAndExtract();
+			assertFalse("this should not happen as E-Mail is not set", true);
+		} catch (ExecutorException e) {
+			assertEquals(400, e.getHttpStatusCode());
+		}
 
 	}
 

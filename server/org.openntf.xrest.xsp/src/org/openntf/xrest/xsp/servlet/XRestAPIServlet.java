@@ -39,7 +39,6 @@ import org.openntf.xrest.xsp.command.SwaggerHandler;
 import org.openntf.xrest.xsp.command.UsersHandler;
 import org.openntf.xrest.xsp.command.WhoAmIHandler;
 import org.openntf.xrest.xsp.command.YamlHandler;
-import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
@@ -47,7 +46,6 @@ import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
-import org.openntf.xrest.xsp.names.UserAndGroupHandler;
 import org.openntf.xrest.xsp.utils.NotesContextFactory;
 
 import com.ibm.commons.util.NotImplementedException;
@@ -116,8 +114,11 @@ public class XRestAPIServlet extends HttpServlet {
 	public void init(final ServletConfig config) throws ServletException {
 		this.config = config;
 		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		this.routerFactory.startup();
+		histogram = routerFactory.buildHistogram();
 		registerCommands();
 	}
+
 
 	@Override
 	protected void service(final HttpServletRequest req, final HttpServletResponse resp)
@@ -125,9 +126,6 @@ public class XRestAPIServlet extends HttpServlet {
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
-		}
-		if (histogram == null) {
-			histogram = routerFactory.buildHistogram();
 		}
 		Timer timer = null;
 		Router router = routerFactory.getRouter();
@@ -274,6 +272,7 @@ public class XRestAPIServlet extends HttpServlet {
 
 	public void refresh() {
 		routerFactory.refresh();
+		routerFactory.startup();
 		histogram = routerFactory.buildHistogram();
 	}
 
