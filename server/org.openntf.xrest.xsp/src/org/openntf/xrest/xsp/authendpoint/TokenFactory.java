@@ -17,19 +17,19 @@ package org.openntf.xrest.xsp.authendpoint;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openntf.xrest.xsp.exec.ExecutorException;
-
-import com.ibm.xsp.extlib.util.ExtLibUtil;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
+import lotus.domino.Session;
 import lotus.domino.View;
 
 public class TokenFactory {
 
-	private static final String ORG_OPENNTF_XPT_CORE_LTPA_FACTORY = "org.openntf.xpt.core.ltpa.TokenFactory";
-	private HashMap<String, TokenConfiguration> m_Config = null;
+	private Map<String, TokenConfiguration> tokenConfiguration = new HashMap<String,TokenConfiguration>();
 
 	
 	public Token buildLTPAToken(String user, String domainName) throws ExecutorException {
@@ -46,28 +46,25 @@ public class TokenFactory {
 	}
 
 	public TokenConfiguration getConfiguration(String serverFQDN) {
-		if (m_Config == null) {
-			m_Config = loadConfig();
-		}
-		if (m_Config.containsKey("." + serverFQDN.toLowerCase())) {
-			return m_Config.get("." + serverFQDN.toLowerCase());
+		if (tokenConfiguration.containsKey("." + serverFQDN.toLowerCase())) {
+			return tokenConfiguration.get("." + serverFQDN.toLowerCase());
 		}
 		int nStart = serverFQDN.indexOf(".");
 		while (nStart > 0 && serverFQDN.length() > 0) {
 			serverFQDN = serverFQDN.substring(nStart);
-			if (m_Config.containsKey(serverFQDN.toLowerCase())) {
-				return m_Config.get(serverFQDN.toLowerCase());
+			if (tokenConfiguration.containsKey(serverFQDN.toLowerCase())) {
+				return tokenConfiguration.get(serverFQDN.toLowerCase());
 			}
 		}
 		return null;
 	}
 
-	private synchronized HashMap<String, TokenConfiguration> loadConfig() {
+	public void loadConfig(Session sessionAsSigner, String serverName) {
 		Database ndbNames = null;
 		View viwSSO = null;
-		HashMap<String, TokenConfiguration> configurations = new HashMap<String, TokenConfiguration>();
+		this.tokenConfiguration.clear();
 		try {
-			ndbNames = ExtLibUtil.getCurrentSessionAsSigner().getDatabase(ExtLibUtil.getCurrentSession().getServerName(), "names.nsf");
+			ndbNames = sessionAsSigner.getDatabase(serverName, "names.nsf");
 			if (ndbNames != null) {
 				viwSSO = ndbNames.getView("($WebSSOConfigs)");
 				Document docNext = viwSSO.getFirstDocument();
@@ -76,15 +73,15 @@ public class TokenFactory {
 					docNext = viwSSO.getNextDocument(docNext);
 					TokenConfiguration tokenConfig = buildConfig(docConfig);
 					if (tokenConfig != null) {
-						configurations.put(tokenConfig.getDomain().toLowerCase(), tokenConfig);
+						this.tokenConfiguration.put(tokenConfig.getDomain().toLowerCase(), tokenConfig);
 					}
 					docConfig.recycle();
 				}
 			}
+			NotesObjectRecycler.recycle(viwSSO, ndbNames);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return configurations;
 	}
 
 	private TokenConfiguration buildConfig(Document docCurrent) {

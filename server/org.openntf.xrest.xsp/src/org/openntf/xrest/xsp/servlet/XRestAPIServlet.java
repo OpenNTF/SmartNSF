@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openntf.xrest.xsp.authendpoint.TokenFactory;
 import org.openntf.xrest.xsp.command.AuthorizationHandler;
 import org.openntf.xrest.xsp.command.CommandDefinition;
 import org.openntf.xrest.xsp.command.SwaggerHandler;
@@ -105,6 +106,7 @@ public class XRestAPIServlet extends HttpServlet {
 	private RouterFactory routerFactory;
 	private Histogram histogram;
 	private List<CommandDefinition> commands = new ArrayList<CommandDefinition>();
+	private TokenFactory tokenFactory = new TokenFactory();
 
 	public XRestAPIServlet(final RouterFactory routerFactory) {
 		this.routerFactory = routerFactory;
@@ -112,11 +114,20 @@ public class XRestAPIServlet extends HttpServlet {
 
 	@Override
 	public void init(final ServletConfig config) throws ServletException {
+		System.out.println("Startup for SmartNSF Servlet!");
 		this.config = config;
 		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
 		this.routerFactory.startup();
 		histogram = routerFactory.buildHistogram();
-		registerCommands();
+		System.out.println("Register Commands for SmartNSF Servlet.");
+		if (!routerFactory.hasError()) {
+			registerCommands();
+			try {
+				initalizeLTPAFactory();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 
@@ -294,7 +305,6 @@ public class XRestAPIServlet extends HttpServlet {
 	}
 
 	private void registerCommands() {
-
 		commands.add(new CommandDefinition(request -> "yaml.".equals(request.getQueryString()), new YamlHandler()));
 		commands.add(new CommandDefinition(request -> "swagger".equals(request.getQueryString()), new SwaggerHandler()));
 		commands.add(new CommandDefinition(request -> "login".equals(request.getQueryString()), new WhoAmIHandler()));
@@ -307,6 +317,14 @@ public class XRestAPIServlet extends HttpServlet {
 					processMetricsRequest(resp, request);
 					return Optional.empty();
 				}));
-
 	}
+
+	private void initalizeLTPAFactory() throws SecurityException, NotesException {
+		if (routerFactory.getRouter().getAuthorizationEndpoint() != null) {
+			NotesContext nc = NotesContextFactory.buildModifiedNotesContext();
+			tokenFactory.loadConfig(nc.getSessionAsSigner(), nc.getSessionAsSigner().getServerName());
+		}
+		
+	}
+
 }
