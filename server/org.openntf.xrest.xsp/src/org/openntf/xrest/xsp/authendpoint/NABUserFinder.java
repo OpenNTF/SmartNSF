@@ -8,6 +8,7 @@ import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
+import lotus.domino.Name;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 import lotus.domino.View;
@@ -28,13 +29,15 @@ public class NABUserFinder {
 			Database db = getDatabase(path, session);
 			View users = db.getView("($Users)");
 			Document userDocument = users.getDocumentByKey(eMail, true);
+			Name notesUserName = null;
 			try {
 				if (userDocument != null) {
 					String userName = (String)userDocument.getItemValue("FullName").elementAt(0);
-					return Optional.of(userName);
+					notesUserName = session.createName(userName);
+					return Optional.of(notesUserName.getCanonical());
 				}
 			} finally {
-				NotesObjectRecycler.recycle(userDocument,users, db);
+				NotesObjectRecycler.recycle(notesUserName,userDocument,users, db);
 			}
 		}
 		return Optional.empty();

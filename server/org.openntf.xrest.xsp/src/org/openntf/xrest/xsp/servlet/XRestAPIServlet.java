@@ -106,7 +106,8 @@ public class XRestAPIServlet extends HttpServlet {
 	private RouterFactory routerFactory;
 	private Histogram histogram;
 	private List<CommandDefinition> commands = new ArrayList<CommandDefinition>();
-	private TokenFactory tokenFactory = new TokenFactory();
+	private final TokenFactory tokenFactory = new TokenFactory();
+
 
 	public XRestAPIServlet(final RouterFactory routerFactory) {
 		this.routerFactory = routerFactory;
@@ -122,11 +123,6 @@ public class XRestAPIServlet extends HttpServlet {
 		System.out.println("Register Commands for SmartNSF Servlet.");
 		if (!routerFactory.hasError()) {
 			registerCommands();
-			try {
-				initalizeLTPAFactory();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -304,14 +300,18 @@ public class XRestAPIServlet extends HttpServlet {
 		return config;
 	}
 
+	public TokenFactory getTokenFactory() {
+		return tokenFactory;
+	}
+
 	private void registerCommands() {
-		commands.add(new CommandDefinition(request -> "yaml.".equals(request.getQueryString()), new YamlHandler()));
+		commands.add(new CommandDefinition(request -> "yaml".equals(request.getQueryString()), new YamlHandler()));
 		commands.add(new CommandDefinition(request -> "swagger".equals(request.getQueryString()), new SwaggerHandler()));
 		commands.add(new CommandDefinition(request -> "login".equals(request.getQueryString()), new WhoAmIHandler()));
 		commands.add(new CommandDefinition(request -> "whoami".equals(request.getQueryString()), new WhoAmIHandler()));
 		commands.add(new CommandDefinition(request -> request.getQueryString().startsWith("users"), new UsersHandler()));
 		commands.add(new CommandDefinition(request -> "authorization".equals(request.getQueryString()),
-				new AuthorizationHandler()));
+				new AuthorizationHandler(this.tokenFactory)));
 		commands.add(new CommandDefinition(request -> "metrics".equals(request.getQueryString()),
 				(resp, request, router, histogram) -> {
 					processMetricsRequest(resp, request);
@@ -322,7 +322,9 @@ public class XRestAPIServlet extends HttpServlet {
 	private void initalizeLTPAFactory() throws SecurityException, NotesException {
 		if (routerFactory.getRouter().getAuthorizationEndpoint() != null) {
 			NotesContext nc = NotesContextFactory.buildModifiedNotesContext();
-			tokenFactory.loadConfig(nc.getSessionAsSigner(), nc.getSessionAsSigner().getServerName());
+			System.out.println(nc.getSessionAsSigner());
+			System.out.println(nc.getCurrentDatabase());
+			tokenFactory.loadConfig(nc.getSessionAsSigner(), nc.getCurrentDatabase().getServer());
 		}
 		
 	}

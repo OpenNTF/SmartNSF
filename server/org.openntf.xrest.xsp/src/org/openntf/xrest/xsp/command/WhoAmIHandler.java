@@ -30,7 +30,11 @@ public class WhoAmIHandler implements CommandHandler {
 			loginObject.put("groups", c.getGroupList());
 			loginObject.put("accesslevel", c.getCurrentDatabase().getCurrentAccessLevel());
 			loginObject.put("roles", c.getCurrentDatabase().queryAccessRoles(ses.getEffectiveUserName()));
-			loginObject.put("email", c.getInetMail());
+			try {
+				loginObject.put("email", c.getInetMail());
+			} catch(Exception e) {
+				//This could fail!
+			}
 			JsonPayloadProcessor.INSTANCE.processJsonPayload(loginObject, resp);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, "Error during build response object", ex, request.getPathInfo(),

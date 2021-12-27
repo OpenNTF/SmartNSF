@@ -30,6 +30,7 @@ import lotus.domino.View;
 public class TokenFactory {
 
 	private Map<String, TokenConfiguration> tokenConfiguration = new HashMap<String,TokenConfiguration>();
+	private boolean loaded = false;
 
 	
 	public Token buildLTPAToken(String user, String domainName) throws ExecutorException {
@@ -59,7 +60,7 @@ public class TokenFactory {
 		return null;
 	}
 
-	public void loadConfig(Session sessionAsSigner, String serverName) {
+	public synchronized void loadConfig(Session sessionAsSigner, String serverName) {
 		Database ndbNames = null;
 		View viwSSO = null;
 		this.tokenConfiguration.clear();
@@ -82,6 +83,15 @@ public class TokenFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		loaded = true;
+	}
+	
+	public void refresh() {
+		loaded = false;
+	}
+	
+	public boolean isLoaded() {
+		return this.loaded;
 	}
 
 	private TokenConfiguration buildConfig(Document docCurrent) {
