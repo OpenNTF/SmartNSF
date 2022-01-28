@@ -16,12 +16,10 @@
 package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -35,16 +33,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openntf.xrest.xsp.authendpoint.TokenFactory;
+import org.openntf.xrest.xsp.command.AuthorizationHandler;
+import org.openntf.xrest.xsp.command.CommandDefinition;
+import org.openntf.xrest.xsp.command.SwaggerHandler;
+import org.openntf.xrest.xsp.command.UsersHandler;
+import org.openntf.xrest.xsp.command.WhoAmIHandler;
+import org.openntf.xrest.xsp.command.YamlHandler;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutorFactory;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.exec.output.ExecutorExceptionProcessor;
-import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
-import org.openntf.xrest.xsp.names.UserAndGroupHandler;
-import org.openntf.xrest.xsp.yaml.YamlProducer;
+import org.openntf.xrest.xsp.utils.NotesContextFactory;
 
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
@@ -63,7 +66,6 @@ import io.prometheus.client.Histogram;
 import io.prometheus.client.Histogram.Timer;
 import io.prometheus.client.exporter.common.TextFormat;
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 
 public class XRestAPIServlet extends HttpServlet {
 
@@ -103,6 +105,9 @@ public class XRestAPIServlet extends HttpServlet {
 	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
 	private Histogram histogram;
+	private List<CommandDefinition> commands = new ArrayList<CommandDefinition>();
+	private final TokenFactory tokenFactory = new TokenFactory();
+
 
 	public XRestAPIServlet(final RouterFactory routerFactory) {
 		this.routerFactory = routerFactory;
@@ -110,18 +115,24 @@ public class XRestAPIServlet extends HttpServlet {
 
 	@Override
 	public void init(final ServletConfig config) throws ServletException {
+		System.out.println("Startup for SmartNSF Servlet!");
 		this.config = config;
 		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		this.routerFactory.startup();
+		histogram = routerFactory.buildHistogram();
+		System.out.println("Register Commands for SmartNSF Servlet.");
+		if (!routerFactory.hasError()) {
+			registerCommands();
+		}
 	}
 
+
 	@Override
-	protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+	protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+			throws ServletException, IOException {
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
-		}
-		if (histogram == null) {
-			histogram = routerFactory.buildHistogram();
 		}
 		Timer timer = null;
 		Router router = routerFactory.getRouter();
@@ -132,7 +143,8 @@ public class XRestAPIServlet extends HttpServlet {
 				FacesContextEx exc = (FacesContextEx) fc;
 				ApplicationEx ape = exc.getApplicationEx();
 				if (ape.getController() == null) {
-					FacesController controller = new FacesControllerFactoryImpl().createFacesController(getServletContext());
+					FacesController controller = new FacesControllerFactoryImpl()
+							.createFacesController(getServletContext());
 					controller.init(null);
 				}
 			}
@@ -172,7 +184,8 @@ public class XRestAPIServlet extends HttpServlet {
 
 	private void processCORSHeaders(HttpServletRequest req, HttpServletResponse resp, Router router, String method) {
 		if ("OPTIONS".equals(method)) {
-			resp.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, " + router.getCORSTokenHeader());
+			resp.addHeader("Access-Control-Allow-Headers",
+					"origin, content-type, accept, " + router.getCORSTokenHeader());
 		}
 		if (router.isCORSAllowCredentials()) {
 			resp.addHeader("Access-Control-Allow-Credentials", "true");
@@ -193,102 +206,56 @@ public class XRestAPIServlet extends HttpServlet {
 		return sb.substring(0, sb.length() - 1);
 	}
 
-	private Timer processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request, Router router) throws JsonException, IOException, ExecutorException, NotesException {
-		Timer timer = null;
+	private Timer processBuildInCommands(final HttpServletResponse resp, final HttpServletRequest request,
+			Router router) throws ExecutorException {
 		String queryString = request.getQueryString();
 		if (StringUtil.isEmpty(queryString)) {
-			throw new ExecutorException(500, "Path not found and no built-in command found.", request.getPathInfo(), "SERVLET");
+			throw new ExecutorException(500, "Path not found and no built-in command found.", request.getPathInfo(),
+					"SERVLET");
 		}
-		if ("yaml".equals(request.getQueryString())) {
-			timer = histogram.labels("yaml", request.getMethod()).startTimer();
-			processYamlRequest(resp, request);
-			return timer;
+		Optional<CommandDefinition> command = commands.stream().filter(cmd -> cmd.match(request)).findFirst();
+		if (command.isPresent()) {
+			return command.get().execute(request, resp, router, histogram);
 		}
-		if ("swagger".equals(request.getQueryString())) {
-			timer = histogram.labels("swagger", request.getMethod()).startTimer();
-			processSwaggerRequest(resp, request);
-			return timer;
-		}
-		if ("login".equals(request.getQueryString())) {
-			timer = histogram.labels("login", request.getMethod()).startTimer();
-			processLoginRequest(resp, request);
-			return timer;
-		}
-		if ("metrics".equals(request.getQueryString())) {
-			processMetricsRequest(resp, request);
-			return timer;
-		}
-		if (queryString.startsWith("users")) {
-			timer = histogram.labels("users",request.getMethod()).startTimer();
-			ContextImpl context = new ContextImpl();
-			NotesContext c = modifiyNotesContext();
-			context.addNotesContext(c).addRequest(request).addResponse(resp);
-			UserAndGroupHandler handler = new UserAndGroupHandler( resp, router.getTypeAHeadResolverValue(), router.getUserInformationResolverValue(),context);
-			handler.execute(queryString);
-			return timer;
-		}
-		
-		throw new ExecutorException(500, queryString +" is not a built-in command.", request.getPathInfo(), "SERVLET");
+
+		throw new ExecutorException(500, queryString + " is not a built-in command.", request.getPathInfo(), "SERVLET");
 	}
 
-	private void processMetricsRequest(HttpServletResponse resp, HttpServletRequest request) throws IOException {
-		resp.setStatus(HttpServletResponse.SC_OK);
-		resp.setContentType(TextFormat.CONTENT_TYPE_004);
-		Writer writer = resp.getWriter();
+	private void processMetricsRequest(HttpServletResponse resp, HttpServletRequest request) throws ExecutorException {
 		try {
-			TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
-			writer.flush();
-		} finally {
-			writer.close();
+			resp.setStatus(HttpServletResponse.SC_OK);
+			resp.setContentType(TextFormat.CONTENT_TYPE_004);
+			Writer writer = resp.getWriter();
+			try {
+				TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
+				writer.flush();
+			} finally {
+				writer.close();
+			}
+		} catch (Exception e) {
+			throw new ExecutorException(500, "Error during build response object", e, request.getPathInfo(),
+					"/?metrics");
+
 		}
 	}
 
-	private void processLoginRequest(HttpServletResponse resp, HttpServletRequest request) throws ExecutorException {
-		JsonJavaObject loginObject = new JsonJavaObject();
-		try {
-			NotesContext c = NotesContext.getCurrentUnchecked();
-			Session ses = c.getCurrentSession();
-			loginObject.put("username", ses.getEffectiveUserName());
-			loginObject.put("groups", c.getGroupList());
-			loginObject.put("accesslevel", c.getCurrentDatabase().getCurrentAccessLevel());
-			loginObject.put("roles", c.getCurrentDatabase().queryAccessRoles(ses.getEffectiveUserName()));
-			loginObject.put("email", c.getInetMail());
-			JsonPayloadProcessor.INSTANCE.processJsonPayload(loginObject, resp);
-			return;
-		} catch (Exception ex) {
-			throw new ExecutorException(500, "Error during build response object", ex, request.getPathInfo(), "/?login");
-		}
-	}
 
-	private void processSwaggerRequest(final HttpServletResponse resp, final HttpServletRequest request) throws IOException {
-		String path = request.getRequestURL().toString();
-		URL url = new URL(path + "?yaml");
-		URL urlSwagger = new URL(url.getProtocol(), url.getHost(), url.getPort(), "/xsp/.ibmxspres/.swaggerui/dist/index.html?url=" + url.toExternalForm());
-		resp.sendRedirect(urlSwagger.toExternalForm());
-	}
-
-	private void processYamlRequest(final HttpServletResponse resp, final HttpServletRequest request) throws JsonException, IOException {
-		Router router = routerFactory.getRouter();
-		PrintWriter pw = resp.getWriter();
-		YamlProducer yamlProducer = new YamlProducer(router, request, pw);
-		yamlProducer.processYamlToPrintWriter();
-		pw.close();
-	}
-
-	private Timer processRouteProcessorBased(final HttpServletRequest req, final HttpServletResponse resp, final String method, final String path, FacesContext fc)
+	private Timer processRouteProcessorBased(final HttpServletRequest req, final HttpServletResponse resp,
+			final String method, final String path, FacesContext fc)
 			throws NotesException, IOException, ExecutorException {
 		RouteProcessor rp = routerFactory.getRouter().find(method, path);
 		if (rp != null) {
 			Timer timer = histogram.labels(rp.getRoute(), rp.getMethod()).startTimer();
 			ContextImpl context = new ContextImpl();
-			NotesContext c = modifiyNotesContext();
+			NotesContext c = NotesContextFactory.buildModifiedNotesContext();
 			context.addNotesContext(c).addRequest(req).addResponse(resp);
 			context.addRouterVariables(rp.extractValuesFromPath(path));
 			context.addQueryStringVariables(rp.extractValuesFromQueryString(req.getQueryString()));
 			context.setTrace(routerFactory.getRouter().isTrace());
 			context.addFacesContext(fc);
 			context.addIdentityMapProvider(routerFactory.getRouter().getIdentityMapProviderValue());
-			if (req.getContentLength() > 0 && req.getContentType() != null && req.getContentType().toLowerCase().startsWith("application/json")) {
+			if (req.getContentLength() > 0 && req.getContentType() != null
+					&& req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
 					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
@@ -312,12 +279,15 @@ public class XRestAPIServlet extends HttpServlet {
 
 	public void refresh() {
 		routerFactory.refresh();
+		routerFactory.startup();
 		histogram = routerFactory.buildHistogram();
 	}
 
-	public FacesContext initContext(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public FacesContext initContext(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// Create a temporary FacesContext and make it available
-		FacesContext context = contextFactory.getFacesContext(getServletConfig().getServletContext(), request, response, dummyLifeCycle);
+		FacesContext context = contextFactory.getFacesContext(getServletConfig().getServletContext(), request, response,
+				dummyLifeCycle);
 		return context;
 	}
 
@@ -330,23 +300,33 @@ public class XRestAPIServlet extends HttpServlet {
 		return config;
 	}
 
-	private NotesContext modifiyNotesContext() {
-		NotesContext c = NotesContext.getCurrentUnchecked();
-		try {
-			Field checkedSigners = NotesContext.class.getDeclaredField("checkedSigners");
-			checkedSigners.setAccessible(true);
-			HashSet<?> signers = (HashSet<?>) checkedSigners.get(c);
-			signers.clear();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		c.setSignerSessionRights("WEB-INF/routes.groovy");
-		return c;
+	public TokenFactory getTokenFactory() {
+		return tokenFactory;
 	}
+
+	private void registerCommands() {
+		commands.add(new CommandDefinition(request -> "yaml".equals(request.getQueryString()), new YamlHandler()));
+		commands.add(new CommandDefinition(request -> "swagger".equals(request.getQueryString()), new SwaggerHandler()));
+		commands.add(new CommandDefinition(request -> "login".equals(request.getQueryString()), new WhoAmIHandler()));
+		commands.add(new CommandDefinition(request -> "whoami".equals(request.getQueryString()), new WhoAmIHandler()));
+		commands.add(new CommandDefinition(request -> request.getQueryString().startsWith("users"), new UsersHandler()));
+		commands.add(new CommandDefinition(request -> "authorization".equals(request.getQueryString()),
+				new AuthorizationHandler(this.tokenFactory)));
+		commands.add(new CommandDefinition(request -> "metrics".equals(request.getQueryString()),
+				(resp, request, router, histogram) -> {
+					processMetricsRequest(resp, request);
+					return Optional.empty();
+				}));
+	}
+
+	private void initalizeLTPAFactory() throws SecurityException, NotesException {
+		if (routerFactory.getRouter().getAuthorizationEndpoint() != null) {
+			NotesContext nc = NotesContextFactory.buildModifiedNotesContext();
+			System.out.println(nc.getSessionAsSigner());
+			System.out.println(nc.getCurrentDatabase());
+			tokenFactory.loadConfig(nc.getSessionAsSigner(), nc.getCurrentDatabase().getServer());
+		}
+		
+	}
+
 }

@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<properties>
 		<tycho-version>0.23.0</tycho-version>
-		<compiler>1.6</compiler>
+		<compiler>1.8</compiler>
 		<license.failIfMissing>false</license.failIfMissing>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -18,6 +18,9 @@
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 		<groovy-version>2.4.8</groovy-version>
 		<olingo-version>4.6.0</olingo-version>
+		<jwt-lib>0.11.2</jwt-lib>
+		<jackson.version>2.9.10</jackson.version>
+		<jackson-db.version>2.9.10.4</jackson-db.version>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 		<osgi.qualifier>${maven.build.timestamp}</osgi.qualifier>
 		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-SNAPSHOT</kit.buildVersion>
@@ -25,7 +28,7 @@
 		<kit.result>snapshots</kit.result>
 		<kit.sourceCodeUrl>https://stash.openntf.org/rest/api/latest/projects/XRAPI/repos/org.openntf.xrestapi/archive?format=zip&amp;at=refs%2Fheads%2F</kit.sourceCodeUrl>
 		<kit.sourceBranch>develop</kit.sourceBranch>
-		
+
 	</properties>
 
 	<repositories>

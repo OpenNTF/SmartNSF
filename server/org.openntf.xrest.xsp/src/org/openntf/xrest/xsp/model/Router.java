@@ -34,6 +34,8 @@ public class Router {
 	private TypeAHeadResolver typeAHeadResolverValue;
 	private UserInformationResolver userInformationResolverValue;
 	private IdentityMapProvider identityMapProvider;
+	private AuthorizationEndpointDefinition authorizationEndpoint;
+
 
 	public Router() {
 		DefaultUserInformationAndTypeAHeadImplementation defaultUIAT = new DefaultUserInformationAndTypeAHeadImplementation();
@@ -130,6 +132,13 @@ public class Router {
 	public void identityMapProvider(IdentityMapProvider provider) {
 		this.identityMapProvider = provider;
 	}
+	
+	public void authorizationEndpoint(Closure<Void> cl) {
+		AuthorizationEndpointDefinition definition = new AuthorizationEndpointDefinition();
+		DSLBuilder.applyClosureToObject(cl, definition);
+		this.authorizationEndpoint = definition;
+	}
+
 
 	public RouteProcessor find(String method, String path) {
 		String[] pathParts = path.split("/");
@@ -216,4 +225,8 @@ public class Router {
 	public IdentityMapProvider getIdentityMapProviderValue() {
 		return identityMapProvider;
 	}
+	public AuthorizationEndpointDefinition getAuthorizationEndpoint() {
+		return authorizationEndpoint;
+	}
+
 }

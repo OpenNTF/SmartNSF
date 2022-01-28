@@ -16,15 +16,27 @@ public class RouterFactory {
 	private final ComponentModule module;
 	private Router router;
 	private Throwable error;
+	private final CollectorRegistry collectorRegistry;
 
 	public RouterFactory(ComponentModule module) {
 		this.module = module;
 		this.router = buildRouter();
+		this.collectorRegistry = new CollectorRegistry();
 	}
 
 	public void refresh() {
 		error = null;
 		this.router = buildRouter();
+	}
+	
+	public void startup() {
+		try {
+			if (this.router.getAuthorizationEndpoint() != null ) {
+				this.router.getAuthorizationEndpoint().startup();
+			}
+		} catch(Exception e) {
+			error =e;
+		}
 	}
 
 	private Router buildRouter() {
@@ -56,12 +68,12 @@ public class RouterFactory {
 		if (router == null || error != null) {
 			return null;
 		}
-		CollectorRegistry.defaultRegistry.clear();
+		this.collectorRegistry.clear();
 		Histogram.Builder builder =  Histogram.build()
 				.labelNames("path", "method");
 		builder.help("SmartNSF Execution Data");
 		builder.name("http_xrest_request_duration_seconds");
 		builder.buckets(new double[]{0.005,0.01,0.025,0.05,0.075,0.1,0.25,0.5,0.75,1,2.5,5,7.5,10});
-		return builder.register();
+		return builder.register(this.collectorRegistry);
 	}
 }
