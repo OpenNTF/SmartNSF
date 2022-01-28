@@ -100,7 +100,7 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 			Vector<EmbeddedObject> allEmbeddedObject = ((RichTextItem) notesItem).getEmbeddedObjects();
 			for (EmbeddedObject emb : allEmbeddedObject) {
 				String name = emb.getName();
-				if (name.equals(fileName)|| emb.getSource().equals(fileName)) {
+				if (name.equalsIgnoreCase(fileName)|| emb.getSource().equalsIgnoreCase(fileName)) {
 					embo = emb;
 				} else {
 					emb.recycle();

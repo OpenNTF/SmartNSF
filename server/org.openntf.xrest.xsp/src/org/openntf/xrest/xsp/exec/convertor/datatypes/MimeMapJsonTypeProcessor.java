@@ -330,7 +330,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		String dispositionValue = getContentDispositionHeaderValue(entity);
 		if (!StringUtil.isEmpty(dispositionValue) && dispositionValue.startsWith(ATTACHMENT_HEADER_VALUE)) {
 			// System.out.println(dispositionValue);
-			if (dispositionValue.contains(attachmentName)) {
+			if (dispositionValue.toLowerCase().contains(attachmentName.toLowerCase())) {
 				return entity;
 			}
 		}
