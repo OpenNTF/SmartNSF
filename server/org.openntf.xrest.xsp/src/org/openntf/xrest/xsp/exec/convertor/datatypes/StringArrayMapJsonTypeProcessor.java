@@ -1,8 +1,10 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.MappingField;
@@ -24,25 +26,20 @@ public class StringArrayMapJsonTypeProcessor extends AbstractMapJsonTypeProcesso
 
 	@Override
 	public void processValuesToJsonObject(final List<?> values, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
-		if (values != null && !values.isEmpty()) {
-			List<String> val = makeStringList(values);
-			if (!val.isEmpty()) {
-				jo.putJsonProperty(jsonPropertyName, val);
-			}
-		}
+		List<String> jsonValues = buildValues(values);
+		jo.putJsonProperty(jsonPropertyName, jsonValues);
 	}
 
-	private List<String> makeStringList(final List<?> values) {
-		List<String> stringValues = new ArrayList<String>();
-		for (Object value : values) {
-			if (value instanceof String) {
-				String val = (String) value;
-				if (!val.isEmpty()) {
-					stringValues.add((String) value);
-				}
-			}
+	private List<String> buildValues(List<?> values) {
+		if (values == null || values.isEmpty()) {
+			return Collections.emptyList();
 		}
-		return stringValues;
+		return makeStringList(values);
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> makeStringList(final List<?> values) {
+		return (List<String>)values.stream().filter(val-> val instanceof String).filter(val -> val != null).collect(Collectors.toList());
 	}
 
 	@Override

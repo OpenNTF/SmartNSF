@@ -1,11 +1,14 @@
 package org.openntf.xrest.xsp.servlet;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import org.openntf.xrest.xsp.dsl.DSLBuilder;
 import org.openntf.xrest.xsp.model.Router;
 
-import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 
 import io.prometheus.client.CollectorRegistry;
@@ -40,10 +43,14 @@ public class RouterFactory {
 	}
 
 	private Router buildRouter() {
+		//CharsetProviderICU provider =  new CharsetProviderICU();
 		try {
 			InputStream is = module.getResourceAsStream("/WEB-INF/routes.groovy");
 			if (is != null) {
-				String dsl = StreamUtil.readString(is);
+				String dsl = new BufferedReader(
+					      new InputStreamReader(is, StandardCharsets.ISO_8859_1))
+				        .lines()
+				        .collect(Collectors.joining("\n"));
 				return DSLBuilder.buildRouterFromDSL(dsl, Thread.currentThread().getContextClassLoader());
 			}
 		} catch (Exception e) {
