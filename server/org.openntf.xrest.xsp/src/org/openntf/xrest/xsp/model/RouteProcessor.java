@@ -35,7 +35,6 @@ public class RouteProcessor {
 	private String descriptionValue;
 	private String summaryValue;
 
-
 	public RouteProcessor(String path, String method) {
 		route = path;
 		this.method = method;
@@ -70,7 +69,7 @@ public class RouteProcessor {
 			}
 		}
 	}
-	
+
 	public void allowedAccess(Closure<?> cl) {
 		allowedAccessCL = cl;
 	}
@@ -106,7 +105,6 @@ public class RouteProcessor {
 	public void summary(String summary) {
 		this.summaryValue = summary;
 	}
-	
 
 	public String getRoute() {
 		return route;
@@ -126,25 +124,26 @@ public class RouteProcessor {
 		}
 		return extract;
 	}
-	public Map<String,String> extractValuesFromQueryString(String queryString) {
+
+	public Map<String, String> extractValuesFromQueryString(String queryString) {
 		Map<String, String> extract = new HashMap<String, String>();
 		if (StringUtil.isEmpty(queryString)) {
 			return extract;
 		}
 		String[] pairs = queryString.split("&");
-	    for (String pair : pairs) {
-	        int idx = pair.indexOf("=");
-	        if(idx > 0) {
-	        	extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
-	        }
-	    }
-	    return extract;
+		for (String pair : pairs) {
+			int idx = pair.indexOf("=");
+			if (idx > 0) {
+				extract.put(decodeURLPart(pair.substring(0, idx)), decodeURLPart(pair.substring(idx + 1)));
+			}
+		}
+		return extract;
 	}
 
 	private String decodeURLPart(String toDecode) {
 		try {
-			return URLDecoder.decode(toDecode,"UTF-8");
-		} catch(Exception e) {
+			return URLDecoder.decode(toDecode, "UTF-8");
+		} catch (Exception e) {
 			e.printStackTrace();
 			return toDecode;
 		}
@@ -184,6 +183,7 @@ public class RouteProcessor {
 		}
 		return null;
 	}
+
 	public Closure<?> getAllowedAccessClosure() {
 		return allowedAccessCL;
 	}
@@ -219,5 +219,5 @@ public class RouteProcessor {
 	public String getSummaryValue() {
 		return this.summaryValue;
 	}
-	
+
 }
