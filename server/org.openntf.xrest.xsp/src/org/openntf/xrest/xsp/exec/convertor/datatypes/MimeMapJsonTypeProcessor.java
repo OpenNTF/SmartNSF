@@ -48,22 +48,20 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
-		Document doc = item.getParent();
-		Session session = doc.getParentDatabase().getParent();
-		String fieldName = item.getName();
-		MIMEEntity entity = doc.getMIMEEntity(fieldName);
-		if (entity != null) {
+		Session session = item.getParent().getParentDatabase().getParent();
+		
+		switch(item.getType()) {
+		case Item.MIME_PART:
+			MIMEEntity entity = item.getMIMEEntity();
 			String content = getContentFromMime(entity, session);
 			jo.putJsonProperty(jsonPropertyName, content);
-			entity.recycle();
-		} else {
-			if (item.getType() != Item.RICHTEXT) {
-				jo.putJsonProperty(jsonPropertyName, item.getValueString());
-			} else {
-				String value = getContentFormRT(doc, item.getName());
-				jo.putJsonProperty(jsonPropertyName, value);
-			}
+			return;
+		case Item.RICHTEXT:
+			String value = getContentFormRT(item.getParent(), item.getName());
+			jo.putJsonProperty(jsonPropertyName, value);
+			return;
 		}
+		jo.putJsonProperty(jsonPropertyName, item.getValueString());
 	}
 
 	private String getContentFormRT(final Document doc, final String fieldName) throws NotesException {
