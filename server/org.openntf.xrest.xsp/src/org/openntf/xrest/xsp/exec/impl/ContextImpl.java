@@ -59,8 +59,11 @@ public class ContextImpl implements Context {
 
 	public ContextImpl addNotesContext(NotesContext notesContext) throws NotesException {
 		this.session = notesContext.getCurrentSession();
+		this.session.setConvertMIME(false);
 		this.sessionAsSigner = notesContext.getSessionAsSigner();
+		this.sessionAsSigner.setConvertMIME(false);
 		this.sessionAsSignerAdmin = notesContext.getSessionAsSignerFullAdmin();
+		this.sessionAsSignerAdmin.setConvertMIME(false);
 		this.database = notesContext.getCurrentDatabase();
 		calcSessionBasedValues();
 		this.nsfHelper = new NSFHelperImpl(this.database);
