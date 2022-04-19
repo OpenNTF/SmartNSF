@@ -11,6 +11,7 @@ import org.openntf.xrest.xsp.exec.datacontainer.DocumentListDataContainer;
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonJavaArray;
 
@@ -34,15 +35,16 @@ public class AllByView extends AbstractViewDatabaseStrategy implements StrategyM
 			ViewNavigator vnav = viewAccess.createViewNav();
 			vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES + ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
 			vnav.setCacheGuidance(Integer.MAX_VALUE, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
-			ViewEntry entCurrent = vnav.getFirst();
-			while (entCurrent != null && entCurrent.isValid()) {
-				docs.add(entCurrent.getDocument());
-				ViewEntry nextEntry = vnav.getNext();
-				// recycle!
-				entCurrent.recycle();
-				entCurrent = nextEntry;
+			ViewEntry nextEntry = vnav.getFirst();
+			while (nextEntry != null) {
+				ViewEntry entryCurrent = nextEntry;
+				nextEntry = vnav.getNext();
+				if (entryCurrent.isValid()) {
+					docs.add(entryCurrent.getDocument());
+				}
+				NotesObjectRecycler.recycle(entryCurrent);
 			}
-			vnav.recycle();
+			NotesObjectRecycler.recycle(vnav);
 			return new DocumentListDataContainer(docs, viewAccess, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");

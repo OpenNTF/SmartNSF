@@ -53,14 +53,17 @@ public class Document2JsonConverter {
 				processFormulaToJson(jo, field, doc);
 			}
 		}
-		NotesObjectRecycler.recycleObjects(documentItems.toArray());
+		NotesObjectRecycler.recycleList(documentItems);
+		documentItems.clear();
+		itemProcessed.clear();
 		return jo;
 	}
 
 	private void processFormulaToJson(final JsonObject jo, final MappingField field, final Document doc) throws NotesException {
 		Vector<?> result = doc.getParentDatabase().getParent().evaluate(field.getFormula(), doc);
 		field.getType().processValuesToJsonObject(result, jo, field.getJsonName(), this.context);
-		NotesObjectRecycler.recycleObjects(result.toArray());
+		NotesObjectRecycler.recycleList(result);
+		result.clear();
 	}
 
 	private void processItem(final JsonObject jo, final Item item, final MappingField mappingField) throws NotesException {

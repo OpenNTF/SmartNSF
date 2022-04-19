@@ -1,8 +1,10 @@
 package org.openntf.xrest.xsp.exec.convertor.datatypes;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.openntf.xrest.xsp.exec.Context;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
@@ -13,7 +15,9 @@ public class DefaultMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
-		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName, context);
+		Vector<?> items = item.getValues();
+		processValuesToJsonObject(items, jo, jsonPropertyName, context);
+		NotesObjectRecycler.recycleList(items);
 	}
 
 	@Override

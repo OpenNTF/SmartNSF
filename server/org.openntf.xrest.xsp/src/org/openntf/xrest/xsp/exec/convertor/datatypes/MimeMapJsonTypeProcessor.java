@@ -37,7 +37,7 @@ import lotus.domino.Stream;
 
 public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
-	private static final String ATTACHMENT_HEADER_VALUE = "attachment";
+	protected static final String ATTACHMENT_HEADER_VALUE = "attachment";
 	private static final String BINARY_HEADER_VALUE = "binary";
 	private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
@@ -116,6 +116,14 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField, Context context) throws NotesException {
 		String fieldName = mfField.getNotesFieldName();
 		String value = jso.getAsString(mfField.getJsonName());
+		if (StringUtil.isEmpty(value)) {
+			if (doc.hasItem(fieldName)) {
+				doc.removeItem(fieldName);
+				RichTextItem rti = doc.createRichTextItem(fieldName);
+				rti.recycle();
+				return;
+			}
+		}
 		Stream stream = doc.getParentDatabase().getParent().createStream();
 		stream.writeText(value);
 		Item notesItem = doc.getFirstItem(fieldName);
@@ -335,7 +343,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	private String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
+	protected String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_DISPOSITION);
 		if (mimeheader != null) {
 			String val = mimeheader.getHeaderValAndParams(false, true);
@@ -345,7 +353,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	private String getContentHeaderValue(final MIMEEntity entity) throws NotesException {
+	protected String getContentHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader != null) {
 			String contenType = mimeHeader.getHeaderVal();

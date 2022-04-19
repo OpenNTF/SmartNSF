@@ -25,7 +25,9 @@ public class DateTimeArrayMapJsonTypeProcessor extends AbstractDateTimeToISODate
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
-		processValuesToJsonObject(item.getValues(), jo, jsonPropertyName, context);
+		Vector<?> items = item.getValues();
+		processValuesToJsonObject(items, jo, jsonPropertyName, context);
+		NotesObjectRecycler.recycleList(items);
 	}
 
 	@Override

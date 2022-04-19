@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
+import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.StreamUtil;
@@ -27,26 +28,61 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		return processor;
 	}
 
-	public void addAttachment(final Document doc, final String fieldName, final String filePath, final String fileName)
-			throws NotesException {
+	public void addAttachment(final Document doc, final String fieldName, final String filePath, final String fileName,
+			AttachmentUpdateType updateType) throws NotesException {
 		Item notesItem = doc.getFirstItem(fieldName);
 
-		if (notesItem != null && notesItem.getType() == Item.RICHTEXT) {
-			addFileToRT((RichTextItem) notesItem, filePath, fileName);
-		} else {
-			MIMEEntity entity = doc.getMIMEEntity(fieldName);
-			if (entity == null) {
+		if (updateType == AttachmentUpdateType.REPLACE_ALL) {
+			if (notesItem != null) {
 				doc.removeItem(fieldName);
-				entity = doc.createMIMEEntity(fieldName);
+				doc.save(true, false, true);
 			} else {
-				MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
-				if (mimeHeader == null || !MULTIPART_MIXED.equals(mimeHeader.getHeaderVal())) {
-					entity = entity.createParentEntity();
+				MIMEEntity entity = doc.getMIMEEntity(fieldName);
+				if (entity != null) {
+					entity.remove();
+					doc.save(true, false, true);
 				}
 			}
-			checkMulitPartMixedHeaders(entity);
-			Session ses = doc.getParentDatabase().getParent();
-			addFileToMime(entity, ses, filePath, fileName);
+			RichTextItem rtItem = doc.createRichTextItem(fieldName);
+			addFileToRT(rtItem, filePath, fileName);
+		} else {
+			if (notesItem != null && notesItem.getType() == Item.RICHTEXT) {
+				RichTextItem rtItem = (RichTextItem) notesItem;
+				removeExistingAttachmentFromRT(rtItem, fileName);
+				addFileToRT(rtItem, filePath, fileName);
+			} else {
+				MIMEEntity entity = doc.getMIMEEntity(fieldName);
+				if (entity == null) {
+					doc.removeItem(fieldName);
+					entity = doc.createMIMEEntity(fieldName);
+				} else {
+					MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
+					if (mimeHeader == null || !MULTIPART_MIXED.equals(mimeHeader.getHeaderVal())) {
+						entity = entity.createParentEntity();
+					}
+				}
+				checkMulitPartMixedHeaders(entity);
+				Session ses = doc.getParentDatabase().getParent();
+				removeExistingAttachmentFromMime(entity, fileName);
+				addFileToMime(entity, ses, filePath, fileName);
+			}
+		}
+	}
+
+	private void removeExistingAttachmentFromMime(MIMEEntity entity, String fileName) throws NotesException {
+		MIMEEntity toReplace = findAttachment(entity, fileName);
+		if (toReplace != null) {
+			toReplace.remove();
+		}
+	}
+
+	private void removeExistingAttachmentFromRT(RichTextItem rtItem, String fileName) throws NotesException {
+		for (Object emboObject : rtItem.getEmbeddedObjects()) {
+			EmbeddedObject embo = (EmbeddedObject) emboObject;
+			if (embo.getName().equalsIgnoreCase(fileName)) {
+				embo.remove();
+			}
+
 		}
 	}
 
@@ -55,7 +91,8 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		processSingleAttachment2Mime(entity, ses, fileName, filePath);
 	}
 
-	private void addFileToRT(final RichTextItem notesItem, final String serverFilePath, final String fileName) throws NotesException {
+	private void addFileToRT(final RichTextItem notesItem, final String serverFilePath, final String fileName)
+			throws NotesException {
 		File serverFile = new File(serverFilePath);
 		File fileNew = new File(serverFile.getParentFile().getAbsolutePath() + File.separator + fileName);
 		try {
@@ -84,7 +121,8 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 
 	}
 
-	public MIMEEntity getMimeAttachment(final Document doc, final String fieldName, final String fileName) throws NotesException {
+	public MIMEEntity getMimeAttachment(final Document doc, final String fieldName, final String fileName)
+			throws NotesException {
 		MIMEEntity entity = doc.getMIMEEntity(fieldName);
 		if (entity == null) {
 			return null;
@@ -100,7 +138,7 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 			Vector<EmbeddedObject> allEmbeddedObject = ((RichTextItem) notesItem).getEmbeddedObjects();
 			for (EmbeddedObject emb : allEmbeddedObject) {
 				String name = emb.getName();
-				if (name.equalsIgnoreCase(fileName)|| emb.getSource().equalsIgnoreCase(fileName)) {
+				if (name.equalsIgnoreCase(fileName) || emb.getSource().equalsIgnoreCase(fileName)) {
 					embo = emb;
 				} else {
 					emb.recycle();
@@ -111,9 +149,10 @@ public class AttachmentProcessor extends MimeMapJsonTypeProcessor {
 		}
 		return embo;
 	}
+
 	public String storeFileUploadStream(InputStream stream, String fileName) {
 		File tempDir = buildTempDir();
-		File tempFile = new File(tempDir,fileName);
+		File tempFile = new File(tempDir, fileName);
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(tempFile);

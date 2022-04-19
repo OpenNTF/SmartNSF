@@ -12,6 +12,7 @@ import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonJavaArray;
 
 import lotus.domino.Database;
@@ -31,6 +32,9 @@ public class AllByKey extends AbstractAllByKeyViewDatabaseStrategy implements St
 			viewAccess.setAutoUpdate(false);
 			List<Document> docs = new ArrayList<Document>();
 			String varValue = getKeyValue(context);
+			if (StringUtil.isEmpty(varValue)) {
+				throw new ExecutorException(400,"KeyValue for strategy should not be blank","", "getmodel");
+			}
 
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, isExact(context));
 			Document docNext = dcl.getFirstDocument();
