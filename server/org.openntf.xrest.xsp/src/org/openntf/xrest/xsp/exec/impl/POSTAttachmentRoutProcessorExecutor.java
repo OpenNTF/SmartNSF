@@ -15,6 +15,7 @@ import org.openntf.xrest.xsp.exec.convertor.datatypes.AttachmentProcessor;
 import org.openntf.xrest.xsp.exec.datacontainer.AttachmentDataContainer;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
 import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
+import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
@@ -60,6 +61,7 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 	@Override
 	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
 		System.out.println(context.getFacesContext().getExternalContext().getContext().getClass().getName());
+		AttachmentUpdateType updateType = ((SelectAttachment) this.routeProcessor.getStrategyModel()).getUpdateType();
 		HttpServletRequest request = context.getRequest();
 		AttachmentProcessor attachmentProcessor = AttachmentProcessor.getInstance();
 		AttachmentDataContainer<?> adc = (AttachmentDataContainer<?>) container;
@@ -67,7 +69,7 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 		try {
 			String file = attachmentProcessor.storeFileUploadStream(request.getInputStream(), adc.getFileName());
 			attachmentProcessor.addAttachment(adc.getDocumentDataContainer().document, adc.getFieldName(), file,
-					adc.getFileName());
+					adc.getFileName(), updateType);
 			FileUtils.deleteDirectory(new File(file).getParentFile());
 		} catch (Exception e) {
 			throw new ExecutorException(500, e, path, "executeMethodSpecific");

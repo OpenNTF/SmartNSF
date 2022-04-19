@@ -34,8 +34,8 @@ public class DocumentListDataContainer extends AbstractDataContainer<List<Docume
 
 	@Override
 	protected void executeCleanUp() {
-		NotesObjectRecycler.recycle(documents.toArray(new Document[documents.size()]));
-		
+		NotesObjectRecycler.recycleList(documents);
+		documents.clear();
 	}
 
 }

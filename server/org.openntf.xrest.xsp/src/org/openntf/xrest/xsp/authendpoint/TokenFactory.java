@@ -56,6 +56,7 @@ public class TokenFactory {
 			if (tokenConfiguration.containsKey(serverFQDN.toLowerCase())) {
 				return tokenConfiguration.get(serverFQDN.toLowerCase());
 			}
+			nStart = serverFQDN.indexOf(".");
 		}
 		return null;
 	}

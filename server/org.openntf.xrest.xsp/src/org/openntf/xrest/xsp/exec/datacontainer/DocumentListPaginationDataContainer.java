@@ -52,7 +52,8 @@ public class DocumentListPaginationDataContainer extends AbstractDataContainer<L
 
 	@Override
 	protected void executeCleanUp() {
-		NotesObjectRecycler.recycle(documents.toArray(new Document[documents.size()]));
+		NotesObjectRecycler.recycleList(documents);
+		documents.clear();
 	}
 
 }
