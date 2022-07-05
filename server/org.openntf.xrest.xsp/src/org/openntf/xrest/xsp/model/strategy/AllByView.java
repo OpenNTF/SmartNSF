@@ -41,13 +41,25 @@ public class AllByView extends AbstractViewDatabaseStrategy
 	public JsonArray buildResponse(final Context context, final RouteProcessor routeProcessor,
 			final DataContainer<?> dc) throws NotesException {
 		Document2JsonConverter d2jc = new Document2JsonConverter(routeProcessor, context);
-		JsonJavaArray jsa = new JsonJavaArray();	
-		((DocumentListDataContainer)dc).getView().setAutoUpdate(false);
-		ViewNavigator vnav = ((DocumentListDataContainer)dc).getView().createViewNav();
-		vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES + ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
-		ViewEntry nextEntry = vnav.getFirst();
-		vnav.setCacheGuidance(Integer.MAX_VALUE, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
-		while (nextEntry != null) {
+		JsonJavaArray jsa = new JsonJavaArray();
+		View viewCurrent = ((DocumentListDataContainer)dc).getView();
+		viewCurrent.setAutoUpdate(false);
+		//ViewNavigator vnav = ((DocumentListDataContainer)dc).getView().createViewNav();
+		//vnav.setEntryOptions(ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES + ViewNavigator.VN_ENTRYOPT_NOCOUNTDATA);
+		//ViewEntry nextEntry = vnav.getFirst();
+		//vnav.setCacheGuidance(Integer.MAX_VALUE, ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
+		Document docNext = viewCurrent.getFirstDocument();
+		while (docNext != null) {
+			Document docProcess = docNext;
+			docNext = viewCurrent.getNextDocument(docProcess);
+			if (docProcess.isValid() && !docProcess.isDeleted()) {
+				JsonObject jso =  d2jc.buildJsonFromDocument(docProcess);
+				jsa.add(jso);
+				
+			}
+			NotesObjectRecycler.recycle(docProcess);
+
+			/*
 			ViewEntry entryCurrent = nextEntry;
 			nextEntry = vnav.getNext(entryCurrent);
 			if (entryCurrent.isValid()) {
@@ -56,9 +68,11 @@ public class AllByView extends AbstractViewDatabaseStrategy
 				jsa.add(jso);
 				NotesObjectRecycler.recycle(doc);
 			}
+			
 			NotesObjectRecycler.recycle(entryCurrent);
+			*/
 		}
-		NotesObjectRecycler.recycle(vnav);
+		//NotesObjectRecycler.recycle(vnav);
 		return jsa;
 	}
 }
