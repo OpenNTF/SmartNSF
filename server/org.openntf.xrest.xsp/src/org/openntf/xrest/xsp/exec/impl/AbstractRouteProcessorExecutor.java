@@ -21,34 +21,27 @@ import lotus.domino.Document;
 
 public abstract class AbstractRouteProcessorExecutor implements RouteProcessorExecutor {
 
-	protected final Context context;
 
-	protected abstract void submitValues() throws IOException, JsonException, ExecutorException;
 
-	protected abstract void preSubmitValues() throws ExecutorException;
-
-	protected final RouteProcessor routeProcessor;
 	protected final String path;
-	protected DataContainer<?> dataContainer;
 
-	public AbstractRouteProcessorExecutor(final Context context, final RouteProcessor routeProcessor, final String path) {
+	public AbstractRouteProcessorExecutor(final String path) {
 		this.path = path;
-		this.routeProcessor = routeProcessor;
-		this.context = context;
 	}
 
 	@Override
-	public void execute() {
+	public void execute(Context context, RouteProcessor rp) {
 		try {
-			checkAccess();
-			validateRequest();
-			preLoadDocument();
-			loadDocument();
-			postNewDocument();
-			postLoadDocument();
-			executeMethodeSpecific(this.context, this.dataContainer);
-			preSubmitValues();
-			submitValues();
+			checkAccess(context,rp);
+			validateRequest(context,rp);
+			preLoadDocument(context,rp);
+			DataContainer<?> dataContainer = loadDocument(context,rp);
+			postNewDocument(context,rp, dataContainer);
+			postLoadDocument(context,rp, dataContainer);
+			executeMethodeSpecific(context, dataContainer, rp);
+			preSubmitValues(context,rp, dataContainer);
+			submitValues(context,rp, dataContainer);
+			dataContainer.cleanUp();
 		} catch (ExecutorException ex) {
 			try {
 				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse(), context.traceEnabled());
@@ -70,7 +63,10 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	private void checkAccess() throws ExecutorException {
+	protected abstract void submitValues(Context context,RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws IOException, JsonException, ExecutorException;
+
+	protected abstract void preSubmitValues(Context context,RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException;
+	private void checkAccess(Context context, RouteProcessor routeProcessor) throws ExecutorException {
 		Closure<?> clAllowedAccess = routeProcessor.getAllowedAccessClosure();
 		if (clAllowedAccess != null) {
 			try {
@@ -100,7 +96,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		throw new ExecutorException(403, "Access denied for user " + context.getUserName(), path, "checkAccess");
 	}
 
-	private void validateRequest() throws ExecutorException {
+	private void validateRequest(Context context, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.VALIDATE);
 			if (cl != null) {
@@ -113,7 +109,7 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	private void preLoadDocument() throws ExecutorException {
+	private void preLoadDocument(Context context, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_LOAD_DOCUMENT);
 			if (cl != null) {
@@ -126,11 +122,11 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	private void loadDocument() throws ExecutorException {
-		dataContainer = routeProcessor.getDataContainer(context);
+	private DataContainer<?> loadDocument(Context context, RouteProcessor routeProcessor) throws ExecutorException {
+		return routeProcessor.getDataContainer(context);
 	}
 
-	private void postNewDocument() throws ExecutorException {
+	private void postNewDocument(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException {
 		if (dataContainer.isList() || dataContainer.isBinary()) {
 			return;
 		}
@@ -147,7 +143,10 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	private void postLoadDocument() throws ExecutorException {
+	private void postLoadDocument(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException {
+		if (dataContainer.isList()) {
+			return;
+		}
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_LOAD_DOCUMENT);
 			if (cl != null) {
@@ -160,15 +159,12 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 		}
 	}
 
-	protected abstract void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException;
+	protected abstract void executeMethodeSpecific(Context context, DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException;
 
-	public void setDataContainer(final DataContainer<?> container) {
+/*	public void setDataContainer(final DataContainer<?> container) {
 		this.dataContainer = container;
 	}
-
-	protected RouteProcessor getRouteProcessor() {
-		return routeProcessor;
-	}
+	*/
 
 	protected String getPath() {
 		return path;

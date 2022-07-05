@@ -36,9 +36,8 @@ public class ViewEntryListDataContainer extends AbstractDataContainer<List<List<
 		if (entries == null) {
 			return;
 		}
-		for(List<Object> columns: entries) {
+		for (List<Object> columns : entries) {
 			NotesObjectRecycler.recycleObjects(columns);
 		}
 	}
-
 }

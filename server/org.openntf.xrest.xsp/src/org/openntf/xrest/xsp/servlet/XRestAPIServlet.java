@@ -52,6 +52,7 @@ import org.openntf.xrest.xsp.utils.NotesContextFactory;
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.JsonJavaArray;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
@@ -258,14 +259,23 @@ public class XRestAPIServlet extends HttpServlet {
 					&& req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-					JsonJavaObject json = (JsonJavaObject) JsonParser.fromJson(factory, req.getReader());
-					context.addJsonPayload(json);
+					Object pl =  JsonParser.fromJson(factory, req.getReader());
+					if (pl instanceof JsonJavaObject) {
+						context.addJsonPayload((JsonJavaObject)pl);
+					} else {
+						context.addJsonPayloadAsArray((JsonJavaArray) pl);
+					}
 				} catch (JsonException jE) {
 					jE.printStackTrace();
 				}
 			}
 			RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
-			executor.execute();
+			executor.execute(context, rp);
+			try {
+				context.cleanUp();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			return timer;
 		} else {
 			throw new ExecutorException(500, "Path not found", path, "SERVLET");

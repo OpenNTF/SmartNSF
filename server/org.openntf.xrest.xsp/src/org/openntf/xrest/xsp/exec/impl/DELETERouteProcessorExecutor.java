@@ -20,27 +20,27 @@ import lotus.domino.NotesException;
 
 public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
-	public DELETERouteProcessorExecutor(final Context context, final RouteProcessor routerProcessor, final String path) {
-		super(context, routerProcessor, path);
+	public DELETERouteProcessorExecutor( final String path) {
+		super( path);
 	}
 
 	@Override
-	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container) throws ExecutorException {
-		preDelete(context, container);
+	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
+		preDelete(context, container,routeProcessor);
 		List<String> deletedDocuments;
-		Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_DELETE);
+		Closure<?> cl = routeProcessor.getEventClosure(EventType.ALT_DOCUMENT_DELETE);
 		if (cl != null) {
 			deletedDocuments = executeAlternativeDelete(cl, context, container);
 		} else {
-			deletedDocuments = executeDelteDocuments(container);
+			deletedDocuments = executeDeleteDocuments(container);
 		}
 		JsonObject jso = new JsonJavaObject();
 		jso.putJsonProperty("deleted", deletedDocuments);
-		setResultPayload(jso);
+		setResultPayload(jso, context, routeProcessor);
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> executeDelteDocuments(final DataContainer<?> container) throws ExecutorException {
+	private List<String> executeDeleteDocuments(final DataContainer<?> container) throws ExecutorException {
 		List<String> unids = new ArrayList<String>();
 		try {
 			if (container.isList()) {
@@ -59,9 +59,9 @@ public class DELETERouteProcessorExecutor extends AbstractJsonRouteProcessorExec
 		return unids;
 	}
 
-	private void preDelete(final Context context, final DataContainer<?> container) throws ExecutorException {
+	private void preDelete(final Context context, final DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_DELETE);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_DELETE);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}

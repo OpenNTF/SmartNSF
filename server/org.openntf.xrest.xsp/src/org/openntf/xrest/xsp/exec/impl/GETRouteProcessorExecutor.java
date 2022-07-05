@@ -7,14 +7,14 @@ import org.openntf.xrest.xsp.model.RouteProcessor;
 
 public class GETRouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
-	public GETRouteProcessorExecutor(Context context, RouteProcessor routerProcessor, String path) {
-		super(context, routerProcessor, path);
+	public GETRouteProcessorExecutor(String path) {
+		super(path);
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(Context context, DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			setResultPayload(getRouteProcessor().getStrategyModel().buildResponse(context, getRouteProcessor(), container));
+			setResultPayload(routeProcessor.getStrategyModel().buildResponse(context, routeProcessor, container), context, routeProcessor);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, getPath(), "buildResult");
 		}

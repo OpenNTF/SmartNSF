@@ -97,8 +97,8 @@ public class GetByUNID extends AbstractDatabaseStrategy implements StrategyModel
 	@Override
 	public JsonObject buildResponse(final Context context, final RouteProcessor routeProcessor, final DataContainer<?> dc)
 			throws NotesException {
-		Document2JsonConverter d2j = new Document2JsonConverter(((DocumentDataContainer) dc).getData(), routeProcessor, context);
-		return d2j.buildJsonFromDocument();
+		Document2JsonConverter d2j = new Document2JsonConverter( routeProcessor, context);
+		return d2j.buildJsonFromDocument(((DocumentDataContainer) dc).getData());
 	}
 
 }

@@ -14,20 +14,16 @@ import com.ibm.commons.util.io.json.JsonException;
 
 public class CustomRouteProcessorExecutor implements RouteProcessorExecutor {
 
-	private final Context context;
-	private final RouteProcessor rp;
 	private final String path;
 
-	public CustomRouteProcessorExecutor(Context context, RouteProcessor rp, String path) {
-		this.context = context;
-		this.rp = rp;
+	public CustomRouteProcessorExecutor( String path) {
 		this.path = path;
 	}
 
 	@Override
-	public void execute() {
+	public void execute(Context context, RouteProcessor routeProcessor) {
 		try {
-			Custom model = (Custom) rp.getStrategyModel();
+			Custom model = (Custom) routeProcessor.getStrategyModel();
 			CustomRestHandler handler = model.getCustomRestHandler();
 			handler.processCall(context, path);
 		} catch (ExecutorException ex) {

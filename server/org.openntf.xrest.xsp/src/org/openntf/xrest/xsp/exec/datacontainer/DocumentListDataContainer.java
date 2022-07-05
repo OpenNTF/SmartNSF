@@ -2,7 +2,7 @@ package org.openntf.xrest.xsp.exec.datacontainer;
 
 import java.util.List;
 
-import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
+import com.ibm.commons.util.NotImplementedException;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
@@ -10,16 +10,14 @@ import lotus.domino.View;
 
 public class DocumentListDataContainer extends AbstractDataContainer<List<Document>> {
 
-	private final List<Document> documents;
 
-	public DocumentListDataContainer(List<Document> docs, View view, Database db) {
+	public DocumentListDataContainer( View view, Database db) {
 		super(view,db);
-		documents = docs;
 	}
 
 	@Override
 	public List<Document> getData() {
-		return documents;
+		throw new NotImplementedException("Function is not Implemented");
 	}
 
 	@Override
@@ -34,8 +32,6 @@ public class DocumentListDataContainer extends AbstractDataContainer<List<Docume
 
 	@Override
 	protected void executeCleanUp() {
-		NotesObjectRecycler.recycleList(documents);
-		documents.clear();
 	}
 
 }

@@ -28,9 +28,9 @@ public class DocumentListPaged2JsonConverter {
 		jso.putJsonProperty("count", container.getCount());
 		jso.putJsonProperty("total", container.getMax());
 		JsonJavaArray jsa = new JsonJavaArray();
+		Document2JsonConverter d2jc = new Document2JsonConverter( routeProcessor, context);
 		for (Document doc : container.getData()) {
-			Document2JsonConverter d2jc = new Document2JsonConverter(doc, routeProcessor, context);
-			JsonObject jsoEntrie =  d2jc.buildJsonFromDocument();
+			JsonObject jsoEntrie =  d2jc.buildJsonFromDocument(doc);
 			jsa.add(jsoEntrie);
 		}
 		jso.putJsonProperty("entries", jsa);

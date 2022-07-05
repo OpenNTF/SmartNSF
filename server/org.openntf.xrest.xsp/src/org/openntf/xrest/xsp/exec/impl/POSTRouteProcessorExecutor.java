@@ -18,26 +18,26 @@ import lotus.domino.NotesException;
 
 public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecutor {
 
-	public POSTRouteProcessorExecutor(final Context context, final RouteProcessor routeProcessor, final String path) {
-		super(context, routeProcessor, path);
+	public POSTRouteProcessorExecutor(final String path) {
+		super(path);
 	}
 
 	@Override
-	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
 		if (container.isList()) {
-			buildResultMapping(context, container);
+			buildResultMapping(context, container,routeProcessor);
 		} else {
 			DocumentDataContainer docContainer = (DocumentDataContainer) container;
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.ALT_DOCUMENT_UPDATE);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.ALT_DOCUMENT_UPDATE);
 			if (cl != null) {
 				executeAlternateDocumentUpdate(cl, context, docContainer);
 			} else {
-				executeDocumentUpdate(context, docContainer);
+				executeDocumentUpdate(context, docContainer,routeProcessor);
 			}
-			executePreSave(context, docContainer);
+			executePreSave(context, docContainer,routeProcessor);
 			executeDocumentSave(docContainer);
-			executePostSave(context, docContainer);
-			buildResultMapping(context, docContainer);
+			executePostSave(context, docContainer,routeProcessor);
+			buildResultMapping(context, docContainer,routeProcessor);
 		}
 
 	}
@@ -52,9 +52,9 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 		}
 	}
 
-	private void executePreSave(final Context context, final DocumentDataContainer container) throws ExecutorException {
+	private void executePreSave(final Context context, final DocumentDataContainer container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_SAVE_DOCUMENT);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SAVE_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl, context, container.getData());
 			}
@@ -66,11 +66,11 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 
 	}
 
-	private void executeDocumentUpdate(final Context context, final DocumentDataContainer container) throws ExecutorException {
+	private void executeDocumentUpdate(final Context context, final DocumentDataContainer container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
 			Document doc = container.getData();
 			JsonJavaObject jso = (JsonJavaObject) context.getJsonPayload();
-			Json2DocumentConverter converter = new Json2DocumentConverter(doc, getRouteProcessor(), jso, context);
+			Json2DocumentConverter converter = new Json2DocumentConverter(doc, routeProcessor, jso, context);
 			converter.buildDocumentFromJson();
 		} catch (NotesException e) {
 			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, getPath(), "applyPayLoad");
@@ -86,9 +86,9 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 		}
 	}
 
-	private void executePostSave(final Context context, final DocumentDataContainer container) throws ExecutorException {
+	private void executePostSave(final Context context, final DocumentDataContainer container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.POST_SAVE_DOCUMENT);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_SAVE_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}
@@ -100,9 +100,9 @@ public class POSTRouteProcessorExecutor extends AbstractJsonRouteProcessorExecut
 
 	}
 
-	private void buildResultMapping(final Context context, final DataContainer<?> container) throws ExecutorException {
+	private void buildResultMapping(final Context context, final DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			setResultPayload(getRouteProcessor().getStrategyModel().buildResponse(context, getRouteProcessor(), container));
+			setResultPayload(routeProcessor.getStrategyModel().buildResponse(context, routeProcessor, container), context,routeProcessor);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, getPath(), "buildResult");
 		}

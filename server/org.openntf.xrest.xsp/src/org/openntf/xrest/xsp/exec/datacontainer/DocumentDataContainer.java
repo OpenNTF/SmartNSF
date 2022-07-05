@@ -6,11 +6,12 @@ import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.View;
 
-public class DocumentDataContainer extends AbstractDataContainer<Document>  {
+public class DocumentDataContainer extends AbstractDataContainer<Document> {
 
 	public final Document document;
+
 	public DocumentDataContainer(Document doc, View view, Database db) {
-		super(view,db);
+		super(view, db);
 		document = doc;
 	}
 
@@ -31,8 +32,7 @@ public class DocumentDataContainer extends AbstractDataContainer<Document>  {
 
 	@Override
 	protected void executeCleanUp() {
-		NotesObjectRecycler.recycle(document);		
+		NotesObjectRecycler.recycle(document);
 	}
 
-	
 }

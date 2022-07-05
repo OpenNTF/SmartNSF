@@ -22,15 +22,13 @@ public class Document2JsonConverter {
 
 	private final Context context;
 	private final RouteProcessor routeProcessor;
-	private final Document doc;
 
-	public Document2JsonConverter(final Document doc, final RouteProcessor routeProcessor, final Context context) {
+	public Document2JsonConverter(final RouteProcessor routeProcessor, final Context context) {
 		this.context = context;
 		this.routeProcessor = routeProcessor;
-		this.doc = doc;
 	}
 
-	public JsonObject buildJsonFromDocument() throws NotesException {
+	public JsonObject buildJsonFromDocument(Document doc) throws NotesException {
 		JsonObject jo = new JsonJavaObject();
 		if (null == doc) {
 			return jo;

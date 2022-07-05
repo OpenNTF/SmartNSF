@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.xrest.xsp.names.IdentityMapProvider;
 
+import com.ibm.commons.util.io.json.JsonArray;
 import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.Database;
@@ -27,7 +28,7 @@ public interface Context {
 	Session getSessionAsSignerFullAdmin();
 
 	Database getDatabase();
-	
+
 	Database getDatabaseFromStrategy();
 
 	String getUserName();
@@ -37,6 +38,8 @@ public interface Context {
 	List<String> getRoles();
 
 	JsonObject getJsonPayload();
+
+	JsonArray getJsonPayloadAsArray();
 
 	Map<String, String> getRouterVariables();
 
@@ -55,10 +58,12 @@ public interface Context {
 	void setResultPayload(Object resultPayLoad);
 
 	Object getResultPayload();
-	
+
 	boolean traceEnabled();
-	
+
 	FacesContext getFacesContext();
-	
+
 	IdentityMapProvider getIdentityMapProvider();
+
+	public void cleanUp();
 }

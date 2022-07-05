@@ -15,28 +15,28 @@ public class RouteProcessorExecutorFactory {
 	}
 
 	public static RouteProcessorExecutor getExecutor(String method, String path, Context context, RouteProcessor rp) {
-		if(rp.getStrategyValue() == Strategy.CUSTOM) {
-			return new CustomRouteProcessorExecutor(context, rp, path);
+		if (rp.getStrategyValue() == Strategy.CUSTOM) {
+			return new CustomRouteProcessorExecutor(path);
 		}
 		if ("GET".equals(method)) {
 			if (rp.getStrategyValue() == Strategy.ATTACHMENT) {
-				return new GETAttachmentRouteProcessorExecutor(context, rp, path);
+				return new GETAttachmentRouteProcessorExecutor(path);
 			}
-			return new GETRouteProcessorExecutor(context, rp, path);
+			return new GETRouteProcessorExecutor(path);
 		}
 		if ("POST".equalsIgnoreCase(method)) {
 			if (Strategy.ATTACHMENT == rp.getStrategyValue()) {
-				return new POSTAttachmentRoutProcessorExecutor(context,rp,path);
+				return new POSTAttachmentRoutProcessorExecutor(path);
 			}
-			return new POSTRouteProcessorExecutor(context, rp, path);
+			return new POSTRouteProcessorExecutor(path);
 		}
 		if ("PUT".equalsIgnoreCase(method)) {
-			return new POSTRouteProcessorExecutor(context, rp, path);
+			return new POSTRouteProcessorExecutor(path);
 		}
 		if ("DELETE".equalsIgnoreCase(method)) {
-			return new DELETERouteProcessorExecutor(context, rp, path);
+			return new DELETERouteProcessorExecutor(path);
 		}
-		
+
 		return null;
 	}
 

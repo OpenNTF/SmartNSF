@@ -18,6 +18,7 @@ import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
 import org.openntf.xrest.xsp.model.AuthorizationEndpointDefinition;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.utils.NotesContextFactory;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
@@ -65,6 +66,11 @@ public class AuthorizationHandler implements CommandHandler {
 			Token token = this.tokenFactory.buildLTPAToken(userName.get(), aep.getSsoDomainValue());
 			JsonObject result = buildResult(token, userName.get());
 			JsonPayloadProcessor.INSTANCE.processJsonPayload(result, resp);
+			try {
+				NotesObjectRecycler.recycle(nc.getCurrentDatabase(),nc.getCurrentSession(),nc.getSessionAsSigner(),nc.getSessionAsSignerFullAdmin());
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | NotesException | SecurityException | JsonException
 				| IOException e) {

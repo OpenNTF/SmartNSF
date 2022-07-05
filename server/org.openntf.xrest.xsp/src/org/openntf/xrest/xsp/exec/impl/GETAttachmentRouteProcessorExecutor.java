@@ -23,12 +23,12 @@ import lotus.domino.NotesException;
 
 public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
-	public GETAttachmentRouteProcessorExecutor(final Context context, final RouteProcessor routeProcessor, final String path) {
-		super(context, routeProcessor, path);
+	public GETAttachmentRouteProcessorExecutor(final String path) {
+		super(path);
 	}
 
 	@Override
-	protected void submitValues() throws IOException, JsonException, ExecutorException {
+	protected void submitValues(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws IOException, JsonException, ExecutorException {
 		HttpServletResponse response = context.getResponse();
 		AttachmentDataContainer<?> adc = (AttachmentDataContainer<?>) dataContainer;
 		try {
@@ -46,11 +46,11 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 	}
 
 	@Override
-	protected void preSubmitValues() throws ExecutorException {
+	protected void preSubmitValues(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException {
 	}
 
 	@Override
-	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(final Context context, final DataContainer<?> container, RouteProcessor routeProcessor) throws ExecutorException {
 	}
 
 	private InputStream getInputStream(final AttachmentDataContainer<?> adc) throws NotesException {
