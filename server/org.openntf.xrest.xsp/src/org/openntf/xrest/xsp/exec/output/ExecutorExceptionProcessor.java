@@ -38,7 +38,6 @@ public enum ExecutorExceptionProcessor {
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
 		JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, jso, false);
 		os.close();
-
 	}
 
 	private JsonObject buildJsonErrorFromException(Exception ex) {

@@ -26,6 +26,7 @@ public class CustomRouteProcessorExecutor implements RouteProcessorExecutor {
 			Custom model = (Custom) routeProcessor.getStrategyModel();
 			CustomRestHandler handler = model.getCustomRestHandler();
 			handler.processCall(context, path);
+			context.cleanUp();
 		} catch (ExecutorException ex) {
 			try {
 				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse(), context.traceEnabled());

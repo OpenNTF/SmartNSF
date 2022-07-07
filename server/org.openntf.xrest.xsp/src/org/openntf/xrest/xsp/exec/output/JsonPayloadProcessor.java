@@ -21,10 +21,5 @@ public enum JsonPayloadProcessor {
 		Writer os = new OutputStreamWriter(resp.getOutputStream(), HttpServiceConstants.ENCODING_UTF8);
 		JsonGenerator.toJson(JsonJavaFactory.instanceEx, os, payload, false);
 		os.close();
-		try {
-			resp.getOutputStream().close();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 }

@@ -31,17 +31,19 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 
 	@Override
 	public void execute(Context context, RouteProcessor rp) {
+		DataContainer<?> dataContainer = null;
 		try {
 			checkAccess(context,rp);
 			validateRequest(context,rp);
 			preLoadDocument(context,rp);
-			DataContainer<?> dataContainer = loadDocument(context,rp);
+			dataContainer = loadDocument(context,rp);
 			postNewDocument(context,rp, dataContainer);
 			postLoadDocument(context,rp, dataContainer);
 			executeMethodeSpecific(context, dataContainer, rp);
 			preSubmitValues(context,rp, dataContainer);
 			submitValues(context,rp, dataContainer);
 			dataContainer.cleanUp();
+			dataContainer = null;
 		} catch (ExecutorException ex) {
 			try {
 				ExecutorExceptionProcessor.INSTANCE.processExecutorException(ex, context.getResponse(), context.traceEnabled());
@@ -59,6 +61,10 @@ public abstract class AbstractRouteProcessorExecutor implements RouteProcessorEx
 				ExecutorExceptionProcessor.INSTANCE.processGeneralException(500, ex, context.getResponse());
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		} finally {
+			if (dataContainer != null) {
+				dataContainer.cleanUp();
 			}
 		}
 	}

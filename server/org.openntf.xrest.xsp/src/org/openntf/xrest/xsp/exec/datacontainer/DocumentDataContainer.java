@@ -8,7 +8,7 @@ import lotus.domino.View;
 
 public class DocumentDataContainer extends AbstractDataContainer<Document> {
 
-	public final Document document;
+	public Document document;
 
 	public DocumentDataContainer(Document doc, View view, Database db) {
 		super(view, db);
@@ -33,6 +33,7 @@ public class DocumentDataContainer extends AbstractDataContainer<Document> {
 	@Override
 	protected void executeCleanUp() {
 		NotesObjectRecycler.recycle(document);
+		document = null;
 	}
 
 }

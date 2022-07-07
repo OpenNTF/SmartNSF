@@ -5,6 +5,7 @@ import java.util.Vector;
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.model.MappingField;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
@@ -46,6 +47,7 @@ public class Json2DocumentConverter {
 	private void processFormulaToDocument(JsonObject jo, MappingField field, Document doc) throws NotesException {
 		Vector<?> result = doc.getParentDatabase().getParent().evaluate(field.getFormula(), doc);
 		field.getType().processJsonValueToDocument(result,doc,field.getNotesFieldName(), this.context);
+		NotesObjectRecycler.recycleObjects(result);
 	}
 
 }
