@@ -28,6 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.openntf.xrest.xsp.command.CommandDefinition;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
@@ -45,6 +46,8 @@ import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
+import com.ibm.xsp.context.FacesContextEx;
+import com.ibm.xsp.context.FacesContextExImpl;
 import com.ibm.xsp.webapp.DesignerFacesServlet;
 
 import io.prometheus.client.Histogram;
@@ -85,14 +88,7 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 		FacesContext fc = null;
 		try {
 			if (router.useFacesContext()) {
-				fc = this.getFacesContext(req, resp);
-				// FacesContextEx exc = (FacesContextEx) fc;
-				// ApplicationEx ape = exc.getApplicationEx();
-				// if (ape.getController() == null) {
-				// FacesController controller = new FacesControllerFactoryImpl()
-				// .createFacesController(getServletContext());
-				// controller.init(null);
-				// }
+				fc = (FacesContextExImpl)this.getFacesContext(req, resp);
 			}
 			String method = req.getMethod();
 			String path = req.getPathInfo();
@@ -129,6 +125,14 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 				resp.getOutputStream().close();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			try {
+				if (fc != null) {
+					fc.responseComplete();
+					fc.release();
+				}
+			} catch (Exception ex) {
+				
 			}
 		}
 	}
@@ -189,8 +193,10 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 			if (req.getContentLength() > 0 && req.getContentType() != null
 					&& req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
+					String payloadValue = IOUtils.toString(req.getInputStream(), "UTF-8");
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-					Object pl = JsonParser.fromJson(factory, req.getReader());
+					
+					Object pl = JsonParser.fromJson(factory, payloadValue);
 					if (pl instanceof JsonJavaObject) {
 						context.addJsonPayload((JsonJavaObject) pl);
 					} else {
@@ -199,7 +205,7 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 				} catch (JsonException jE) {
 					jE.printStackTrace();
 				} finally {
-					req.getReader().close();
+					req.getInputStream().close();
 				}
 			}
 			RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);

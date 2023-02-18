@@ -61,7 +61,6 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 	@Override
 	protected void executeMethodeSpecific(Context context, DataContainer<?> container, RouteProcessor routeProcessor)
 			throws ExecutorException {
-		System.out.println(context.getFacesContext().getExternalContext().getContext().getClass().getName());
 		AttachmentUpdateType updateType = ((SelectAttachment) routeProcessor.getStrategyModel()).getUpdateType();
 		HttpServletRequest request = context.getRequest();
 		AttachmentProcessor attachmentProcessor = AttachmentProcessor.getInstance();

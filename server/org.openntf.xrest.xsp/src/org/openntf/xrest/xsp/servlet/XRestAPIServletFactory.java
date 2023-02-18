@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.IServletFactory;
 import com.ibm.designer.runtime.domino.adapter.ServletMatch;
+import com.ibm.xsp.extlib.model.DataAccessorSource.Container;
 
 public class XRestAPIServletFactory implements IServletFactory {
 
@@ -31,7 +32,6 @@ public class XRestAPIServletFactory implements IServletFactory {
 
 	@Override
 	public ServletMatch getServletMatch(String contextPath, String path) throws ServletException {
-
 		if (path.startsWith(SERVLET_PATH)) { // $NON-NLS-1$
 			int len = SERVLET_PATH.length(); // $NON-NLS-1$
 			String servletPath = path.substring(0, len);

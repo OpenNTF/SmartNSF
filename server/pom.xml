@@ -26,9 +26,8 @@
 		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-SNAPSHOT</kit.buildVersion>
 		<p2.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</p2.buildVersion>
 		<kit.result>snapshots</kit.result>
-		<kit.sourceCodeUrl>https://stash.openntf.org/rest/api/latest/projects/XRAPI/repos/org.openntf.xrestapi/archive?format=zip&amp;at=refs/heads/</kit.sourceCodeUrl>
-		<kit.sourceBranch>develop</kit.sourceBranch>
-
+		<kit.sourceCodeUrl>https://codeload.github.com/OpenNTF/SmartNSF/zip/</kit.sourceCodeUrl>
+		<kit.sourceBranch>master</kit.sourceBranch>
 	</properties>
 
 	<repositories>

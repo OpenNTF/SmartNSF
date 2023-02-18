@@ -30,7 +30,11 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SUBMIT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, dataContainer.getData());
+				if (dataContainer.isList()) {
+					DSLBuilder.callClosure(cl, context, null);					
+				} else {
+					DSLBuilder.callClosure(cl, context, dataContainer.getData());
+				}
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(e, path, "presubmit");

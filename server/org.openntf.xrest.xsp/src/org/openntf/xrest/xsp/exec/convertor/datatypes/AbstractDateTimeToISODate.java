@@ -30,6 +30,12 @@ public class AbstractDateTimeToISODate {
 	protected Date parse(final String input) throws java.text.ParseException {
 
 		String toParse = input;
+		
+		if (toParse.length() == 19) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			return df.parse(toParse);
+			
+		}
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
 
 		// this is zero time so we need to add that TZ indicator for
