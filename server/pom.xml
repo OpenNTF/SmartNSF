@@ -23,11 +23,11 @@
 		<jackson-db.version>2.9.10.4</jackson-db.version>
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 		<osgi.qualifier>${maven.build.timestamp}</osgi.qualifier>
-		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-SNAPSHOT</kit.buildVersion>
+		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${mvan.${maven.build.timestamp}</kit.buildVersion>
 		<p2.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</p2.buildVersion>
 		<kit.result>snapshots</kit.result>
 		<kit.sourceCodeUrl>https://codeload.github.com/OpenNTF/SmartNSF/zip/</kit.sourceCodeUrl>
-		<kit.sourceBranch>master</kit.sourceBranch>
+		<kit.sourceBranch>main</kit.sourceBranch>
 	</properties>
 
 	<repositories>
