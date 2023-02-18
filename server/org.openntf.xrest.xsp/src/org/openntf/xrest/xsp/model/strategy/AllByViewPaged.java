@@ -11,6 +11,7 @@ import org.openntf.xrest.xsp.exec.datacontainer.DocumentListPaginationDataContai
 import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
 import com.ibm.commons.util.io.json.JsonObject;
 
@@ -51,22 +52,19 @@ public class AllByViewPaged extends AbstractViewDatabaseStrategy implements Stra
 			}
 
 			if (skippedEntries == start - 1) {
-				ViewEntry entCurrent = vnav.getCurrent();
+				ViewEntry nextEntry = vnav.getCurrent();
 				int i = 0;
-				while (entCurrent != null && entCurrent.isValid() && i < count) {
-					docs.add(dbAccess.getDocumentByUNID(entCurrent.getUniversalID()));
-					i++;
-					ViewEntry nextEntry = vnav.getNext();
-					// recycle!
-					entCurrent.recycle();
-					entCurrent = nextEntry;
+				while (nextEntry!= null && i < count) {
+					ViewEntry entryCurrent = nextEntry;
+					nextEntry = vnav.getNext();
+					if (entryCurrent.isValid()) {
+						docs.add(entryCurrent.getDocument());
+						i++;
+					}
+					NotesObjectRecycler.recycle(entryCurrent);
 				}
-			} else {
-				// TODO: handle the situation when we did not skip to desired
-				// start position: is it because we are already at the end of
-				// view? Or could it happen at all?
 			}
-			vnav.recycle();
+			NotesObjectRecycler.recycle(vnav);
 			return new DocumentListPaginationDataContainer(docs, start, total, viewAccess, dbAccess);
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, "", "getmodel");

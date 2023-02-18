@@ -9,6 +9,7 @@ import org.openntf.xrest.xsp.exec.impl.ContextImpl;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonObject;
 
 import lotus.domino.Database;
@@ -27,7 +28,10 @@ public class AllByKeyPaged extends AbstractAllByKeyViewDatabaseStrategy implemen
 			View viewAccess = dbAccess.getView(getViewNameValue(context));
 			viewAccess.setAutoUpdate(false);
 			String varValue = getKeyValue(context);
-
+			if (StringUtil.isEmpty(varValue)) {
+				throw new ExecutorException(400,"KeyValue for strategy should not be blank","", "getmodel");
+			}
+			
 			DocumentCollection dcl = viewAccess.getAllDocumentsByKey(varValue, isExact(context));
 
 			int total = dcl.getCount();

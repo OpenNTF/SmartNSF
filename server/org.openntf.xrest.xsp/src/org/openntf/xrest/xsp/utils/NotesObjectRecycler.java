@@ -53,4 +53,18 @@ public class NotesObjectRecycler {
 			}
 		}
 	}
+	public static void recycleList(List<?> toRecycleList) {
+		if (toRecycleList == null) {
+			return;
+		}
+		for (Object torecycle : toRecycleList) {
+			if (torecycle != null && torecycle instanceof Base) {
+				Base baseRecycle = (Base)torecycle;
+				try {
+					baseRecycle.recycle();
+				} catch (Exception ex) {
+				}
+			}
+		}
+	}
 }

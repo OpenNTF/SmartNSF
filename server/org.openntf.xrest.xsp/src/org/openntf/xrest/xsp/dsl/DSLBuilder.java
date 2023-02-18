@@ -77,7 +77,6 @@ public class DSLBuilder {
 
 		cl.setDelegate(prevDelegate);
 		cl.setResolveStrategy(prevStrategy);
-
 	}
 
 	public static <T> T callClosure(Closure<T> closure, Object... params) {

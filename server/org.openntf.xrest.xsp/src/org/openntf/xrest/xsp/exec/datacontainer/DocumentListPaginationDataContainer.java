@@ -15,7 +15,8 @@ public class DocumentListPaginationDataContainer extends AbstractDataContainer<L
 	private final int count;
 	private final long max;
 
-	public DocumentListPaginationDataContainer(final List<Document> docs, final int start, final long max, View view, Database db) {
+	public DocumentListPaginationDataContainer(final List<Document> docs, final int start, final long max, View view,
+			Database db) {
 		super(view, db);
 		documents = docs;
 		this.start = start;
@@ -52,7 +53,8 @@ public class DocumentListPaginationDataContainer extends AbstractDataContainer<L
 
 	@Override
 	protected void executeCleanUp() {
-		NotesObjectRecycler.recycle(documents.toArray(new Document[documents.size()]));
+		NotesObjectRecycler.recycleList(documents);
+		documents.clear();
 	}
 
 }

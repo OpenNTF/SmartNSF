@@ -33,7 +33,7 @@ public class NSFHelperImpl implements NSFHelper {
 	}
 	@Override
 	public void makeDocumentAsChild(String parentId, Document doc) throws NotesException {
-		Document parentDoc = database.getDocumentByUNID(parentId);
+		Document parentDoc = doc.getParentDatabase().getDocumentByUNID(parentId);
 		doc.makeResponse(parentDoc);
 		NotesObjectRecycler.recycle(parentDoc);
 	}

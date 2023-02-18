@@ -22,15 +22,13 @@ public class Document2JsonConverter {
 
 	private final Context context;
 	private final RouteProcessor routeProcessor;
-	private final Document doc;
 
-	public Document2JsonConverter(final Document doc, final RouteProcessor routeProcessor, final Context context) {
+	public Document2JsonConverter(final RouteProcessor routeProcessor, final Context context) {
 		this.context = context;
 		this.routeProcessor = routeProcessor;
-		this.doc = doc;
 	}
 
-	public JsonObject buildJsonFromDocument() throws NotesException {
+	public JsonObject buildJsonFromDocument(Document doc) throws NotesException {
 		JsonObject jo = new JsonJavaObject();
 		if (null == doc) {
 			return jo;
@@ -53,14 +51,17 @@ public class Document2JsonConverter {
 				processFormulaToJson(jo, field, doc);
 			}
 		}
-		NotesObjectRecycler.recycleObjects(documentItems.toArray());
+		NotesObjectRecycler.recycleList(documentItems);
+		documentItems.clear();
+		itemProcessed.clear();
 		return jo;
 	}
 
 	private void processFormulaToJson(final JsonObject jo, final MappingField field, final Document doc) throws NotesException {
 		Vector<?> result = doc.getParentDatabase().getParent().evaluate(field.getFormula(), doc);
 		field.getType().processValuesToJsonObject(result, jo, field.getJsonName(), this.context);
-		NotesObjectRecycler.recycleObjects(result.toArray());
+		NotesObjectRecycler.recycleList(result);
+		result.clear();
 	}
 
 	private void processItem(final JsonObject jo, final Item item, final MappingField mappingField) throws NotesException {

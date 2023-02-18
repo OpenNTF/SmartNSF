@@ -37,7 +37,7 @@ import lotus.domino.Stream;
 
 public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
-	private static final String ATTACHMENT_HEADER_VALUE = "attachment";
+	protected static final String ATTACHMENT_HEADER_VALUE = "attachment";
 	private static final String BINARY_HEADER_VALUE = "binary";
 	private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
@@ -48,22 +48,20 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	@Override
 	public void processItemToJsonObject(final Item item, final JsonObject jo, final String jsonPropertyName, Context context) throws NotesException {
-		Document doc = item.getParent();
-		Session session = doc.getParentDatabase().getParent();
-		String fieldName = item.getName();
-		MIMEEntity entity = doc.getMIMEEntity(fieldName);
-		if (entity != null) {
+		Session session = item.getParent().getParentDatabase().getParent();
+		
+		switch(item.getType()) {
+		case Item.MIME_PART:
+			MIMEEntity entity = item.getMIMEEntity();
 			String content = getContentFromMime(entity, session);
 			jo.putJsonProperty(jsonPropertyName, content);
-			entity.recycle();
-		} else {
-			if (item.getType() != Item.RICHTEXT) {
-				jo.putJsonProperty(jsonPropertyName, item.getValueString());
-			} else {
-				String value = getContentFormRT(doc, item.getName());
-				jo.putJsonProperty(jsonPropertyName, value);
-			}
+			return;
+		case Item.RICHTEXT:
+			String value = getContentFormRT(item.getParent(), item.getName());
+			jo.putJsonProperty(jsonPropertyName, value);
+			return;
 		}
+		jo.putJsonProperty(jsonPropertyName, item.getValueString());
 	}
 
 	private String getContentFormRT(final Document doc, final String fieldName) throws NotesException {
@@ -118,6 +116,14 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	public void processJsonValueToDocument(final JsonJavaObject jso, final Document doc, final MappingField mfField, Context context) throws NotesException {
 		String fieldName = mfField.getNotesFieldName();
 		String value = jso.getAsString(mfField.getJsonName());
+		if (StringUtil.isEmpty(value)) {
+			if (doc.hasItem(fieldName)) {
+				doc.removeItem(fieldName);
+				RichTextItem rti = doc.createRichTextItem(fieldName);
+				rti.recycle();
+				return;
+			}
+		}
 		Stream stream = doc.getParentDatabase().getParent().createStream();
 		stream.writeText(value);
 		Item notesItem = doc.getFirstItem(fieldName);
@@ -330,14 +336,14 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		String dispositionValue = getContentDispositionHeaderValue(entity);
 		if (!StringUtil.isEmpty(dispositionValue) && dispositionValue.startsWith(ATTACHMENT_HEADER_VALUE)) {
 			// System.out.println(dispositionValue);
-			if (dispositionValue.contains(attachmentName)) {
+			if (dispositionValue.toLowerCase().contains(attachmentName.toLowerCase())) {
 				return entity;
 			}
 		}
 		return null;
 	}
 
-	private String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
+	protected String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_DISPOSITION);
 		if (mimeheader != null) {
 			String val = mimeheader.getHeaderValAndParams(false, true);
@@ -347,7 +353,7 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		return null;
 	}
 
-	private String getContentHeaderValue(final MIMEEntity entity) throws NotesException {
+	protected String getContentHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeHeader = entity.getNthHeader(CONTENT_TYPE);
 		if (mimeHeader != null) {
 			String contenType = mimeHeader.getHeaderVal();

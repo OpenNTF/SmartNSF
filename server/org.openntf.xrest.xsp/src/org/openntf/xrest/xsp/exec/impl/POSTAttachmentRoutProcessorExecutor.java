@@ -15,6 +15,7 @@ import org.openntf.xrest.xsp.exec.convertor.datatypes.AttachmentProcessor;
 import org.openntf.xrest.xsp.exec.datacontainer.AttachmentDataContainer;
 import org.openntf.xrest.xsp.exec.datacontainer.DocumentDataContainer;
 import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
+import org.openntf.xrest.xsp.model.AttachmentUpdateType;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
@@ -30,20 +31,20 @@ import lotus.domino.NotesException;
 public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorExecutor
 		implements RouteProcessorExecutor {
 
-	public POSTAttachmentRoutProcessorExecutor(Context context, RouteProcessor routeProcessor, String path) {
-		super(context, routeProcessor, path);
+	public POSTAttachmentRoutProcessorExecutor(String path) {
+		super(path);
 	}
 
 	@Override
-	protected void submitValues() throws IOException, JsonException, ExecutorException {
+	protected void submitValues(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer)
+			throws IOException, JsonException, ExecutorException {
 		HttpServletResponse response = context.getResponse();
 		response.setStatus(201);
 		JsonPayloadProcessor.INSTANCE.processJsonPayload(context.getResultPayload(), context.getResponse());
-		dataContainer.cleanUp();
 	}
 
 	@Override
-	protected void preSubmitValues() throws ExecutorException {
+	protected void preSubmitValues(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException {
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SUBMIT);
 			if (cl != null) {
@@ -58,28 +59,31 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 	}
 
 	@Override
-	protected void executeMethodeSpecific(Context context, DataContainer<?> container) throws ExecutorException {
+	protected void executeMethodeSpecific(Context context, DataContainer<?> container, RouteProcessor routeProcessor)
+			throws ExecutorException {
 		System.out.println(context.getFacesContext().getExternalContext().getContext().getClass().getName());
+		AttachmentUpdateType updateType = ((SelectAttachment) routeProcessor.getStrategyModel()).getUpdateType();
 		HttpServletRequest request = context.getRequest();
 		AttachmentProcessor attachmentProcessor = AttachmentProcessor.getInstance();
 		AttachmentDataContainer<?> adc = (AttachmentDataContainer<?>) container;
-		executePreSave(context, adc.getDocumentDataContainer());
+		executePreSave(context, adc.getDocumentDataContainer(), routeProcessor);
 		try {
 			String file = attachmentProcessor.storeFileUploadStream(request.getInputStream(), adc.getFileName());
 			attachmentProcessor.addAttachment(adc.getDocumentDataContainer().document, adc.getFieldName(), file,
-					adc.getFileName());
+					adc.getFileName(), updateType);
 			FileUtils.deleteDirectory(new File(file).getParentFile());
 		} catch (Exception e) {
 			throw new ExecutorException(500, e, path, "executeMethodSpecific");
 		}
 		executeDocumentSave(adc.getDocumentDataContainer());
-		executePostSave(context, adc.getDocumentDataContainer());
-		buildResultMapping(context, adc.getDocumentDataContainer());
+		executePostSave(context, adc.getDocumentDataContainer(), routeProcessor);
+		buildResultMapping(context, adc.getDocumentDataContainer(), routeProcessor);
 	}
 
-	private void executePreSave(final Context context, final DocumentDataContainer container) throws ExecutorException {
+	private void executePreSave(final Context context, final DocumentDataContainer container,
+			RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.PRE_SAVE_DOCUMENT);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SAVE_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl, context, container.getData());
 			}
@@ -91,7 +95,6 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 
 	}
 
-
 	private void executeDocumentSave(final DocumentDataContainer container) throws ExecutorException {
 		try {
 			Document doc = container.getData();
@@ -101,10 +104,10 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 		}
 	}
 
-	private void executePostSave(final Context context, final DocumentDataContainer container)
-			throws ExecutorException {
+	private void executePostSave(final Context context, final DocumentDataContainer container,
+			RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			Closure<?> cl = getRouteProcessor().getEventClosure(EventType.POST_SAVE_DOCUMENT);
+			Closure<?> cl = routeProcessor.getEventClosure(EventType.POST_SAVE_DOCUMENT);
 			if (cl != null) {
 				DSLBuilder.callClosure(cl, context, container.getData(), container);
 			}
@@ -116,10 +119,12 @@ public class POSTAttachmentRoutProcessorExecutor extends AbstractRouteProcessorE
 
 	}
 
-	private void buildResultMapping(final Context context, final DataContainer<?> container) throws ExecutorException {
+	private void buildResultMapping(final Context context, final DataContainer<?> container,
+			RouteProcessor routeProcessor) throws ExecutorException {
 		try {
-			SelectAttachment attachmentStrategy = (SelectAttachment) getRouteProcessor().getStrategyModel();
-			context.setResultPayload(attachmentStrategy.getDocumentStrategyModel().buildResponse(context, getRouteProcessor(), container));
+			SelectAttachment attachmentStrategy = (SelectAttachment) routeProcessor.getStrategyModel();
+			context.setResultPayload(
+					attachmentStrategy.getDocumentStrategyModel().buildResponse(context, routeProcessor, container));
 		} catch (Exception ex) {
 			throw new ExecutorException(500, ex, getPath(), "buildResult");
 		}

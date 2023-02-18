@@ -26,7 +26,7 @@ public class XRestAPIServletFactory implements IServletFactory {
 
 	private ComponentModule module;
 	public static final String SERVLET_PATH = "/xsp/.xrest/";
-	private XRestAPIServlet servlet;
+	private RouterFactory rf;
 	private long lastUpdate;
 
 	@Override
@@ -47,16 +47,31 @@ public class XRestAPIServletFactory implements IServletFactory {
 		this.lastUpdate = module.getLastRefresh();
 	}
 
-	public synchronized Servlet getExecutorServlet() throws ServletException {
-		if (servlet == null) {
-			RouterFactory rf = new RouterFactory(module);
-			servlet = (XRestAPIServlet) module.createServlet(new XRestAPIServlet(rf), "XRestAPI Servlet", null);
-		} else {
-			if (lastUpdate < this.module.getLastRefresh()) {
-				lastUpdate = this.module.getLastRefresh();
-				servlet.refresh();
+	public void refreshRouterFactory() {
+		System.out.println("Refresh SmartNSF RouterFactory for " + module.getModuleName());
+		rf.refresh();
+		rf.startup();
+	}
+
+	public Servlet getExecutorServlet() throws ServletException {
+		if (this.rf == null) {
+			synchronized (this) {
+				if (rf == null) {
+					System.out.println("Creating SmartNSF RouterFactory for " + module.getModuleName());
+					this.rf = new RouterFactory(module);
+					rf.startup();
+				}
 			}
 		}
-		return servlet;
+		if (lastUpdate < this.module.getLastRefresh()) {
+			synchronized (this) {
+				if (lastUpdate < this.module.getLastRefresh()) {
+					lastUpdate = this.module.getLastRefresh();
+					refreshRouterFactory();
+				}
+			}
+
+		}
+		return module.createServlet(new XRestDFAPIServlet(rf), "XRestAPI Servlet", null);
 	}
 }

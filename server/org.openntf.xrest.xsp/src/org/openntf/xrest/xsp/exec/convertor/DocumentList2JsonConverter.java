@@ -23,9 +23,10 @@ public class DocumentList2JsonConverter {
 
 	public JsonJavaArray buildJsonFromDocument() throws NotesException {
 		JsonJavaArray jsa = new JsonJavaArray();
+		Document2JsonConverter d2jc = new Document2JsonConverter(routeProcessor, context);
+		
 		for (Document doc : container.getData()) {
-			Document2JsonConverter d2jc = new Document2JsonConverter(doc, routeProcessor, context);
-			JsonObject jso =  d2jc.buildJsonFromDocument();
+			JsonObject jso =  d2jc.buildJsonFromDocument(doc);
 			jsa.add(jso);
 		}
 		return jsa;
