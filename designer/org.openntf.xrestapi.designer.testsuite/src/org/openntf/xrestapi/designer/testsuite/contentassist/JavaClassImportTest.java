@@ -28,10 +28,7 @@ public class JavaClassImportTest extends AbstractGroovyParserTest {
 	@Test
 	public void testImportWithURLClassLoader() throws IOException {
 		String dsl = readFile("import.groovy");
-		URL resourceURL = getClass().getResource("../mock/markdown4j-2.2.jar");
-		System.out.println("URL" +resourceURL);
-		ClassLoader cl = new URLClassLoader(new URL[]{resourceURL,});
-		
+		ClassLoader cl = buildClassLoader();		
 		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7, cl);
 		assertTrue(analyser.parse());		
 	}
@@ -39,9 +36,7 @@ public class JavaClassImportTest extends AbstractGroovyParserTest {
 	@Test
 	public void testClassOfImportedProcessor() throws IOException {
 		String dsl = readFile("import.groovy");
-		URL resourceURL = getClass().getResource("../mock/markdown4j-2.2.jar");
-		System.out.println("URL" +resourceURL);
-		ClassLoader cl = new URLClassLoader(new URL[]{resourceURL,});
+		ClassLoader cl = buildClassLoader();
 		
 		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 9, cl);
 		assertTrue(analyser.parse());

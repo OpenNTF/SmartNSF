@@ -46,7 +46,6 @@ import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
-import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextExImpl;
 import com.ibm.xsp.webapp.DesignerFacesServlet;
 
@@ -88,7 +87,7 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 		FacesContext fc = null;
 		try {
 			if (router.useFacesContext()) {
-				fc = (FacesContextExImpl)this.getFacesContext(req, resp);
+				fc = (FacesContextExImpl) this.getFacesContext(req, resp);
 			}
 			String method = req.getMethod();
 			String path = req.getPathInfo();
@@ -115,16 +114,17 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 			}
 
 		} finally {
-			/*
-			 * if (router.useFacesContext() && fc != null) { releaseContext(fc); }
-			 */
 			if (timer != null) {
 				timer.observeDuration();
 			}
-			try {
-				resp.getOutputStream().close();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (!resp.isCommitted()) {
+				try {
+					resp.getOutputStream().close();
+				} catch (IllegalStateException stateException) {
+					resp.getWriter().close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			try {
 				if (fc != null) {
@@ -132,7 +132,7 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 					fc.release();
 				}
 			} catch (Exception ex) {
-				
+
 			}
 		}
 	}
@@ -195,7 +195,7 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 				try {
 					String payloadValue = IOUtils.toString(req.getInputStream(), "UTF-8");
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-					
+
 					Object pl = JsonParser.fromJson(factory, payloadValue);
 					if (pl instanceof JsonJavaObject) {
 						context.addJsonPayload((JsonJavaObject) pl);
@@ -232,9 +232,4 @@ public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializa
 		this.histogram = null;
 		this.routerFactory = null;
 	}
-	/*
-	 * public void releaseContext(FacesContext context) throws ServletException,
-	 * IOException { context.release(); }
-	 */
-
 }

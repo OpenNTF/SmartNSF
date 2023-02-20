@@ -26,7 +26,8 @@ public class CodeContextAnalyzerTest extends AbstractGroovyParserTest {
 	public void testBuildCodeContextForRouter() throws IOException {
 		String dsl = readFile("router.groovy");
 		ASTAnalyser analyser = new ASTAnalyser(dsl, 8, 7, null);
-		assertTrue(analyser.parse());
+		boolean result = analyser.parse();
+		assertTrue("Is it really null...",result);
 		DSLRegistry dslRegistry = DSLRegistryFactory.buildRegistry();
 		CodeContextAnalyzer cca = new CodeContextAnalyzer(analyser, dslRegistry);
 		CodeContext codeContext = cca.build();

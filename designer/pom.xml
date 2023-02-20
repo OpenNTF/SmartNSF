@@ -7,19 +7,48 @@
 		<artifactId>xrest.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>xrest.xsp.parent</artifactId>
+	<artifactId>xrest.designer.parent</artifactId>
 	<packaging>pom</packaging>
 	<properties>
+		<tycho-version>0.23.0</tycho-version>
+		<compiler>1.8</compiler>
+		<license.failIfMissing>false</license.failIfMissing>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.language>java</sonar.language>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<groovy-version>2.4.8</groovy-version>
+		<olingo-version>4.6.0</olingo-version>
+		<jwt-lib>0.11.2</jwt-lib>
+		<jackson.version>2.9.10</jackson.version>
+		<jackson-db.version>2.9.10.4</jackson-db.version>
+		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+		<osgi.qualifier>${maven.build.timestamp}</osgi.qualifier>
+		<kit.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-${maven.build.timestamp}</kit.buildVersion>
+		<p2.buildVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</p2.buildVersion>
 		<kit.result>snapshots</kit.result>
 		<kit.sourceCodeUrl>https://codeload.github.com/OpenNTF/SmartNSF/zip/</kit.sourceCodeUrl>
 		<kit.sourceBranch>main</kit.sourceBranch>
+		<main.basedir>${project.parent.basedir}</main.basedir>
 	</properties>
 
 	<repositories>
 		<repository>
+			<id>designer</id>
+			<layout>p2</layout>
+			<url>${designer-platform}</url>
+		</repository>
+		<repository>
 			<id>notes</id>
 			<layout>p2</layout>
 			<url>${notes-platform}</url>
+		</repository>
+		<repository>
+			<id>xrestBase</id>
+			<layout>p2</layout>
+			<url>file:///${project.basedir}/../../server/org.openntf.xrest.xsp.p2/target/repository</url>
 		</repository>
 		<repository>
 			<id>kepler</id>
@@ -279,15 +308,10 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>org.openntf.xrest.libraries</module>
-				<module>org.openntf.xrest.xsp.swaggui</module>
-				<module>org.openntf.xrest.xsp</module>
-				<module>org.openntf.xrest.xsp.testsuite</module>
-				<module>org.openntf.xrest.xsp.feature</module>
-				<module>org.openntf.xrest.xsp.feature.source</module>
-				<module>org.openntf.xrest.xsp.updatesite</module>
-				<module>org.openntf.xrest.xsp.p2</module>
-				<module>xrest.xsp.assembly</module>
+				<module>org.openntf.xrest.designer</module>
+				<module>org.openntf.xrest.designer.feature</module>
+				<module>org.openntf.xrest.designer.updatesite</module>
+				<module>org.openntf.xrestapi.designer.testsuite</module>
 			</modules>
 		</profile>
 	</profiles>
@@ -306,5 +330,5 @@
 			<version>3.0.15</version>
 		</dependency>
 	</dependencies>
-	<name>XRest API - Server Extension</name>
+	<name>XRest API - Designer Extension</name>
 </project>

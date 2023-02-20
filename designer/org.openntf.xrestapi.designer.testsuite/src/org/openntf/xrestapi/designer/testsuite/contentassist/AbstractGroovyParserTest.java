@@ -2,6 +2,8 @@ package org.openntf.xrestapi.designer.testsuite.contentassist;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -30,6 +32,11 @@ public class AbstractGroovyParserTest {
 				System.out.println(me.getType());
 			}
 		}
+	}
+	protected ClassLoader buildClassLoader() {
+		URL resourceURL = getClass().getResource("../mock/markdown4j-2.2.jar");
+		System.out.println("URL" +resourceURL);
+		return new URLClassLoader(new URL[]{resourceURL,},getClass().getClassLoader());
 	}
 
 }
