@@ -3,16 +3,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openntf.xrest</groupId>
-		<artifactId>xrest.xsp.parent</artifactId>
+		<artifactId>xrest.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>xrest.xsp.assembly</artifactId>
+	<artifactId>xrest.assembly</artifactId>
 	<packaging>pom</packaging>
-	<name>XREST XSP Assembly</name>
+	<name>XREST - complete Assembly</name>
 	<properties>
 		<kit.parentDir>${project.basedir}/../../</kit.parentDir>
 		<kit.workingDir>${project.build.directory}</kit.workingDir>
 		<kit.finalAssemblyFolder>${kit.workingDir}/kit</kit.finalAssemblyFolder>
+		<kit.sourceCodeUrl>https://codeload.github.com/OpenNTF/SmartNSF/zip/</kit.sourceCodeUrl>
+		<kit.sourceBranch>main</kit.sourceBranch>
 	</properties>
 	<build>
 		<plugins>
@@ -31,7 +33,7 @@
 							<url>${kit.sourceCodeUrl}${kit.sourceBranch}</url>
 							<unpack>false</unpack>
 							<skipCache>true</skipCache>
-							<outputFileName>org.openntf.xrest.xsp.sources.zip</outputFileName>
+							<outputFileName>org.openntf.xrest.sources.zip</outputFileName>
 							<outputDirectory>${kit.workingDir}/sources/SmartNSF</outputDirectory>
 						</configuration>
 					</execution>
@@ -59,29 +61,14 @@
 						<configuration>
 							<target>
 								<unzip
-									src="../org.openntf.xrest.xsp.p2/target/org.openntf.xrest.xsp.p2-${project.version}.zip"
+									src="../server/org.openntf.xrest.xsp.p2/target/org.openntf.xrest.xsp.p2-${project.version}.zip"
 									dest="${kit.finalAssemblyFolder}/p2-${p2.buildVersion}" />
 							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
-					</execution>
-					<execution>
-						<id>toDistribution</id>
-						<phase>install</phase>
-						<configuration>
-							<target>
-								<copy todir="${kit.parentDir}/${kit.result}">
-    								<fileset dir="${kit.finalAssemblyFolder}">
-    								</fileset>
-								</copy>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>					
+					</execution>			
 				</executions>
 			</plugin>
 			<plugin>
@@ -96,7 +83,7 @@
 						</goals>
 						<configuration>
 							<descriptor>assembly.xml</descriptor>
-							<finalName>SmartNSF-SERVER-${kit.buildVersion}</finalName>
+							<finalName>SmartNSF-${kit.buildVersion}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<outputDirectory>${kit.finalAssemblyFolder}</outputDirectory>
 						</configuration>

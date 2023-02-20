@@ -1,3 +1,5 @@
+.project
+.settings/
 server/.project
 server/.settings/
 server/org.openntf.xrest.libraries/.classpath
@@ -40,3 +42,6 @@ server/org.openntf.xrest.xsp.swaggui/target/
 server/org.openntf.xrest.xsp.swaggui/temp/swagger-ui/master
 server/org.openntf.xrest.xsp.swaggui/temp/
 server/org.openntf.xrest.xsp.feature.source/.settings/
+assembly/target/
+assembly/.settings/
+assembly/.project
