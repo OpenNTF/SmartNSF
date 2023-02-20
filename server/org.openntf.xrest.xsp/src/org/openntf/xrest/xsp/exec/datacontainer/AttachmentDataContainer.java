@@ -16,7 +16,8 @@ public class AttachmentDataContainer<T extends Base> implements DataContainer<T>
 	private final String fileName;
 	private final Item notesItem;
 
-	public AttachmentDataContainer(DocumentDataContainer documentDataContainer, T attachmentObject, String fieldName, String fileName, Item item) {
+	public AttachmentDataContainer(DocumentDataContainer documentDataContainer, T attachmentObject, String fieldName,
+			String fileName, Item item) {
 		this.documentDataContainer = documentDataContainer;
 		this.attachmentMime = attachmentObject;
 		this.fieldName = fieldName;
@@ -56,6 +57,7 @@ public class AttachmentDataContainer<T extends Base> implements DataContainer<T>
 	public String getFieldName() {
 		return fieldName;
 	}
+
 	public DocumentDataContainer getDocumentDataContainer() {
 		return documentDataContainer;
 	}
@@ -64,4 +66,5 @@ public class AttachmentDataContainer<T extends Base> implements DataContainer<T>
 	public Database getDatabase() {
 		return documentDataContainer.getDatabase();
 	}
+
 }

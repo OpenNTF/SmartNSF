@@ -12,8 +12,8 @@ public class ViewEntryListPaginationDataContainer extends AbstractDataContainer<
 	private final int count;
 	private final long max;
 
-	public ViewEntryListPaginationDataContainer(final List<List<Object>> viewEntries, final int start, final long max, final View view,
-			final Database db) {
+	public ViewEntryListPaginationDataContainer(final List<List<Object>> viewEntries, final int start, final long max,
+			final View view, final Database db) {
 		super(view, db);
 		entries = viewEntries;
 		this.start = start;
@@ -52,5 +52,4 @@ public class ViewEntryListPaginationDataContainer extends AbstractDataContainer<
 	protected void executeCleanUp() {
 
 	}
-
 }

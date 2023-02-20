@@ -12,7 +12,10 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.NSFHelper;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.names.IdentityMapProvider;
+import org.openntf.xrest.xsp.utils.NotesObjectRecycler;
 
+import com.ibm.commons.util.io.json.JsonArray;
+import com.ibm.commons.util.io.json.JsonJavaArray;
 import com.ibm.commons.util.io.json.JsonObject;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
@@ -35,6 +38,7 @@ public class ContextImpl implements Context {
 	private List<String> groups;
 	private List<String> roles;
 	private JsonObject jsonPayload;
+	private JsonArray jsonArrayPayload;
 	private Map<String, String> routerVariables;
 	private Map<String, String> queryStringVariables;
 	private NSFHelper nsfHelper;
@@ -194,7 +198,6 @@ public class ContextImpl implements Context {
 		this.roles = new ArrayList<String>(database.queryAccessRoles(userNotesName.getAbbreviated()));
 		this.userName = userName;
 		userNotesName.recycle();
-
 	}
 
 	/*
@@ -282,5 +285,44 @@ public class ContextImpl implements Context {
 	public Map<String, String> getQueryStringVariables() {
 		return this.queryStringVariables;
 	}
+
+	public Context addJsonPayloadAsArray(JsonJavaArray jsonArray) {
+		this.jsonArrayPayload = jsonArray;
+		return this;
+
+		
+	}
+
+	@Override
+	public JsonArray getJsonPayloadAsArray() {
+		return this.jsonArrayPayload;
+	}
+
+	@Override
+	public void cleanUp() {
+		NotesObjectRecycler.recycle(this.database,this.databaseFromStrategy,this.session,this.sessionAsSigner,this.sessionAsSignerAdmin);
+		this.jsonPayload = null;
+		this.jsonArrayPayload= null;
+		this.database = null;
+		this.databaseFromStrategy = null;
+		this.session = null;
+		this.sessionAsSigner = null;
+		this.sessionAsSignerAdmin = null;
+		this.nsfHelper = null;
+		this.groups=null;
+		this.roles=null;
+		this.identityMapProvider = null;
+		this.resultPayload =null;
+		this.request = null;
+		this.response = null;
+		this.facesContext = null;
+		this.queryStringVariables=null;
+		this.routerVariables=null;
+		this.session = null;
+		this.sessionAsSigner = null;
+		this.sessionAsSignerAdmin = null;
+	}
+	
+	
 
 }

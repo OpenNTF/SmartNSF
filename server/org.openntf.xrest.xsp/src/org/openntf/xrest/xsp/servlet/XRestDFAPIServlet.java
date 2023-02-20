@@ -16,21 +16,19 @@
 package org.openntf.xrest.xsp.servlet;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import javax.faces.FacesException;
-import javax.faces.FactoryFinder;
 import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
-import javax.faces.event.PhaseListener;
-import javax.faces.lifecycle.Lifecycle;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.openntf.xrest.xsp.command.CommandDefinition;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.RouteProcessorExecutor;
@@ -41,7 +39,6 @@ import org.openntf.xrest.xsp.model.RouteProcessor;
 import org.openntf.xrest.xsp.model.Router;
 import org.openntf.xrest.xsp.utils.NotesContextFactory;
 
-import com.ibm.commons.util.NotImplementedException;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaArray;
@@ -49,68 +46,38 @@ import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
-import com.ibm.xsp.application.ApplicationEx;
-import com.ibm.xsp.context.FacesContextEx;
-import com.ibm.xsp.controller.FacesController;
-import com.ibm.xsp.controller.FacesControllerFactoryImpl;
+import com.ibm.xsp.context.FacesContextExImpl;
+import com.ibm.xsp.webapp.DesignerFacesServlet;
 
 import io.prometheus.client.Histogram;
 import io.prometheus.client.Histogram.Timer;
 import lotus.domino.NotesException;
 
-public class XRestAPIServlet extends HttpServlet {
-
-	private static Lifecycle dummyLifeCycle = new Lifecycle() {
-		@Override
-		public void render(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void removePhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public PhaseListener[] getPhaseListeners() {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void execute(FacesContext context) throws FacesException {
-			throw new NotImplementedException();
-		}
-
-		@Override
-		public void addPhaseListener(PhaseListener listener) {
-			throw new NotImplementedException();
-		}
-	};
+public class XRestDFAPIServlet extends DesignerFacesServlet implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private ServletConfig config;
-	private FacesContextFactory contextFactory;
 	private RouterFactory routerFactory;
 	private Histogram histogram;
 
-	public XRestAPIServlet(final RouterFactory routerFactory) {
+	public XRestDFAPIServlet(final RouterFactory routerFactory) {
 		this.routerFactory = routerFactory;
 	}
 
 	@Override
 	public void init(final ServletConfig config) throws ServletException {
-		this.config = config;
-		contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		super.init(config);
 		histogram = routerFactory.getHistogram();
 	}
 
 	@Override
-	protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+	public void service(final ServletRequest servletRequest, final ServletResponse servletResponse)
 			throws ServletException, IOException {
+		HttpServletRequest req = (HttpServletRequest) servletRequest;
+		HttpServletResponse resp = (HttpServletResponse) servletResponse;
 		if (routerFactory.hasError()) {
 			publishError(req, resp, routerFactory.getError());
 			return;
@@ -120,14 +87,7 @@ public class XRestAPIServlet extends HttpServlet {
 		FacesContext fc = null;
 		try {
 			if (router.useFacesContext()) {
-				fc = initContext(req, resp);
-				FacesContextEx exc = (FacesContextEx) fc;
-				ApplicationEx ape = exc.getApplicationEx();
-				if (ape.getController() == null) {
-					FacesController controller = new FacesControllerFactoryImpl()
-							.createFacesController(getServletContext());
-					controller.init(null);
-				}
+				fc = (FacesContextExImpl) this.getFacesContext(req, resp);
 			}
 			String method = req.getMethod();
 			String path = req.getPathInfo();
@@ -154,11 +114,25 @@ public class XRestAPIServlet extends HttpServlet {
 			}
 
 		} finally {
-			if (router.useFacesContext() && fc != null) {
-				releaseContext(fc);
-			}
 			if (timer != null) {
 				timer.observeDuration();
+			}
+			if (!resp.isCommitted()) {
+				try {
+					resp.getOutputStream().close();
+				} catch (IllegalStateException stateException) {
+					resp.getWriter().close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				if (fc != null) {
+					fc.responseComplete();
+					fc.release();
+				}
+			} catch (Exception ex) {
+
 			}
 		}
 	}
@@ -219,8 +193,10 @@ public class XRestAPIServlet extends HttpServlet {
 			if (req.getContentLength() > 0 && req.getContentType() != null
 					&& req.getContentType().toLowerCase().startsWith("application/json")) {
 				try {
+					String payloadValue = IOUtils.toString(req.getInputStream(), "UTF-8");
 					JsonJavaFactory factory = JsonJavaFactory.instanceEx2;
-					Object pl = JsonParser.fromJson(factory, req.getReader());
+
+					Object pl = JsonParser.fromJson(factory, payloadValue);
 					if (pl instanceof JsonJavaObject) {
 						context.addJsonPayload((JsonJavaObject) pl);
 					} else {
@@ -229,14 +205,13 @@ public class XRestAPIServlet extends HttpServlet {
 				} catch (JsonException jE) {
 					jE.printStackTrace();
 				} finally {
-					req.getReader().close();
+					req.getInputStream().close();
 				}
 			}
 			RouteProcessorExecutor executor = RouteProcessorExecutorFactory.getExecutor(method, path, context, rp);
 			executor.execute(context, rp);
 			try {
 				context.cleanUp();
-				resp.getOutputStream().close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -251,21 +226,10 @@ public class XRestAPIServlet extends HttpServlet {
 
 	}
 
-	public FacesContext initContext(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// Create a temporary FacesContext and make it available
-		FacesContext context = contextFactory.getFacesContext(getServletConfig().getServletContext(), request, response,
-				dummyLifeCycle);
-		return context;
-	}
-
-	public void releaseContext(FacesContext context) throws ServletException, IOException {
-		context.release();
-	}
-
 	@Override
-	public ServletConfig getServletConfig() {
-		return config;
+	public void destroy() {
+		super.destroy();
+		this.histogram = null;
+		this.routerFactory = null;
 	}
-
 }

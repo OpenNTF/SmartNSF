@@ -8,8 +8,8 @@ import lotus.domino.View;
 
 public abstract class AbstractDataContainer<T> implements DataContainer<T> {
 
-	private final Database db;
-	private final View view;
+	private Database db;
+	private View view;
 
 	public AbstractDataContainer(View view, Database db) {
 		this.db = db;
@@ -28,6 +28,8 @@ public abstract class AbstractDataContainer<T> implements DataContainer<T> {
 	public void cleanUp() {
 		executeCleanUp();
 		NotesObjectRecycler.recycle(view, db);
+		view = null;
+		db = null;
 	}
 
 	protected abstract void executeCleanUp();

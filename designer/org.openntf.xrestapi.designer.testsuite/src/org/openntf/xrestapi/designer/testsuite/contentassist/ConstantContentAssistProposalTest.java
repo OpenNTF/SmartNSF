@@ -24,7 +24,7 @@ public class ConstantContentAssistProposalTest extends AbstractContentAssistProp
 	@Test
 	public void testImportMockClass() throws IOException {
 		String dsl = readFile("import.groovy");
-		ASTAnalyser analyser = new ASTAnalyser(dsl, 10, 7, getClassLoader());
+		ASTAnalyser analyser = new ASTAnalyser(dsl, 10, 7, buildClassLoader());
 		assertTrue(analyser.parse());
 		assertTrue(analyser.getNode() instanceof ConstantExpression);
 		ConstantExpression ce = (ConstantExpression) analyser.getNode();
@@ -44,12 +44,5 @@ public class ConstantContentAssistProposalTest extends AbstractContentAssistProp
 		CoEProposal coe = new CoEProposal(pp);
 		List<ICompletionProposal> proposals = coe.suggestions(100);
 		assertEquals(3, proposals.size());
-	}
-	
-	
-	private ClassLoader getClassLoader() {
-		URL resourceURL = getClass().getResource("../mock/markdown4j-2.2.jar");
-		return new URLClassLoader(new URL[]{resourceURL,});
-
 	}
 }

@@ -7,6 +7,7 @@ import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
 import org.openntf.xrest.xsp.exec.convertor.Document2JsonConverter;
 import org.openntf.xrest.xsp.exec.output.JsonPayloadProcessor;
+import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.EventException;
 import org.openntf.xrest.xsp.model.EventType;
 import org.openntf.xrest.xsp.model.RouteProcessor;
@@ -20,16 +21,20 @@ import lotus.domino.NotesException;
 
 public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
-	public AbstractJsonRouteProcessorExecutor(final Context context, final RouteProcessor routerProcessor, final String path) {
-		super(context, routerProcessor, path);
+	public AbstractJsonRouteProcessorExecutor(final String path) {
+		super( path);
 	}
 
 	@Override
-	protected void preSubmitValues() throws ExecutorException {
+	protected void preSubmitValues(Context context, RouteProcessor routeProcessor, DataContainer<?> dataContainer) throws ExecutorException {
 		try {
 			Closure<?> cl = routeProcessor.getEventClosure(EventType.PRE_SUBMIT);
 			if (cl != null) {
-				DSLBuilder.callClosure(cl, context, dataContainer.getData());
+				if (dataContainer.isList()) {
+					DSLBuilder.callClosure(cl, context, null);					
+				} else {
+					DSLBuilder.callClosure(cl, context, dataContainer.getData());
+				}
 			}
 		} catch (EventException e) {
 			throw new ExecutorException(e, path, "presubmit");
@@ -40,17 +45,16 @@ public abstract class AbstractJsonRouteProcessorExecutor extends AbstractRoutePr
 	}
 
 	@Override
-	protected void submitValues() throws IOException, JsonException {
+	protected void submitValues(Context context, RouteProcessor routeProcessor,DataContainer<?> dataContainer) throws IOException, JsonException {
 		JsonPayloadProcessor.INSTANCE.processJsonPayload(context.getResultPayload(), context.getResponse());
-		dataContainer.cleanUp();
 	}
 
-	public void setResultPayload(final Object rp) {
+	public void setResultPayload(final Object rp, Context context, RouteProcessor routeProcessor) {
 		context.setResultPayload(rp);
 	}
 
-	protected JsonObject buildJsonFromDocument(final Document doc) throws NotesException {
-		Document2JsonConverter d2jc = new Document2JsonConverter(doc, routeProcessor, context);
-		return d2jc.buildJsonFromDocument();
+	protected JsonObject buildJsonFromDocument(final Document doc, Context context, RouteProcessor routeProcessor) throws NotesException {
+		Document2JsonConverter d2jc = new Document2JsonConverter(routeProcessor, context);
+		return d2jc.buildJsonFromDocument(doc);
 	}
 }
