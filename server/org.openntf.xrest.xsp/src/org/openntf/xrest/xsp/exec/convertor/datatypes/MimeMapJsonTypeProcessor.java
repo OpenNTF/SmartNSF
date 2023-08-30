@@ -337,8 +337,11 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 		String contentId = getContentIDHeaderValue(entity);
 		if (!StringUtil.isEmpty(contentId)) {
 			String attachmentNameEnhanced = "<"+attachmentName.toLowerCase() +">";
-			// System.out.println(dispositionValue);
-			if (contentId.toLowerCase().equals(attachmentName.toLowerCase()) || contentId.toLowerCase().equals(attachmentNameEnhanced)) {
+			String attachmentNameCleaned = attachmentNameEnhanced.toLowerCase().replaceAll("[^\\w\\s]","").replace(" ", "");
+			String contentIdCleaned = contentId.toLowerCase().replaceAll("[^\\w\\s]","").replace(" ", "");
+			if (contentId.toLowerCase().equals(attachmentName.toLowerCase()) 
+				|| contentId.toLowerCase().equals(attachmentNameEnhanced)
+				|| contentIdCleaned.equals(attachmentNameCleaned)) {
 				return entity;
 			}
 		}

@@ -54,7 +54,7 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 				
 			}
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "presubmit");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "submitValues");
 		}
 	}
 

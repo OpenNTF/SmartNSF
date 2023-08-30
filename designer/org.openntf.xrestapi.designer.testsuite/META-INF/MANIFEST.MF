@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Testsuite
 Bundle-SymbolicName: org.openntf.xrestapi.designer.testsuite;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Fragment-Host: org.openntf.xrest.designer;bundle-version="1.0.0"
+Bundle-Version: 10.0.1.qualifier
+Fragment-Host: org.openntf.xrest.designer;bundle-version="10.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="4.11.0",
  com.ibm.notes.java.api,

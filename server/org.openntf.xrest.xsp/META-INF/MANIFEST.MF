@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: XRest API Server
 Bundle-SymbolicName: org.openntf.xrest.xsp;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 10.0.1.qualifier
 Bundle-Vendor: WebGate Consulting AG
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime;resolution:=optional,

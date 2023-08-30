@@ -27,6 +27,7 @@ designer/org.openntf.xrest.designer.updatesite/artifacts.jar
 designer/org.openntf.xrest.designer.updatesite/content.jar
 designer/org.openntf.xrest.designer.updatesite/features/
 designer/org.openntf.xrest.designer.updatesite/plugins/
+designer/target/
 server/org.openntf.xrest.xsp.p2/.project
 server/org.openntf.xrest.xsp.p2/.settings/
 server/org.openntf.xrest.xsp.p2/target/category.xml

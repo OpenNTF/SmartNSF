@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.xrest.designer.feature"
       label="XREST Api Designer Feature"
-      version="1.0.0.qualifier">
+      version="10.0.1.qualifier">
 
    <description url="https://smartnsf.openntf.org">
       Transform your own NSF to a Microservice!
