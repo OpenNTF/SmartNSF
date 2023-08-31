@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.xrest.xsp.exec.Context;
 import org.openntf.xrest.xsp.exec.ExecutorException;
+import org.openntf.xrest.xsp.exec.convertor.datatypes.MimeMapJsonTypeProcessor;
 import org.openntf.xrest.xsp.exec.datacontainer.AttachmentDataContainer;
 import org.openntf.xrest.xsp.model.DataContainer;
 import org.openntf.xrest.xsp.model.RouteProcessor;
@@ -19,7 +20,9 @@ import com.ibm.commons.util.io.json.JsonException;
 
 import lotus.domino.EmbeddedObject;
 import lotus.domino.MIMEEntity;
+import lotus.domino.MIMEHeader;
 import lotus.domino.NotesException;
+import lotus.domino.Stream;
 
 public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorExecutor {
 
@@ -32,16 +35,26 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 		HttpServletResponse response = context.getResponse();
 		AttachmentDataContainer<?> adc = (AttachmentDataContainer<?>) dataContainer;
 		try {
-			String mimeType = URLConnection.guessContentTypeFromName( adc.getFileName());
-			InputStream is = getInputStream(adc);
-			response.setContentType(StringUtil.isEmpty(mimeType) ?"application/octet-stream": mimeType);
+			String mimeType = GuessMimeType(adc);
+			response.setContentType(mimeType);
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + adc.getFileName() + "\"");
 			OutputStream out = response.getOutputStream();
-			StreamUtil.copyStream(is, out);
-			out.close();
-			is.close();
+			if (adc.isMime()) {
+				Stream outStream = context.getSession().createStream();
+				MIMEEntity entity = (MIMEEntity) adc.getData();
+				entity.getContentAsBytes(outStream, true);
+				outStream.getContents(out);
+				outStream.close();
+				out.close();
+			} else {
+				InputStream is = getInputStream(adc);
+				StreamUtil.copyStream(is, out);
+				out.close();
+				is.close();
+				
+			}
 		} catch (Exception e) {
-			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "presubmit");
+			throw new ExecutorException(500, "Runtime Error: " + e.getMessage(), e, path, "submitValues");
 		}
 	}
 
@@ -59,5 +72,22 @@ public class GETAttachmentRouteProcessorExecutor extends AbstractRouteProcessorE
 		} else {
 			return ((EmbeddedObject) adc.getData()).getInputStream();
 		}
+	}
+	private String GuessMimeType(AttachmentDataContainer<?> adc) {
+		if (adc.isMime()) {
+			MIMEEntity entity = (MIMEEntity) adc.getData();
+			try {
+			MIMEHeader mimeHeader = entity.getNthHeader(MimeMapJsonTypeProcessor.CONTENT_TYPE);
+			if (mimeHeader != null) {
+				String contenType = mimeHeader.getHeaderVal();
+				mimeHeader.recycle();
+				return contenType;
+			}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		} 
+		String fromUrl = URLConnection.guessContentTypeFromName( adc.getFileName());
+		return StringUtil.isEmpty(fromUrl) ? "application/octet-stream": fromUrl;
 	}
 }

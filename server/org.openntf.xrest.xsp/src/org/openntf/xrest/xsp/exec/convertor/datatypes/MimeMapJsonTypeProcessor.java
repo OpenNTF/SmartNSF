@@ -41,8 +41,9 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 	private static final String BINARY_HEADER_VALUE = "binary";
 	private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
+	private static final String CONTENT_ID = "Content-ID";
 	protected static final String MULTIPART_MIXED = "multipart/mixed";
-	protected static final String CONTENT_TYPE = "Content-Type";
+	public static final String CONTENT_TYPE = "Content-Type";
 	private static final String TEXT_HTML_CHARSET_UTF_8 = "text/html;charset=UTF-8";
 	private static final String CHARSET_UTF_8 = "charset=UTF-8";
 
@@ -333,6 +334,17 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 				childCurrent.recycle();
 			}
 		}
+		String contentId = getContentIDHeaderValue(entity);
+		if (!StringUtil.isEmpty(contentId)) {
+			String attachmentNameEnhanced = "<"+attachmentName.toLowerCase() +">";
+			String attachmentNameCleaned = attachmentNameEnhanced.toLowerCase().replaceAll("[^\\w\\s]","").replace(" ", "");
+			String contentIdCleaned = contentId.toLowerCase().replaceAll("[^\\w\\s]","").replace(" ", "");
+			if (contentId.toLowerCase().equals(attachmentName.toLowerCase()) 
+				|| contentId.toLowerCase().equals(attachmentNameEnhanced)
+				|| contentIdCleaned.equals(attachmentNameCleaned)) {
+				return entity;
+			}
+		}
 		String dispositionValue = getContentDispositionHeaderValue(entity);
 		if (!StringUtil.isEmpty(dispositionValue) && dispositionValue.startsWith(ATTACHMENT_HEADER_VALUE)) {
 			// System.out.println(dispositionValue);
@@ -345,6 +357,16 @@ public class MimeMapJsonTypeProcessor extends AbstractMapJsonTypeProcessor {
 
 	protected String getContentDispositionHeaderValue(final MIMEEntity entity) throws NotesException {
 		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_DISPOSITION);
+		if (mimeheader != null) {
+			String val = mimeheader.getHeaderValAndParams(false, true);
+			mimeheader.recycle();
+			return val;
+		}
+		return null;
+	}
+
+	protected String getContentIDHeaderValue(final MIMEEntity entity) throws NotesException {
+		MIMEHeader mimeheader = entity.getNthHeader(CONTENT_ID);
 		if (mimeheader != null) {
 			String val = mimeheader.getHeaderValAndParams(false, true);
 			mimeheader.recycle();

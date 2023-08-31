@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openntf.xrest</groupId>
 	<artifactId>xrest.parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>10.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
 		<xrest.root>${project.basedir}</xrest.root>
